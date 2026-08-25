@@ -124,42 +124,52 @@ slot table shows up there automatically — no UI code, no contact with the dex 
 all. That is why slot placement is preferred over the Super Rod everywhere the
 choice exists.
 
-**FIELD NOTES** is in your bag from the start. It lists what you have not caught
-yet and, for each, the map, the method, the level band, the rarity and the gate:
+**Undiscovered entries open AREA.** Vanilla refuses: the Pokédex side menu
+does not open at all on an entry you have never seen, which is exactly backwards
+for a mod whose job is helping you find the ones you have never met. Gen151
+opens it, with AREA and QUIT on it — and nothing that would hand over the dex
+paragraph you have not earned.
+
+**And the map gets a line under it** saying how to get there. The blinking
+nests say *where*; they cannot say *in the grass, around level ten, and rare*,
+which is the half you actually need:
 
 ```
-SEAFOAM IS. B4F, Lv31-33
-in the grass
-        [ next page ]
-Very rare there.
-Needs STRENGTH
++------------------------+
+|                        |
+|      (Kanto, with      |
+|    nests blinking)     |
+|                        |
++------------------------+
+| GRASS  Lv31-33         |
+| NEEDS STRENGTH         |
++------------------------+
 ```
 
-Every line is composed from the same placement rows the roll layer is using, so
-a hint cannot drift from the spawn it describes. It also covers the two Super
-Rod placements, which AREA cannot see.
+Both lines are composed from the same placement rows the roll layer is using,
+so a hint cannot drift from the spawn it describes. The caption also covers the
+two Super Rod placements, which have no slot for AREA to find and so blink no
+nest at all.
 
-The notebook is also where anything Gen151 adds to the bag gets explained, at
-the top of the list above the species. **Gen 1 has no item descriptions
-anywhere** — the mart shows a name and a price, the bag a name and a count;
-descriptions arrive in Gen 2 — so this is the only surface a line like this can
-live on without the game growing one first:
+Mew is the exception, on purpose: while its gate is shut it is not in the
+encounter table, so there is no nest — and there is no caption either. A
+caption would give away the basement more precisely than a nest ever could.
 
-```
-An old LINK CABLE,
-modified.
-        [ next page ]
-Good for one
-trade evolution.
-        [ next page ]
-It does not
-survive the job.
-```
+This is the whole hint surface, and it is the third attempt at it. The first
+was a FIELD NOTES key item with a screen of its own; the second added a HINT
+row to the dex side menu from a companion mod. Both are gone. A player looking
+for a Pokémon opens the POKéDEX and presses AREA — that is the surface, and it
+was already one press away.
 
-**A HINT row in the Pokedex** ships as a separate companion mod,
-`gen151_hints`, because it is the one feature that needs the
-`engine_internals` permission and the base mod should not have to request it.
-Install it alongside if you want the row; Gen151 works without it.
+It is also the one thing in Gen151 that needs the `engine_internals`
+permission, which is why the mod wears a **PATCHES ENGINE CODE** badge in the
+manager. Neither screen is replaced: `PokedexMenu.new` and `TownMap.new` are
+wrapped and their originals called, so a dex-replacing mod that calls through
+(Gen1Dex does) keeps working, and one that does not simply never grows the
+extra AREA rather than growing a broken one.
+
+Turn **AREA HINTS** off and the dex is left exactly as the cartridge shipped
+it.
 
 ---
 
@@ -181,7 +191,7 @@ version exclusives but not a wild Mew should not have to fork it.
 | MEW EVENT | on | the Mansion journals and what they unlock |
 | TEST BENCH | off | the built-in bench, below — not part of normal play |
 | RARITY % | 100 | scales every tier at once; 0 disables every substitution |
-| HINTS | AREA + DEX ROW | AREA only, + FIELD NOTES, or + the dex row |
+| AREA HINTS | on | AREA on undiscovered entries, and the line under the map |
 
 There is no legendary option, because there is nothing to toggle — see below.
 
@@ -297,8 +307,8 @@ GEN1RECOMP=/path/to/gen1recomp lua tests/roll_test.lua
 lua tests/placements_test.lua
 
 # end to end, through the engine's real headless loader, on all three
-# versions, plus the companion mod's dex row and, if you point it at a
-# Gen1Dex checkout, that row inside Gen1Dex's own re-dressed list
+# versions, plus the dex wrap and, if you point it at a Gen1Dex checkout,
+# that wrap inside Gen1Dex's own re-dressed list
 cd /path/to/gen1recomp
 GEN151=/path/to/Gen151 GEN1DEX=/path/to/Gen1Dex \
   luajit "$GEN151/tests/mod_load_test.lua"
@@ -307,8 +317,13 @@ GEN151=/path/to/Gen151 GEN1DEX=/path/to/Gen1Dex \
 ./tools/regen.sh /path/to/gen1recomp /path/to/pokered /path/to/pokeyellow
 git diff --exit-code placements.lua hints.lua SPOILERS.md tests/fixtures thumbnail.png
 
+# every box the mod prints, paginated by the real TextBox: a page that
+# renders three lines scrolls the first one away before it can be read
+cd /path/to/gen1recomp
+GEN151=/path/to/Gen151 luajit "$GEN151/tests/text_test.lua"
+
 # the runtime features: the LINK CABLE's use flow, the Mansion journals and
-# the FIELD NOTES screen, all driven through the buses the mod registered on
+# the dex AREA hints, all driven through the buses the mod registered on
 cd /path/to/gen1recomp
 GEN151=/path/to/Gen151 luajit "$GEN151/tests/features_test.lua"
 
@@ -325,7 +340,7 @@ tables: no vanilla species, level or rate changed on any map on any version;
 everything added lands in a table that can be rolled again; every gap closes;
 and Mew is absent from `data.encounters` until its gate flips. The features
 suite drives the LINK CABLE onto a Kadabra and onto a Pidgey, reads all four
-journals one at a time, and opens the notebook — through the loader's own hook
+journals one at a time, and opens AREA — through the loader's own hook
 and event tables, so what runs is the wiring as installed.
 
 ---
@@ -341,7 +356,7 @@ roll.lua           the two-stage roll
 rarity.lua         the tier table
 hints.lua          GENERATED hint vocabulary
 linkcable.lua      the trade-evolution item
-fieldnotes.lua     the FIELD NOTES key item and its screen
+dexarea.lua        AREA on an undiscovered entry, and the map caption
 mewgate.lua        the journals, and the spawn they unlock
 tools/             the derivation pipeline (not shipped)
 tests/             (not shipped)

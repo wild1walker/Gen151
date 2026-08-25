@@ -124,7 +124,7 @@ function M.new(mod, ctx)
       local game = mod.game
       local box = game and game.stack and game.stack.top and game.stack:top()
       local TextBox = mod.ui.TextBox
-      local extra = "The last page is\nloose.\fSomething small was\nhere, and is not\nnow."
+      local extra = "The last page is\nloose.\fSomething small\nwas here,\fand is not now."
       if box and type(box.pages) == "table" and box.maxCols then
         for _, page in ipairs(TextBox.paginate(
             TextBox.substitute(game, extra), box.maxCols)) do

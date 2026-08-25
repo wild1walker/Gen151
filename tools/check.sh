@@ -25,7 +25,10 @@ echo "== end to end, through the engine's headless loader"
 ( cd "$RECOMP" \
   && GEN151="$HERE" GEN1DEX="$GEN1DEX_DIR" luajit "$HERE/tests/mod_load_test.lua" )
 
-echo "== the runtime features: the cable, the journals, the notebook"
+echo "== every box the mod prints fits the two lines a box has"
+( cd "$RECOMP" && GEN151="$HERE" luajit "$HERE/tests/text_test.lua" )
+
+echo "== the runtime features: the cable, the journals, the dex hints"
 ( cd "$RECOMP" && GEN151="$HERE" luajit "$HERE/tests/features_test.lua" )
 
 echo "== modkit"
@@ -36,7 +39,7 @@ if [ -n "$POKERED" ] && [ -n "$POKEYELLOW" ]; then
   echo "== derived files are up to date"
   ./tools/regen.sh "$RECOMP" "$POKERED" "$POKEYELLOW" >/dev/null
   git diff --exit-code placements.lua hints.lua SPOILERS.md thumbnail.png \
-    gen151_hints/thumbnail.png tests/fixtures
+    tests/fixtures
 fi
 
 echo "all green"

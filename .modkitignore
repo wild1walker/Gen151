@@ -9,13 +9,15 @@
 # tests/ requires engine modules, which is a private-require finding against a
 # shipped archive, and `pack` treats warnings as fatal.  tools/ parses the pret
 # disassembly to regenerate placements.lua, hints.lua, SPOILERS.md and the
-# fixtures; it is of no use to a player.  gen151_hints/ is a mod in its own
-# right and is packaged separately.
+# fixtures; it is of no use to a player.  There are no companion directories
+# left to list: both companions folded into this mod once it became clear that
+# a second archive is a second thing that never gets installed.
 
 tests/roll_test.lua
 tests/placements_test.lua
 tests/mod_load_test.lua
 tests/features_test.lua
+tests/text_test.lua
 tests/fixtures/vanilla.lua
 tests/fixtures/gapset.json
 
@@ -31,9 +33,3 @@ tools/regen.sh
 
 SPOILERS.md
 
-gen151_hints/manifest.json
-gen151_hints/main.lua
-gen151_hints/mod.card
-gen151_hints/README.md
-gen151_hints/CHANGELOG.md
-gen151_hints/thumbnail.png

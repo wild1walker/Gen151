@@ -296,14 +296,18 @@ for _, version in ipairs({ "red", "blue", "yellow" }) do
   end
   check(onShelf, version .. ": LINK CABLE is on the Celadon Mart 4F shelf")
 
-  -- ---- the notebook exists
-  check(data.items and data.items.FIELD_NOTES ~= nil,
-    version .. ": FIELD NOTES is registered")
+  -- ---- and the notebook does NOT exist any more
+  --
+  -- The hints moved onto the dex AREA screen, which is where a player
+  -- looking for a Pokemon already goes.  A key item that only opens a menu
+  -- is one more thing to find before the answer turns up.
+  check(not (data.items and data.items.FIELD_NOTES),
+    version .. ": no FIELD NOTES key item is registered")
 
   -- ---- no orphans: every placement resolves through AREA or has explicit
   -- hint coverage (SPEC 9).  AREA scans data.encounters, so a slot row is
-  -- covered by construction; a Super Rod row is not, and must be in the
-  -- notebook's own table.
+  -- covered by construction; a Super Rod row is not, and reaches the player
+  -- only through the caption under the map.
   local inNotebook = {}
   for _, row in ipairs(exports.rows or {}) do inNotebook[row.species] = true end
   for _, row in ipairs(exports.fishing or {}) do
@@ -337,92 +341,88 @@ do
   run.release()
 end
 
--- ---- the companion mod loads beside it, and finds it
+-- ---- the dex wrap, in the mod itself
 --
--- gen151_hints is a separate mod because the dex HINT row is the one feature
--- that needs `engine_internals`, and a mod that requests that permission wears
--- a "PATCHES ENGINE CODE" badge in the manager.  It reads Gen151's resolved
--- rows through mod.find, so this checks the handoff as well as the load.
+-- This was a companion mod for two releases, because the wrap needs
+-- `engine_internals` and a mod that asks for that wears a "PATCHES ENGINE
+-- CODE" badge in the manager.  The badge turned out to be the cheaper of the
+-- two costs: a companion is a second archive, and a second archive is a
+-- second thing that never gets installed.
+--
+-- The dex list constructs headlessly under the love stub and its onChoose
+-- pushes onto the stack, so what is driven here is the real thing rather
+-- than the fact that a wrap installed.
 
-do
-  local data = datasetFor("red")
-  local run = loadPaths({ GEN151, GEN151 .. "/gen151_hints" }, data)
-  eq(#run.errors, 0, "companion: both mods load clean ("
-    .. table.concat(run.errors, "; ") .. ")")
-  local hints = run.loader.mods.gen151_hints
-  check(hints ~= nil, "companion: gen151_hints was discovered")
-  check(hints == nil or hints.failed ~= true,
-    "companion: gen151_hints did not fail: " .. tostring(hints and hints.skipReason))
-  check(run.loader.exports.gen151 ~= nil,
-    "companion: Gen151's exports are reachable through mod.find")
-
-  -- ---- and the row is really in the side menu
-  --
-  -- The dex list constructs headlessly under the love stub, and its onChoose
-  -- pushes the side menu onto the stack, so the splice can be driven for real
-  -- rather than inferred from the fact that the wrap installed.
+local function dexGame(data, seen)
   local stack = {
     pushed = {},
     push = function(self, state) self.pushed[#self.pushed + 1] = state end,
     top = function(self) return self.pushed[#self.pushed] end,
     pop = function(self) table.remove(self.pushed) end,
   }
-  local species = "BULBASAUR"
-  -- the fixture's dex is three entries long; Kanto's is 151, and
-  -- PokedexMenu walks 1..constants.dexSize
   data.constants = data.constants or {}
   data.constants.dexSize = 151
-  local game = {
+  return {
     data = data,
-    save = { pokedex = { seen = { [species] = true },
-                         owned = {} } },
+    save = { pokedex = { seen = seen or {}, owned = {} } },
     stack = stack,
-  }
+  }, stack
+end
+
+local function labelsOf(menu)
+  local out = {}
+  for _, entry in ipairs((menu or {}).items or {}) do
+    out[#out + 1] = tostring(entry.label)
+  end
+  return table.concat(out, "/")
+end
+
+do
+  local data = datasetFor("red")
+  local run = loadGen151(data)
+  eq(#run.errors, 0, "dex: it loads clean ("
+    .. table.concat(run.errors, "; ") .. ")")
+
+  local species = "BULBASAUR"
+  local game, stack = dexGame(data, { [species] = true })
   local PokedexMenu = require("src.ui.PokedexMenu")
   local built, list = pcall(PokedexMenu.new, game, {})
-  check(built, "companion: the dex list still constructs: " .. tostring(list))
-  if built then
-    local row
-    for _, item in ipairs(list.items) do
-      if item.value == species then row = item end
-    end
-    check(row ~= nil, "companion: the dex list has a row for " .. species)
-    if row then
-      list.onChoose(row, list)
-      local menu = stack:top()
-      local labels = {}
-      for _, entry in ipairs((menu or {}).items or {}) do
-        labels[#labels + 1] = tostring(entry.label)
-      end
-      local joined = table.concat(labels, "/")
-      check(joined:find("AREA/HINT", 1, true) ~= nil,
-        "companion: HINT sits right after AREA, got " .. joined)
+  check(built, "dex: the list still constructs: " .. tostring(list))
 
-      -- and pressing it says something about where Gen151 put it
-      local hint
-      for _, entry in ipairs(menu.items) do
-        if entry.label == "HINT" then hint = entry end
-      end
-      if hint then
-        local before = #stack.pushed
-        hint.onSelect()
-        check(#stack.pushed > before,
-          "companion: HINT pushes a box")
-        local box = stack:top()
-        local text = box and table.concat(box.pages and box.pages[1] or {}, " ")
-        check(type(text) == "string" and text ~= "",
-          "companion: the HINT box has text")
-      end
+  if built then
+    -- ---- a SEEN entry keeps the side menu the cartridge shipped
+    local known
+    for _, item in ipairs(list.items) do
+      if item.value == species then known = item end
+    end
+    check(known ~= nil, "dex: the list has a row for " .. species)
+    if known then
+      list.onChoose(known, list)
+      local joined = labelsOf(stack:top())
+      check(joined:find("DATA", 1, true) ~= nil
+              and joined:find("AREA", 1, true) ~= nil,
+        "dex: a seen entry is untouched, got " .. joined)
+      check(joined:find("HINT", 1, true) == nil,
+        "dex: with no extra row spliced into it -- the hint went under the "
+          .. "map instead, got " .. joined)
+      stack:pop()
+    end
+
+    -- ---- an UNDISCOVERED entry opens AREA, which vanilla refuses to do
+    local unknown
+    for _, item in ipairs(list.items) do
+      if not item.value then unknown = item break end
+    end
+    check(unknown ~= nil, "dex: the list has an undiscovered row")
+    if unknown then
+      local before = #stack.pushed
+      list.onChoose(unknown, list)
+      check(#stack.pushed > before,
+        "dex: choosing it opens something, where vanilla returns early")
+      eq(labelsOf(stack:top()), "AREA/QUIT",
+        "dex: AREA and the way out, and nothing that spoils the entry")
     end
   end
-
-  -- nothing stays patched between calls: the interception is scoped to one
-  -- onChoose, so a second dex list built afterwards gets the real Menu.new
-  local Menu = require("src.ui.Menu")
-  local menuNew = Menu.new
-  local again = select(2, pcall(PokedexMenu.new, game, {}))
-  check(Menu.new == menuNew,
-    "companion: Menu.new is not left patched between calls")
 
   run.release()
 end
@@ -432,8 +432,8 @@ end
 -- SPEC 9: "Test with the dex mod installed and enabled."  Gen1Dex registers
 -- over the PokedexMenu screen id, so the list the player actually sees is
 -- Gen1Dex's -- but it builds that list by calling the VANILLA constructor and
--- re-dressing the result, which is the whole reason the HINT row is safe.
--- This drives the id through the screens registry, so what is exercised is
+-- re-dressing the result, which is what keeps the wrap effective.  This
+-- drives the id through the screens registry, so what is exercised is
 -- Gen1Dex's factory calling the constructor this mod wrapped.
 --
 -- Set GEN1DEX to a Gen1Dex checkout to run it; skipped, loudly, when absent.
@@ -441,48 +441,27 @@ end
 local GEN1DEX = os.getenv("GEN1DEX")
 if GEN1DEX then
   local data = datasetFor("red")
-  data.constants = data.constants or {}
-  data.constants.dexSize = 151
-  for _, def in pairs(data.pokemon) do
-    if def.dex == nil then def.dex = nil end
-  end
-  local run = loadPaths({ GEN151, GEN151 .. "/gen151_hints", GEN1DEX }, data)
-  eq(#run.errors, 0, "Gen1Dex: all three mods load clean ("
+  local run = loadPaths({ GEN151, GEN1DEX }, data)
+  eq(#run.errors, 0, "Gen1Dex: both mods load clean ("
     .. table.concat(run.errors, "; ") .. ")")
   check(data.screens ~= nil and data.screens.PokedexMenu ~= nil,
     "Gen1Dex: it still owns the PokedexMenu screen id")
 
-  local species = "BULBASAUR"
-  local stack = {
-    pushed = {},
-    push = function(self, state) self.pushed[#self.pushed + 1] = state end,
-    top = function(self) return self.pushed[#self.pushed] end,
-    pop = function(self) table.remove(self.pushed) end,
-  }
-  local game = {
-    data = data,
-    save = { pokedex = { seen = { [species] = true }, owned = {} } },
-    stack = stack,
-  }
+  local game, stack = dexGame(data, { BULBASAUR = true })
   local Screens = require("src.ui.Screens")
   local pushed, err = pcall(Screens.push, game, "PokedexMenu")
   check(pushed, "Gen1Dex: its dex list constructs: " .. tostring(err))
   if pushed then
     local list = stack:top()
-    local row
+    local unknown
     for _, item in ipairs((list or {}).items or {}) do
-      if item.value == species then row = item end
+      if not item.value then unknown = item break end
     end
-    check(row ~= nil, "Gen1Dex: its list has a row for " .. species)
-    if row and type(list.onChoose) == "function" then
-      list.onChoose(row, list)
-      local labels = {}
-      for _, entry in ipairs((stack:top() or {}).items or {}) do
-        labels[#labels + 1] = tostring(entry.label)
-      end
-      check(table.concat(labels, "/"):find("AREA/HINT", 1, true) ~= nil,
-        "Gen1Dex: HINT still sits after AREA inside its list, got "
-          .. table.concat(labels, "/"))
+    check(unknown ~= nil, "Gen1Dex: its list has an undiscovered row")
+    if unknown and type(list.onChoose) == "function" then
+      list.onChoose(unknown, list)
+      eq(labelsOf(stack:top()), "AREA/QUIT",
+        "Gen1Dex: AREA still opens on an undiscovered entry inside its list")
     end
   end
   run.release()
@@ -490,26 +469,26 @@ else
   io.write("note: GEN1DEX is unset, so the dex-mod case was not run\n")
 end
 
--- ---- and with the hint surface turned down, the row is not installed
+-- ---- and with the hints switched off, the dex is left completely alone
 --
--- SPEC 9: "both option states".  Gen151's HINTS option is the switch the
--- companion reads; set to AREA ONLY it must leave the dex completely alone.
+-- SPEC 9: "both option states".
 
 do
   require("src.ui.PokedexMenu").new = PRISTINE_DEX_NEW
   local data = datasetFor("red")
-  local run = loadPaths({ GEN151, GEN151 .. "/gen151_hints" }, data, {
+  local run = loadPaths({ GEN151 }, data, {
     ["options.lua"] = 'return { modOptions = { gen151 = '
-      .. '{ hints = "area" } } }',
+      .. '{ hints = false } } }',
   })
-  eq(#run.errors, 0, "hints=area: both mods still load clean ("
+  eq(#run.errors, 0, "hints=off: it still loads clean ("
     .. table.concat(run.errors, "; ") .. ")")
   local exports = run.loader.exports.gen151
-  eq(exports and exports.hintSurface, "area",
-    "hints=area: the option really took")
+  eq(exports and exports.hintSurface, false,
+    "hints=off: the option really took")
   check(require("src.ui.PokedexMenu").new == PRISTINE_DEX_NEW,
-    "hints=area: the dex constructor is left completely alone")
+    "hints=off: the dex constructor is left completely alone")
   run.release()
 end
+
 
 T.finish("gen151 mod load")

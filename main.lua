@@ -13,11 +13,15 @@
 --   rarity.lua      the tier table the whole mod shares
 --   hints.lua       generated hint vocabulary
 --   linkcable.lua   the consumable trade-evolution item
---   fieldnotes.lua  the FIELD NOTES key item and its screen
+--   dexarea.lua     AREA on an undiscovered entry, and the hint under the map
 --   mewgate.lua     the Mansion journals, and the spawn they unlock
+--   bench.lua       the test bench, behind an option that defaults off
 --
--- No permissions.  Everything here goes through mod.content, mod.hooks,
--- mod.events, mod.options, mod.ui, mod.world and mod.game.
+-- One permission, engine_internals, and dexarea.lua is the whole of why: the
+-- POKeDEX and the town map are engine screens with no hook between them, and
+-- putting the answer on the screen the player already opens is worth reaching
+-- for them.  Everything else goes through mod.content, mod.hooks, mod.events,
+-- mod.options, mod.ui, mod.world and mod.game.
 
 local MOD_ID = "gen151"
 
@@ -121,18 +125,19 @@ return function(mod)
     { key = "bench", type = "toggle", label = "TEST BENCH", default = false,
       visible_if = { key = "enabled", equals = true } },
 
-    { key = "hints", type = "choice", label = "HINTS", default = "dex",
-      choices = { { "AREA + DEX ROW", "dex" },
-                  { "AREA + NOTES", "notes" },
-                  { "AREA ONLY", "area" } },
+    -- On, the POKeDEX opens AREA for a Pokemon you have never met and puts
+    -- a line under the map saying how to get there.  Off leaves the dex
+    -- exactly as the cartridge shipped it, which is the setting for anyone
+    -- who would rather find the additions the hard way.
+    { key = "hints", type = "toggle", label = "AREA HINTS", default = true,
       visible_if = { key = "enabled", equals = true } },
   }
 
   local function opt(key) return mod.options:get(key) end
 
-  -- Published for the companion mod (the dex HINT row) and for anyone else
-  -- who wants the placement table.  Filled in below; declared here so an
-  -- early return still leaves a well-formed handle behind.
+  -- Published for anyone who wants the placement table.  Filled in below;
+  -- declared here so an early return still leaves a well-formed handle
+  -- behind.
   mod.exports.version = mod.version
   mod.exports.rows = {}
   mod.exports.fishing = {}
@@ -238,10 +243,6 @@ return function(mod)
 
   if mewGate then mewGate.install(resolved.rows) end
 
-  -- Anything Gen151 adds to the bag gets a line in the FIELD NOTES, because
-  -- Gen 1 has no item descriptions and that is the only surface there is.
-  local kit = {}
-
   if opt("trade_evolutions") == "link_cable" then
     local cable = submodule(mod, "linkcable.lua")
     if cable then
@@ -249,19 +250,17 @@ return function(mod)
         romText = romText,
         sfx = function() return opt("cable_sfx") == true end,
       })
-      kit[#kit + 1] = cable.note()
     end
   end
 
-  if opt("hints") ~= "area" then
-    local notes = submodule(mod, "fieldnotes.lua")
-    if notes then
-      notes.install(mod, {
+  if opt("hints") == true then
+    local dexarea = submodule(mod, "dexarea.lua")
+    if dexarea then
+      dexarea.install(mod, {
         hints = Hints,
         rows = resolved.rows,
         fishing = resolved.fishing,
-        romText = romText,
-        kit = kit,
+        unlocked = mewGate and mewGate.unlocked or nil,
       })
     end
   end

@@ -3,6 +3,50 @@
 All notable changes to Gen151 are recorded here, in
 [keep a changelog](https://keepachangelog.com/en/1.1.0/) order.
 
+## [1.1.0] - 2026-08-25
+
+Six things a human found by playing it, which is the only way any of them
+were ever going to turn up.
+
+### Changed
+
+- **The hints moved onto the dex AREA screen, and FIELD NOTES is gone.** The
+  POKeDEX now opens its side menu on an entry you have never seen -- vanilla
+  refuses, which is backwards for a mod about finding what you have not met --
+  with AREA on it, and the AREA map carries a line underneath saying how to
+  get there: method, level band, and either the rarity or the HM you need to
+  be standing there at all. The FIELD NOTES key item and its screen are
+  deleted, and so is the `gen151_hints` companion that added a HINT row to the
+  same menu. Both were a second place to look for an answer that belonged on
+  the first one.
+- Mew keeps its seal: while its gate is shut there is no nest AND no caption.
+- **Every text box the mod prints was rewritten to fit.** A page that renders
+  three lines does not stop -- the engine only waits between lines when the
+  break is `\v` -- so the top line scrolled away while the player was still
+  reading it. Fifteen pages across five files did that. `tests/text_test.lua`
+  now paginates every string in the mod with the real `TextBox.paginate` and
+  fails the build on any page that would scroll unread.
+- The LINK CABLE **asks before it commits**, which is where B gets a meaning:
+  everything after the question is a trade evolution, and a trade evolution
+  has never been cancelable on any cartridge. The question also carries the
+  one line of description Gen 1 has nowhere else to put, now that the FIELD
+  NOTES screen it used to live on is gone.
+
+### Added
+
+- A second sound on the cable break. The snap stays exactly where it was, on
+  the page that says the cable broke; **ZzZzap** now gets an arc of its own --
+  the noise channel's 7-bit polynomial, three bursts and a decay, over a
+  square sweeping up where the snap sweeps down. It fires as the box comes up
+  rather than after the word has finished typing.
+
+### Fixed
+
+- The bench's MEW row said nothing and looked like it did nothing. It now
+  confirms what it did, and when MEW EVENT is switched off -- the one case
+  where flipping the flag really does move nothing -- it says so instead of
+  failing silently.
+
 ## [1.0.3] - 2026-08-25
 
 ### Added

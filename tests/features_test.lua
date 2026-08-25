@@ -182,6 +182,35 @@ do
   local picker = { close = function() pickerClosed = true end }
   hooks:call("item.use", vanillaUse, game, nil, "LINK_CABLE", kadabra, bag,
              nil, picker)
+
+  -- ---- it ASKS first, which is the only place a cancel can mean anything
+  --
+  -- Everything past this point is a trade evolution, and a trade evolution
+  -- is non-cancelable by design (via = "TRADE").  So B has to have a meaning
+  -- here or it has none at all, which is exactly how it played.
+  local ask = game.stack:top()
+  local askText = boxText(ask)
+  check(askText ~= nil and askText:find("KADABRA", 1, true) ~= nil,
+    "cable: it asks before it does anything, got " .. tostring(askText))
+  check(askText ~= nil and askText:lower():find("modified", 1, true) ~= nil,
+    "cable: and says what the thing is, which the mart list cannot")
+  check(type(ask.choice) == "function",
+    "cable: as a YES/NO, so B is NO")
+
+  -- ---- NO backs all the way out, spending nothing
+  ask.choice(false)
+  eq(kadabra.species, "KADABRA", "cable: NO evolves nothing")
+  eq(game.save.inventory.LINK_CABLE, 2, "cable: and consumes nothing")
+  check(pickerClosed, "cable: and takes the party picker back down")
+  eq(#game.stack.pushed, 1,
+    "cable: leaving nothing of its own on the stack")
+
+  -- ---- YES is what starts the machine
+  pickerClosed = false
+  game.stack = newStack()
+  hooks:call("item.use", vanillaUse, game, nil, "LINK_CABLE", kadabra, bag,
+             nil, picker)
+  game.stack:top().choice(true)
   local first = game.stack:top()
   eq(boxText(first), ". . .", "cable: it opens on the engine's beat idiom")
   check(first.auto ~= nil and first.auto.sound ~= nil,
@@ -241,24 +270,38 @@ do
   eq(bag.items[1].right, "x1",
     "cable: the open bag list is corrected to the new count")
 
-  local breakBox = game.stack:top()
+  -- ---- the break is three boxes, because it is three beats with two
+  -- different sounds on them.  One box could only ever carry one sound
+  -- (TextBox fires auto.sound when the LAST page of a box types out), which
+  -- is why the arc had nothing to play on.
+  local beat = game.stack:top()
+  check(game.stack:top() ~= intro,
+    "cable: the is-evolving box is taken down first")
+  eq(boxText(beat), ". . .", "cable: the break opens on the beat")
   check(not pickerClosed,
-    "cable: the party picker is still up while the break message is on "
-      .. "screen, the way vanilla holds it through showMessages")
+    "cable: the party picker is still up while the break plays, the way "
+      .. "vanilla holds it through showMessages")
+
+  game.stack:pop()
+  beat.onDone()
+  local zapBox = game.stack:top()
+  eq(boxText(zapBox), "ZzZzap!", "cable: then the arc")
+  check(zapBox.preSound ~= nil,
+    "cable: with the zap armed to fire as the box comes up, not after the "
+      .. "player has finished reading it")
+
+  game.stack:pop()
+  zapBox.onDone()
+  local breakBox = game.stack:top()
+  local breakText = boxText(breakBox)
+  check(breakText ~= nil and breakText:lower():find("broke", 1, true) ~= nil,
+    "cable: then the cable breaks, got " .. tostring(breakText))
+  check(breakBox.auto ~= nil and breakBox.auto.sound ~= nil,
+    "cable: with the snap on it, which is the sound that was already right")
   check(type(breakBox.onDone) == "function",
-    "cable: and dismissing the break message is what takes it down")
+    "cable: and dismissing THAT is what takes the picker down")
   breakBox.onDone()
   check(pickerClosed, "cable: which it does")
-  local breakText = boxText(game.stack:top())
-  check(breakText ~= nil and breakText:find("ZzZzap", 1, true) ~= nil,
-    "cable: the break message zaps, got " .. tostring(breakText))
-  check(breakText ~= nil and breakText:lower():find("broke", 1, true) ~= nil,
-    "cable: and says the cable broke")
-  check(breakText ~= nil
-          and breakText:find("ZzZzap", 1, true) > breakText:find(".", 1, true),
-    "cable: after the beat, not before it")
-  check(game.stack:top() ~= intro,
-    "cable: and the is-evolving box is taken down first")
 
   -- ---- the last one leaves the bag entirely
   game.save.bagOrder = { "LINK_CABLE", "POTION" }
@@ -364,105 +407,83 @@ do
   run.release()
 end
 
--- ------------------------------------------------------- the FIELD NOTES
+-- ----------------------------------------------------- AREA on an unknown
+--
+-- The whole hint surface, after the FIELD NOTES item and the companion mod
+-- that came before it were both thrown away: the POKeDEX opens AREA on a
+-- Pokemon you have never met, and the map it opens has a line under it.
 
 do
   local run, data = load()
   local game = stubGame(data)
   run.loader.game = game
 
-  run.loader.events:emit("save.created", { save = game.save })
-  eq(game.save.inventory.FIELD_NOTES, 1,
-    "notes: the notebook is in the bag")
-  run.loader.events:emit("save.loaded", { save = game.save })
-  eq(game.save.inventory.FIELD_NOTES, 1,
-    "notes: and granting it twice does not stack it")
+  eq(game.save.inventory.FIELD_NOTES, nil,
+    "area: no key item is added to the bag any more")
+  check(data.screens == nil or data.screens.Gen151FieldNotes == nil,
+    "area: and no screen of its own is registered")
 
-  local order = 0
-  for _, id in ipairs(game.save.bagOrder) do
-    if id == "FIELD_NOTES" then order = order + 1 end
+  -- ---- the caption is derived from the SAME resolved rows as the spawn
+  local Hints = run.loader.exports.gen151.hints
+  check(Hints ~= nil, "area: the hint vocabulary is published")
+  local placed
+  for _, row in ipairs(run.loader.exports.gen151.rows or {}) do
+    if not row.gated then placed = row break end
   end
-  eq(order, 1, "notes: it appears once in the bag order")
+  check(placed ~= nil, "area: there is a placed species to caption")
 
-  local pushed = false
-  local Screens = require("src.ui.Screens")
-  local realPush = Screens.push
-  Screens.push = function(g, id, ...)
-    if id == "Gen151FieldNotes" then
-      pushed = true
-      return
-    end
-    return realPush(g, id, ...)
+  local caption = Hints.caption({ placed }, 19)
+  check(type(caption) == "table" and caption[1] ~= nil,
+    "area: which produces a caption")
+  for _, line in ipairs(caption or {}) do
+    check(#line <= 19,
+      "area: every caption line fits under the map, but %q is %d wide",
+      line, #line)
   end
-  run.loader.hooks:call("item.use", function() return "vanilla" end,
-                        game, nil, "FIELD_NOTES", nil, nil, nil, nil)
-  Screens.push = realPush
-  check(pushed, "notes: using it opens the notebook screen")
+  eq(Hints.caption({}, 19), nil,
+    "area: a species this mod never placed gets no caption, so its AREA "
+      .. "screen is exactly the one the cartridge shipped")
 
-  -- and the screen itself builds, listing what has not been caught
-  local factory = data.screens and data.screens.Gen151FieldNotes
-  check(factory ~= nil, "notes: the screen is registered")
-  if factory then
-    local built, list = pcall(factory.new, game)
-    check(built, "notes: the screen constructs: " .. tostring(list))
-    if built then
-      check(#list.items > 0, "notes: it lists the species still missing")
-      local first
-      for _, item in ipairs(list.items) do
-        if item.value then first = item break end
-      end
-      check(first ~= nil, "notes: with at least one selectable row")
-      if first then
-        list.onChoose(first, list)
-        local hint = boxText(game.stack:top())
-        check(hint ~= nil and hint ~= "",
-          "notes: and choosing one says where to look")
-      end
-    end
+  -- ---- and MEW's caption stays sealed until its gate opens, because a
+  -- caption would spoil the basement more precisely than a nest ever could
+  local mewRow
+  for _, row in ipairs(run.loader.exports.gen151.rows or {}) do
+    if row.species == "MEW" then mewRow = row end
   end
+  check(mewRow ~= nil and mewRow.gated == "mew",
+    "area: MEW's row is the gated one")
 
-  -- ---- the kit row: Gen 1 has no item descriptions, so this is the only
-  -- place the LINK CABLE gets explained
-  local _, listed = pcall(factory.new, game)
-  local kitRow
-  for _, item in ipairs((listed or {}).items or {}) do
-    if item.label == "LINK CABLE" then kitRow = item end
-  end
-  check(kitRow ~= nil, "notes: the LINK CABLE has an entry")
-  eq(listed.items[1].label, "LINK CABLE",
-    "notes: at the top, above the species")
-  if kitRow then
-    check(kitRow.value == nil,
-      "notes: and it is not mistaken for a species")
-    game.stack = newStack()
-    listed.onChoose(kitRow, listed)
-    local note = boxText(game.stack:top())
-    check(note ~= nil and note:lower():find("old link cable", 1, true) ~= nil,
-      "notes: which says what it is, got " .. tostring(note))
-    check(note ~= nil and note:lower():find("modified", 1, true) ~= nil,
-      "notes: and that it was modified")
-    for _, page in ipairs(game.stack:top().pages) do
-      for _, line in ipairs(page) do
-        check(#line <= 18,
-          "notes: every line fits the text box, but %q is %d wide",
-          line, #line)
-      end
-    end
-  end
+  local PokedexMenu = require("src.ui.PokedexMenu")
+  local TownMap = require("src.ui.TownMap")
+  check(PokedexMenu.new ~= nil and TownMap.new ~= nil,
+    "area: both engine screens are still callable after the wrap")
 
-  -- everything caught: a sentence, not a blank box, and the kit survives it
-  for id in pairs(data.pokemon) do game.save.pokedex.owned[id] = true end
-  local _, full = pcall(factory.new, game)
-  if type(full) == "table" and full.items then
-    eq(#full.items, 2, "notes: a finished notebook keeps the kit row")
-    eq(full.items[1].label, "LINK CABLE",
-      "notes: the kit row first")
-    eq(full.items[2].label, "ALL FOUND!",
-      "notes: then the sentence")
+  -- ---- an undiscovered entry opens a side menu, which vanilla refuses to do
+  local list = PokedexMenu.new(game, {})
+  check(type(list) == "table" and type(list.items) == "table",
+    "area: the dex list still builds")
+  local unknown
+  for _, item in ipairs(list.items or {}) do
+    if not item.value then unknown = item break end
   end
+  check(unknown ~= nil, "area: with an undiscovered entry in it")
+  game.stack = newStack()
+  list.onChoose(unknown, list)
+  local menu = game.stack:top()
+  check(menu ~= nil, "area: choosing it opens something, where vanilla "
+    .. "returns early and opens nothing")
+  local labels = {}
+  for _, entry in ipairs((menu or {}).items or {}) do
+    labels[#labels + 1] = entry.label
+  end
+  eq(labels[1], "AREA", "area: whose first row is AREA")
+  eq(labels[2], "QUIT",
+    "area: and whose second is QUIT -- DATA on a Pokemon you have never met "
+      .. "would hand over the dex paragraph, which nobody asked for")
 
   run.release()
 end
+
 
 -- --------------------------------------------------------- the debug bench
 --

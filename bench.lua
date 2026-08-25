@@ -49,14 +49,14 @@ local MEW_FOUND = "GEN151_MEW_FOUND"
 -- The list of things that need a human, in the order they are cheapest to
 -- check.  Printed by the CHECKLIST row so the bench says what it is for.
 local CHECKLIST = {
-  "1 CABLE SFX\nDoes the snap read\nas electrical?",
-  "2 BREAK BOX\nDoes ZzZzap render,\nand does it land\nafter the evolution?",
-  "3 KIT, then use a\nLINK CABLE on the\nKADABRA. Watch for\na B press doing\nnothing.",
-  "4 SPAWNS ON, then\nwalk. Every battle\nis a GEN151 one.",
-  "5 NOTES: open FIELD\nNOTES. Does the list\nfit? Do the hints\nmatch what you met?",
-  "6 DEX FILL, then\nPOKeDEX, AREA on a\nplaced species. Nest\non the right map?",
-  "7 MEW: flip it OFF,\ncheck AREA shows no\nnest. Flip ON, check\nit does.",
-  "8 CELADON MART 4F.\nIs LINK CABLE on the\nshelf at 2100?",
+  "1 CABLE SFX.\nZap, then snap?",
+  "2 BREAK BOX.\fDoes ZzZzap render\nand land AFTER\fthe evolution?",
+  "3 KIT, then use a\nLINK CABLE\fon the KADABRA.\nB should cancel.",
+  "4 SPAWNS ON,\nthen walk.\fEvery battle is a\nGEN151 one.",
+  "5 POKeDEX, then\nAREA\fon a species you\nhave NOT met.\fIs there a hint\nunder the map?",
+  "6 DEX FILL, then\nAREA again.\fNest on the right\nmap?",
+  "7 MEW: flip it\nOFF.\fAREA shows no\nnest.\fFlip ON. It does.",
+  "8 CELADON MART 4F.\fIs LINK CABLE on\nthe shelf at 2100?",
 }
 
 
@@ -167,7 +167,7 @@ function M.install(mod, ctx)
     list:close()
     local ow, err = toOverworld(game)
     if not ow then
-      say(game, "Bag filled, but the\nparty needs the\noverworld.\f" .. tostring(err))
+      say(game, "Bag filled.\fThe party needs\nthe overworld:\f" .. tostring(err))
       return
     end
     local rows = {}
@@ -189,7 +189,7 @@ function M.install(mod, ctx)
       -- EVOS is LINK CABLE -- CABLE SOUND decides whether the snap PLAYS,
       -- not whether it exists, so naming it here sent the last reader to
       -- the wrong switch.
-      say(game, "No SFX_GEN151_CABLE\n_SNAP registered.\fIn MODS -> Gen151,\nis TRADE EVOS set\nto LINK CABLE?")
+      say(game, "No cable sound\nis registered.\fIn MODS, Gen151,\fis TRADE EVOS set\nto LINK CABLE?")
       return
     end
     play()
@@ -218,7 +218,7 @@ function M.install(mod, ctx)
       end
     end
     if #rows == 0 then
-      say(game, "GEN151 adds nothing\nto " .. tostring(mapId) .. ".\fTry GO TO...")
+      say(game, "Nothing is placed\non\f" .. tostring(mapId) .. ".\fTry GO TO.")
       return
     end
     local items = {}
@@ -262,7 +262,22 @@ function M.install(mod, ctx)
     return mod.world and mod.world:getFlag(MEW_FOUND) == true
   end
 
+  -- Whether Gen151 has a MEW row to gate at all.  With MEW EVENT switched
+  -- off, the gate is never installed, so flipping the flag moves nothing and
+  -- the row was quietly doing nothing at all -- which is precisely what it
+  -- looked like from the outside.
+  local function mewPlaced()
+    for _, row in ipairs(ctx.rows or {}) do
+      if row.species == "MEW" then return true end
+    end
+    return false
+  end
+
   local function actMew(game, list, item)
+    if not mewPlaced() then
+      say(game, "MEW is not placed.\fTurn MEW EVENT on\fin this mod's own\noptions.")
+      return
+    end
     local turnOn = not mewOn()
     for _, flag in ipairs(MEW_FLAGS) do
       mod.world:setFlag(flag, turnOn or nil)
@@ -272,6 +287,11 @@ function M.install(mod, ctx)
     -- what the dex AREA screen reads
     if type(ctx.syncGated) == "function" then ctx.syncGated() end
     item.label = turnOn and "MEW: FOUND" or "MEW: HIDDEN"
+    -- The label changing is the only thing this used to do, and a two-word
+    -- label two rows down is not a confirmation.  Say it.
+    say(game, turnOn
+      and "Journals read.\fMEW is in the\ntable now."
+      or "Journals cleared.\fMEW is out of\nthe table.")
   end
 
   local function actDexFill(game)
@@ -288,7 +308,7 @@ function M.install(mod, ctx)
       end
     end
     say(game, ("Marked %d species\nas SEEN."):format(n)
-      .. "\fAREA and the HINT\nrow work on SEEN,\nnot OWNED.")
+      .. "\fAREA works on any\nentry now.")
   end
 
   local function actChecklist(game)

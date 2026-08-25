@@ -3,12 +3,14 @@ name: Release
 # Packs each mod in this repo into an installable .zip and publishes them as
 # one GitHub Release, once per push to main.
 #
-# Adapted from gen1recomp's tools/mod_release_workflow.yml, which assumes one
-# mod per repository.  This repo holds three: gen151 at the root, and the two
-# companions in their own directories.  The base mod's archive is the root
-# MINUS everything .modkitignore lists -- the derivation pipeline under
-# tools/, the suites under tests/, SPOILERS.md and the companion directories --
-# so the one ignore list stays the single source of truth for what ships.
+# Adapted from gen1recomp's tools/mod_release_workflow.yml.  The archive is the
+# repository root MINUS everything .modkitignore lists -- the derivation
+# pipeline under tools/, the suites under tests/, and SPOILERS.md -- so the one
+# ignore list stays the single source of truth for what ships.
+#
+# It used to pack companions out of their own directories as well.  Both are
+# gone: a second archive is a second thing to install, and both times that is
+# exactly what did not happen.
 #
 # Archive layout: every mod file at the archive root, manifest.json included.
 # That is one of the two shapes the game accepts on MODS > Import mod .zip
@@ -104,13 +106,6 @@ jobs:
           mkdir -p "$work" "$out"
           git archive HEAD | tar -x -C "$work"
 
-          # the companions come out whole, before the base mod is stripped
-          for companion in gen151_hints; do
-            if [ -d "$work/$companion" ]; then
-              mv "$work/$companion" "$RUNNER_TEMP/$companion"
-            fi
-          done
-
           # .modkitignore is the ship list, so read it rather than repeating it
           if [ -f "$work/.modkitignore" ]; then
             while IFS= read -r line; do
@@ -137,9 +132,6 @@ jobs:
           }
 
           pack "$work"
-          for companion in gen151_hints; do
-            [ -d "$RUNNER_TEMP/$companion" ] && pack "$RUNNER_TEMP/$companion"
-          done
 
           (cd "$out" && sha256sum ./*.zip > sha256sums.txt)
           cat "$out/sha256sums.txt"
@@ -159,7 +151,6 @@ jobs:
           notes=$'Install from the game: **MODS > Import mod .zip**.\n\n'
           notes+=$'| Archive | What it is |\n|---|---|\n'
           notes+=$'| `gen151` | The mod. All 151 renewably obtainable in one save, on one version, without trading. Start here. |\n'
-          notes+=$'| `gen151_hints` | Optional. Adds a HINT row to the Pokédex side menu, next to AREA. |\n'
           if [ -n "$changes" ]; then
             notes+=$'\n## Changes\n\n'"$changes"
           fi

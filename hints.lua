@@ -114,4 +114,57 @@ function H.forSpecies(rows, speciesName)
   return table.concat(parts, "\f")
 end
 
+-- The strip under the AREA map.  Not a sentence: the blinking nests have
+-- already said WHERE, so this is the rest of the answer in as few glyphs as
+-- will carry it -- how you fish it out, roughly what level, how often, and
+-- what you need to be carrying to get there at all.
+H.SHORT_METHODS = {
+  grass = "GRASS",
+  water = "SURF",
+  super_rod = "SUPER ROD",
+}
+
+H.SHORT_TIERS = {
+  UNCOMMON = "UNCOMMON",
+  RARE = "RARE",
+  VERY_RARE = "VERY RARE",
+  TROPHY = "ALMOST NEVER",
+}
+
+-- rows for ONE species -> up to two lines, each within `cols`.  nil when
+-- there is nothing to say, which is how a species this mod never placed
+-- keeps the vanilla AREA screen exactly as it was.
+function H.caption(rows, cols)
+  if not rows or #rows == 0 then return nil end
+  cols = cols or 19
+
+  -- Every row for a species shares a method far more often than not; when
+  -- they do not, the first one is the one the level band belongs to, so
+  -- naming a second method here would attach it to the wrong numbers.
+  local row = rows[1]
+  local how = H.SHORT_METHODS[row.method or (row.rod and "super_rod")] or ""
+  local band = levelRange(row.levels)
+  local first = band and (how .. "  " .. band) or how
+
+  -- The gate outranks the rarity: "RARE" is a hunt, but "you cannot be here
+  -- without SURF" is the difference between a hunt and a wasted afternoon.
+  local second
+  if row.gate then
+    second = "NEEDS " .. tostring(row.gate):upper()
+  else
+    second = H.SHORT_TIERS[row.tier]
+    if second and #rows > 1 then
+      local more = ("  %d SPOTS"):format(#rows)
+      if #second + #more <= cols then second = second .. more end
+    end
+  end
+
+  local out = { first }
+  if second and second ~= "" then out[2] = second end
+  for index, line in ipairs(out) do
+    if #line > cols then out[index] = line:sub(1, cols) end
+  end
+  return out
+end
+
 return H

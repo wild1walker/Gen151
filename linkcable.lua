@@ -36,6 +36,11 @@ local M = {}
 local ITEM = "LINK_CABLE"
 local NAME = "LINK CABLE"
 local PRICE = 2100
+-- Two sounds, because the break is two events.  ZAP is the fault itself, on
+-- the "ZzZzap!" page; SNAP is the aftermath, on the page that says the cable
+-- broke.  One sound covering both had to be either the arc or the silence
+-- afterwards, and it was the silence.
+local ZAP = "SFX_GEN151_CABLE_ZAP"
 local SFX = "SFX_GEN151_CABLE_SNAP"
 
 -- Celadon Mart 4F's clerk.  text_pointers has "deep" merge semantics, under
@@ -106,21 +111,40 @@ local function registerSfx(mod)
   return true
 end
 
--- Gen 1 has no item descriptions: the mart list is a name and a price, and
--- the bag is a name and a count.  They arrive in Gen 2, with
--- UpdateItemDescription under the list.  So the one line that explains why a
--- cable evolves a POKeMON with nobody on the other end goes where this mod
--- already has a screen of its own -- the FIELD NOTES -- rather than into a
--- description surface the game would have to grow first.
---
--- Written to the 18-column text box, two lines to a page.
-function M.note()
-  return {
-    label = NAME,
-    text = "An old LINK CABLE,\nmodified."
-      .. "\fGood for one\ntrade evolution."
-      .. "\fIt does not\nsurvive the job.",
-  }
+-- The arc.  Where the snap is two square channels going quiet, this is the
+-- noise channel doing what noise is for: parameter bit 3 selects the 7-bit
+-- polynomial, the short buzzy one the ROM reaches for when something is
+-- meant to sound like a machine rather than like a drum, and the three
+-- bursts are the flicker before it lets go.  The square channel sweeps UP
+-- underneath it -- the snap sweeps down -- so the pair reads as a rise and
+-- then a stop rather than as the same sound twice.
+local function registerZap(mod)
+  local ok, ChipAsm = pcall(require, "src.audio.ChipAsm")
+  if not ok or not ChipAsm then return false end
+  local built, program = pcall(ChipAsm.sfx, {
+    channels = {
+      { hw = 1, program = {
+        { pitchSweep = { pace = 1, shift = 3 } },
+        { squareNote = { len = 2, volume = 15, fade = -7, frequency = 0x600 } },
+        { squareNote = { len = 2, volume = 13, fade = -7, frequency = 0x6C0 } },
+        { squareNote = { len = 3, volume = 11, fade = 6, frequency = 0x760 } },
+      } },
+      { hw = 4, program = {
+        { noiseNote = { len = 1, volume = 15, fade = 1, parameter = 0x18 } },
+        { noiseNote = { len = 1, volume = 11, fade = 2, parameter = 0x28 } },
+        { noiseNote = { len = 1, volume = 15, fade = 1, parameter = 0x18 } },
+        { noiseNote = { len = 2, volume = 13, fade = 2, parameter = 0x21 } },
+        { noiseNote = { len = 4, volume = 10, fade = 5, parameter = 0x38 } },
+      } },
+    },
+  })
+  if not built then
+    mod.log:warn("cable zap sfx failed to assemble (%s); the ZzZzap page "
+      .. "will be silent", tostring(program))
+    return false
+  end
+  mod.content.sfx:register(ZAP, program)
+  return true
 end
 
 function M.install(mod, ctx)
@@ -139,7 +163,7 @@ function M.install(mod, ctx)
     [MART_TEXT] = { mart = { ITEM } },
   })
 
-  local haveSfx = registerSfx(mod)
+  local sfx = { snap = registerSfx(mod), zap = registerZap(mod) }
 
   -- item.use wraps the WHOLE dispatch, which is what this needs: the live
   -- game, the bag list, and the party picker, none of which an item_effects
@@ -175,37 +199,64 @@ function M.install(mod, ctx)
     local oldName = target.nickname or (speciesDef and speciesDef.name)
       or target.species
 
-    -- The cable goes in and the machine hums.  Trade_Machine is what
-    -- src/ui/TradeAnim.lua plays when a trade starts, so the player has
-    -- already heard it at the Cable Club -- the strongest diegetic choice
-    -- available.  The spaced periods are the engine's own beat idiom.
-    game.stack:push(TextBox.new(game, ". . .", function()
-      -- The "is evolving!" line STAYS up: the evolution screen clears rows
-      -- 0-11 only, so this rides underneath the whole animation exactly the
-      -- way the vanilla level-up evolution's box does.
-      local intro
-      intro = TextBox.new(game,
-        romText(game.data, "_IsEvolvingText", "What?\n%s is\nevolving!",
-                oldName),
-        nil,
-        { stay = { onShown = function()
-            -- via = "TRADE": EvolutionState reads that as non-cancelable,
-            -- so it always completes, so it always breaks.
-            mod.ui.push(game, "EvolutionState", target, into, function()
-              -- EvolutionState has popped itself and printed "evolved
-              -- into"; the intro box beneath is ours to take down.
-              if game.stack:top() == intro then game.stack:pop() end
-              M.breakCable(mod, game, ctx, haveSfx, closePicker, list)
-            end, "TRADE")
-          end } })
-      game.stack:push(intro)
-    end, TextBox.soundOpts(game, "Trade_Machine")))
+    -- The last point at which nothing has happened yet, and therefore the
+    -- one place a cancel can mean anything.  Everything after it is a trade
+    -- evolution, which the cartridge has never let anyone call off: B during
+    -- the animation is ignored on purpose (EvolutionState reads via="TRADE"
+    -- as non-cancelable, src/ui/EvolutionState.lua), the way it is ignored
+    -- for a stone.  So the question goes here, before the machine starts,
+    -- and B on it is NO.
+    --
+    -- It also carries the one line of description Gen 1 has nowhere else to
+    -- put.  The mart list is a name and a price and the bag is a name and a
+    -- count -- item descriptions arrive in Gen 2 -- so the sentence that
+    -- explains why a cable evolves a POKeMON with nobody on the other end
+    -- has to be said by the item as it is used, or not at all.
+    local function begin()
+
+      -- The cable goes in and the machine hums.  Trade_Machine is what
+      -- src/ui/TradeAnim.lua plays when a trade starts, so the player has
+      -- already heard it at the Cable Club -- the strongest diegetic choice
+      -- available.  The spaced periods are the engine's own beat idiom.
+      game.stack:push(TextBox.new(game, ". . .", function()
+        -- The "is evolving!" line STAYS up: the evolution screen clears rows
+        -- 0-11 only, so this rides underneath the whole animation exactly the
+        -- way the vanilla level-up evolution's box does.
+        local intro
+        intro = TextBox.new(game,
+          romText(game.data, "_IsEvolvingText", "What?\n%s is\nevolving!",
+                  oldName),
+          nil,
+          { stay = { onShown = function()
+              -- via = "TRADE": EvolutionState reads that as non-cancelable,
+              -- so it always completes, so it always breaks.
+              mod.ui.push(game, "EvolutionState", target, into, function()
+                -- EvolutionState has popped itself and printed "evolved
+                -- into"; the intro box beneath is ours to take down.
+                if game.stack:top() == intro then game.stack:pop() end
+                M.breakCable(mod, game, ctx, sfx, closePicker, list)
+              end, "TRADE")
+            end } })
+        game.stack:push(intro)
+      end, TextBox.soundOpts(game, "Trade_Machine")))
+    end
+
+    game.stack:push(TextBox.new(game,
+      "An old LINK CABLE,\nmodified."
+        .. "\fUse it on " .. oldName .. "?",
+      nil,
+      { choice = function(yes)
+          if yes then return begin() end
+          -- Nothing was consumed and nothing evolved, so the only thing to
+          -- undo is the party picker this opened over the bag.
+          closePicker()
+        end }))
   end)
 end
 
 -- Consumed here and nowhere else: on the far side of an evolution that
 -- actually happened.
-function M.breakCable(mod, game, ctx, haveSfx, closePicker, list)
+function M.breakCable(mod, game, ctx, sfx, closePicker, list)
   local TextBox = mod.ui.TextBox
   takeOne(game.save, ITEM)
 
@@ -222,12 +273,35 @@ function M.breakCable(mod, game, ctx, haveSfx, closePicker, list)
     list.index = math.min(list.index or 1, math.max(1, #list.items))
   end
 
-  local text = ". . .\fZzZzap!\fThe " .. NAME .. "\nbroke!"
-  local opts = nil
-  if haveSfx and ctx.sfx() then
-    opts = TextBox.soundOpts(game, SFX)
+  -- Three boxes rather than one string with page breaks in it, because a
+  -- sound is armed per BOX: TextBox fires auto.sound when the last page of
+  -- the box it is on has typed out, so ". . .\fZzZzap!\fbroke!" can only ever
+  -- carry one sound, at the end.  Split, each beat gets its own.
+  --
+  --   ". . ."     silent -- the pause before anything is wrong
+  --   "ZzZzap!"   the arc, on preSound: the box comes up, the zap fires, and
+  --               only then does the word type, so the sound lands WITH the
+  --               card rather than after the player has finished reading it
+  --   "broke!"    the snap, the way it has always been
+  local on = ctx.sfx()
+  local function play(name)
+    return function()
+      return require("src.core.Sound").play(game.data, name)
+    end
   end
-  game.stack:push(TextBox.new(game, text, closePicker, opts))
+
+  local function broke()
+    game.stack:push(TextBox.new(game, "The " .. NAME .. "\nbroke!",
+      closePicker, (on and sfx.snap) and TextBox.soundOpts(game, SFX)
+        or nil))
+  end
+
+  local function zap()
+    game.stack:push(TextBox.new(game, "ZzZzap!", broke,
+      (on and sfx.zap) and { preSound = play(ZAP) } or nil))
+  end
+
+  game.stack:push(TextBox.new(game, ". . .", zap))
 end
 
 return M
