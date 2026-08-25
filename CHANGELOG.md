@@ -3,6 +3,46 @@
 All notable changes to Gen151 are recorded here, in
 [keep a changelog](https://keepachangelog.com/en/1.1.0/) order.
 
+## [1.5.0] - 2026-08-25
+
+### Changed
+
+- **The AREA screen moved to Gen1Dex, and Gen151 keeps only the words.**
+  Opening AREA on an entry you have never met, the box under the map, the press
+  that takes it down and the START that puts it back now live in
+  [Gen1Dex](https://github.com/wild1walker/Gen1Dex) 1.3.0 -- the mod that
+  registers the POKeDEX and draws the row the press lands on.
+
+  It was here for two releases, and reaching a dex list this mod does not own
+  cost exactly what that implies: `PokedexMenu.new` and `TownMap.new` wrapped
+  from the outside, and every row stamped with its species so a dex mod that
+  replaced the rows wholesale did not strand the lookup -- which is the bug
+  that shipped in 1.2.0, because Gen1Dex replaces them wholesale. A content mod
+  has no business owning a UI surface it has to reach two screens deep to
+  install. Neither engine screen is touched by Gen151 any more, and
+  `dexarea.lua` is gone.
+
+  What is left is the half that was always this mod's: the sentence. Gen151
+  registers one caption provider with that screen and answers for the species
+  it placed, from the same resolved rows the roll layer is using, so a hint
+  still cannot drift from its spawn. The map, the level band, the tier and the
+  HM a map needs read exactly as they did before.
+
+  **MEW is still sealed**, and now says so out loud: while its gate is shut the
+  provider withholds an answer rather than returning nothing, which stops
+  Gen1Dex's own reading of the encounter tables from filling the gap. The
+  caption turns up the moment the journals are read, and goes away again on a
+  save that never read them.
+
+  **AREA HINTS** means the same thing it did -- this mod's words on that screen
+  -- and does nothing at all without Gen1Dex installed, which the mod logs once
+  on load. Everything else about Gen151 is unchanged: the spawn layer, the
+  LINK CABLE, the journals and the legendaries never touched the dex.
+
+  `engine_internals` is still declared, for one call: the LINK CABLE's own
+  sound effect reaches `src.core.Sound`, which the mod surface has no facade
+  for. The two screen wraps that used to be the reason for it are Gen1Dex's.
+
 ## [1.4.0] - 2026-08-25
 
 ### Added

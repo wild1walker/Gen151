@@ -17,10 +17,11 @@ return {
         .. "exclusives, starters, gift mons, NPC-trade mons, the fossils and "
         .. "Snorlax",
       "LINK CABLE, a consumable that runs one trade evolution",
-      "FIELD NOTES, a key item listing where to look for what is still "
-        .. "missing",
-      "An optional, default-off Mew unlock behind the Pokemon Mansion "
-        .. "journals",
+      "A caption under Gen1Dex's AREA map for every spawn this mod places: "
+        .. "the map, the level band, the tier and the HM the map needs, "
+        .. "handed to that screen through its provider hook",
+      "A Mew unlock behind the four Pokemon Mansion journals, on by default "
+        .. "and switchable off",
     },
     known = {
       "The encounter RATE per map is never touched, so a species placed on a "
@@ -33,8 +34,13 @@ return {
         .. "encounter record, so another encounter mod's 11th-and-beyond "
         .. "slots stay unreachable on maps Gen151 touches -- which is what "
         .. "they already were without a bucket list of their own",
-      "The dex HINT row lives in the companion mod gen151_hints, because it "
-        .. "is the one feature that needs the engine_internals permission",
+      "The AREA screen the captions go on belongs to Gen1Dex 1.3.0 or newer "
+        .. "-- the mod that draws the dex row the press lands on.  Without "
+        .. "it AREA HINTS has nothing to write on, and nothing else about "
+        .. "this mod changes",
+      "engine_internals is still declared, for one call: the LINK CABLE's "
+        .. "own sound effect reaches src.core.Sound, which the mod surface "
+        .. "has no facade for",
     },
   },
   credits = {

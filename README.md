@@ -178,17 +178,34 @@ slot table shows up there automatically — no UI code, no contact with the dex 
 all. That is why slot placement is preferred over the Super Rod everywhere the
 choice exists.
 
-**Undiscovered entries open AREA.** Vanilla refuses: the Pokédex side menu
-does not open at all on an entry you have never seen, which is exactly backwards
-for a mod whose job is helping you find the ones you have never met. Gen151
-opens it, with AREA and QUIT on it — and nothing that would hand over the dex
-paragraph you have not earned.
+**The screen those hints go on is Gen1Dex's.** Opening AREA on an entry you
+have never met, the box under the map, the press that takes it down and the
+START that brings it back all live in
+[Gen1Dex](https://github.com/wild1walker/Gen1Dex) 1.3.0 and later — the mod
+that registers the POKéDEX and draws the row the press lands on. All of it
+shipped here first, and reaching a list this mod does not own meant wrapping
+two engine screens from the outside and stamping every row with its species so
+a dex mod replacing them wholesale did not strand the lookup — which is
+exactly the bug that shipped, because Gen1Dex replaces them wholesale. A
+content mod has no business owning a UI surface it has to reach two screens
+deep to install. What Gen151 keeps is the half that was always its: the
+**sentence**.
 
-**And the map gets a line under it** saying how to get there — for **all 151**,
-not only the ones this mod placed. The blinking nests say *where*; they cannot
-say *in the grass, around level ten, and rare*, which is the half you actually
-need. It comes up in the game's own dialogue box — the same frame, the same
-geometry, the same blinking prompt as every other box in the game:
+**What that screen says on its own**, for all 151: the map where a species has
+the biggest share of the encounters, that map's own level band, and a rarity
+worked out from Gen 1's ten slot buckets — read straight out of the live
+encounter tables, so it is right by construction and costs no placement data
+at all. A Pokémon that is in no encounter table anywhere falls back to the
+evolution table: `EVOLVE ODDISH / AT LV21`, `LINK CABLE / ON KADABRA`, `MOON
+STONE / ON NIDORINO`. None of it depends on having caught the thing.
+
+**What Gen151 says instead, for its own spawns.** The encounter tables cannot
+carry which tier this mod rolled a placement at, or that a map needs SURF to
+reach at all — those are facts about the placement, and the placement is here.
+So the mod registers one caption provider with that screen
+(`mod.find("Gen1Dex").exports.area.provide`) and answers for the species it
+placed, from the same resolved rows the roll layer is using, so a hint cannot
+drift from its spawn:
 
 ```
 +--------------------+
@@ -203,61 +220,32 @@ geometry, the same blinking prompt as every other box in the game:
 '--------------------'
 ```
 
-A Pokémon this mod placed is described from the same rows the roll layer is
-using, so its hint cannot drift from its spawn. Everything else is read
-straight out of the live encounter tables — the map where it has the biggest
-share of the encounters, that map's own level band, and a rarity worked out
-from Gen 1's ten slot buckets — so a vanilla Pokémon's line is right by
-construction and costs no placement data at all. None of it depends on having
-caught the thing.
+It also covers the two Super Rod placements, which have no slot for AREA to
+find and so blink no nest at all.
 
-A Pokémon that is in no encounter table anywhere falls back to the evolution
-table: `EVOLVE ODDISH / AT LV21`, `LINK CABLE / ON KADABRA`, `MOON STONE /
-ON NIDORINO`. Nothing there is invented — it is the same table the game
-evolves from. If even that has no answer, there is no line, and AREA is
-exactly the screen the cartridge shipped.
+**Mew is the exception, on purpose.** While its gate is shut it is not in the
+encounter table, so there is no nest — and Gen151 answers for it with a
+refusal rather than a silence, so the generic reading cannot fill the gap
+either. A caption would give away the basement more precisely than a nest ever
+could. The moment the gate opens, Mew is captioned like anything else.
 
-The caption also covers the two Super Rod placements, which have no slot for
-AREA to find and so blink no nest at all.
+**Without Gen1Dex there is no screen to write on.** AREA is the cartridge's
+own — no hint, no AREA on an entry you have never met — the mod says so once
+in the log, and nothing else about Gen151 changes. Turn **AREA HINTS** off and
+Gen1Dex's screen goes back to saying whatever it reads out of the encounter
+tables by itself.
 
-**A press takes it away, START brings it back.** The box covers the bottom of
-Kanto and there are nests down there, so the first A dismisses the hint and the
-second closes the screen — which is what A always did. START reopens it, since
-dismissing a hint you were still reading shouldn't mean leaving the screen and
-coming back in; START does nothing else on this screen, so nothing is taken
-away to pay for it. B still leaves immediately.
+Gen151 still declares `engine_internals`, so it still wears the **PATCHES
+ENGINE CODE** badge in the manager — but there is one call behind it now: the
+LINK CABLE's own sound effect reaches `src.core.Sound`, which the mod surface
+has no facade for. The two screen wraps that used to be the reason for it are
+Gen1Dex's, and it is Gen1Dex that wears the badge for them.
 
-**And with the hint down it's the plain town map again**: the d-pad moves the
-cursor between locations and the top strip names the one you're on, exactly as
-it does outside the Pokédex. Vanilla's AREA screen answers A and B and nothing
-else, and stops drawing before it reaches the cursor or the banner — so
-dismissing the hint used to leave you looking at a map you could neither read
-nor move around.
-
-It is four rows rather than the dialogue box's six. The dialogue box
-double-spaces its lines because it's typing a story at you and has nothing
-behind it; this is a two-line label over a map, and the sixteen pixels that
-buys back are two whole tile rows of Kanto.
-
-Mew is the exception, on purpose: while its gate is shut it is not in the
-encounter table, so there is no nest — and there is no caption either. A
-caption would give away the basement more precisely than a nest ever could.
-
-This is the whole hint surface, and it is the third attempt at it. The first
-was a FIELD NOTES key item with a screen of its own; the second added a HINT
-row to the dex side menu from a companion mod. Both are gone. A player looking
-for a Pokémon opens the POKéDEX and presses AREA — that is the surface, and it
-was already one press away.
-
-It is also the one thing in Gen151 that needs the `engine_internals`
-permission, which is why the mod wears a **PATCHES ENGINE CODE** badge in the
-manager. Neither screen is replaced: `PokedexMenu.new` and `TownMap.new` are
-wrapped and their originals called, so a dex-replacing mod that calls through
-(Gen1Dex does) keeps working, and one that does not simply never grows the
-extra AREA rather than growing a broken one.
-
-Turn **AREA HINTS** off and the dex is left exactly as the cartridge shipped
-it.
+This is the third attempt at the hint surface. The first was a FIELD NOTES key
+item with a screen of its own; the second added a HINT row to the dex side
+menu from a companion mod. Both are gone. A player looking for a Pokémon opens
+the POKéDEX and presses AREA — that is the surface, and it belongs to the mod
+that draws it.
 
 ---
 
@@ -280,7 +268,7 @@ version exclusives but not a wild Mew should not have to fork it.
 | TEST BENCH | off | the built-in bench, below — not part of normal play |
 | LEGENDARIES | stay til caught | one shot each, but a fled or fainted one comes back |
 | RARITY % | 100 | scales every tier at once; 0 disables every substitution; above 100 it also lifts the per-placement ceiling |
-| AREA HINTS | on | AREA on undiscovered entries, and the line under the map |
+| AREA HINTS | on | this mod's own words under Gen1Dex's AREA map (needs Gen1Dex) |
 
 There is no legendary option, because there is nothing to toggle — see below.
 
@@ -408,8 +396,8 @@ GEN1RECOMP=/path/to/gen1recomp lua tests/roll_test.lua
 lua tests/placements_test.lua
 
 # end to end, through the engine's real headless loader, on all three
-# versions, plus the dex wrap and, if you point it at a Gen1Dex checkout,
-# that wrap inside Gen1Dex's own re-dressed list
+# versions -- including that neither engine screen is touched, and, with a
+# Gen1Dex checkout, that this mod's captions reach the screen Gen1Dex draws
 cd /path/to/gen1recomp
 GEN151=/path/to/Gen151 GEN1DEX=/path/to/Gen1Dex \
   luajit "$GEN151/tests/mod_load_test.lua"
@@ -424,9 +412,12 @@ cd /path/to/gen1recomp
 GEN151=/path/to/Gen151 luajit "$GEN151/tests/text_test.lua"
 
 # the runtime features: the LINK CABLE's use flow, the Mansion journals and
-# the dex AREA hints, all driven through the buses the mod registered on
+# the AREA captions, all driven through the buses the mod registered on.
+# Point GEN1DEX at a Gen1Dex checkout and the caption cases run too --
+# without it they are skipped, loudly, because that screen is Gen1Dex's
 cd /path/to/gen1recomp
-GEN151=/path/to/Gen151 luajit "$GEN151/tests/features_test.lua"
+GEN151=/path/to/Gen151 GEN1DEX=/path/to/Gen1Dex \
+  luajit "$GEN151/tests/features_test.lua"
 
 # or all of it at once, which is what CI should run
 ./tools/check.sh /path/to/gen1recomp /path/to/pokered /path/to/pokeyellow \
@@ -441,8 +432,9 @@ tables: no vanilla species, level or rate changed on any map on any version;
 everything added lands in a table that can be rolled again; every gap closes;
 and Mew is absent from `data.encounters` until its gate flips. The features
 suite drives the LINK CABLE onto a Kadabra and onto a Pidgey, reads all four
-journals one at a time, and opens AREA — through the loader's own hook
-and event tables, so what runs is the wiring as installed.
+journals one at a time, and — with Gen1Dex present — reads this mod's captions
+back off its AREA screen, Mew's sealed one included; through the loader's own
+hook and event tables, so what runs is the wiring as installed.
 
 ---
 
@@ -457,7 +449,7 @@ roll.lua           the two-stage roll
 rarity.lua         the tier table
 hints.lua          GENERATED hint vocabulary
 linkcable.lua      the trade-evolution item
-dexarea.lua        AREA on an undiscovered entry, and the map caption
+dexhints.lua       the words under Gen1Dex's AREA map, for this mod's spawns
 mewgate.lua        the journals, and the spawn they unlock
 tools/             the derivation pipeline (not shipped)
 tests/             (not shipped)

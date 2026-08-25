@@ -28,8 +28,9 @@ echo "== end to end, through the engine's headless loader"
 echo "== every box the mod prints fits the two lines a box has"
 ( cd "$RECOMP" && GEN151="$HERE" luajit "$HERE/tests/text_test.lua" )
 
-echo "== the runtime features: the cable, the journals, the dex hints"
-( cd "$RECOMP" && GEN151="$HERE" luajit "$HERE/tests/features_test.lua" )
+echo "== the runtime features: the cable, the journals, the AREA captions"
+( cd "$RECOMP" \
+  && GEN151="$HERE" GEN1DEX="$GEN1DEX_DIR" luajit "$HERE/tests/features_test.lua" )
 
 echo "== modkit"
 python3 "$RECOMP/tools/modkit.py" validate "$HERE"

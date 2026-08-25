@@ -1,9 +1,9 @@
 # Gen151 -- SPOILERS
 
 The whole placement table, for people who want it.  Nothing below is a
-surprise the mod intends to keep; the FIELD NOTES item in the bag tells the
-player the same things one species at a time, and the dex AREA screen lights
-up every map in here on its own.
+surprise the mod intends to keep; the dex AREA screen tells the player the
+same things one species at a time -- with Gen1Dex installed, whose screen it
+is -- and lights up every map in here on its own.
 
 **GENERATED** by `tools/dump_placements.lua` from `placements.lua`, through
 the same resolver the mod runs, so a row here cannot disagree with the spawn

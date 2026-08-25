@@ -26,11 +26,12 @@ local check, eq = T.check, T.eq
 
 local vanilla = assert(loadfile(GEN151 .. "/tests/fixtures/vanilla.lua"))()
 
--- The companion mod wraps a module-level function and never unwraps it, which
--- is right in a game (one load per process) and inconvenient in a suite that
--- loads several times.  Held from before anything loads, so the option-state
--- case below starts from a clean dex.
+-- Both engine screens, held from before anything loads.  This mod used to
+-- wrap them and never unwrap them, which is right in a game (one load per
+-- process) and inconvenient in a suite that loads several times; it does not
+-- wrap either any more, and these two are what says so.
 local PRISTINE_DEX_NEW = require("src.ui.PokedexMenu").new
+local PRISTINE_TOWNMAP_NEW = require("src.ui.TownMap").new
 
 local function deepCopy(value)
   if type(value) ~= "table" then return value end
@@ -341,17 +342,17 @@ do
   run.release()
 end
 
--- ---- the dex wrap, in the mod itself
+-- ---- the dex surface, which is not this mod's any anymore
 --
--- This was a companion mod for two releases, because the wrap needs
--- `engine_internals` and a mod that asks for that wears a "PATCHES ENGINE
--- CODE" badge in the manager.  The badge turned out to be the cheaper of the
--- two costs: a companion is a second archive, and a second archive is a
--- second thing that never gets installed.
+-- It was here for two releases: this mod wrapped PokedexMenu.new and
+-- TownMap.new from the outside to put AREA on an undiscovered entry and a
+-- caption under the map.  Both screens belong to Gen1Dex now -- the mod that
+-- registers the dex and draws the row the press lands on -- and what is left
+-- here is the sentence this mod has to say about its own spawns, handed over
+-- through that mod's provider hook.
 --
--- The dex list constructs headlessly under the love stub and its onChoose
--- pushes onto the stack, so what is driven here is the real thing rather
--- than the fact that a wrap installed.
+-- So the first thing to check is a subtraction: on its own, this mod does not
+-- touch either engine screen at all.
 
 local function dexGame(data, seen)
   local stack = {
@@ -380,61 +381,55 @@ end
 do
   local data = datasetFor("red")
   local run = loadGen151(data)
-  eq(#run.errors, 0, "dex: it loads clean ("
+  eq(#run.errors, 0, "dex: it loads clean with no dex mod present ("
     .. table.concat(run.errors, "; ") .. ")")
 
-  local species = "BULBASAUR"
-  local game, stack = dexGame(data, { [species] = true })
-  local PokedexMenu = require("src.ui.PokedexMenu")
-  local built, list = pcall(PokedexMenu.new, game, {})
-  check(built, "dex: the list still constructs: " .. tostring(list))
+  check(require("src.ui.PokedexMenu").new == PRISTINE_DEX_NEW,
+    "dex: the POKeDEX constructor is left exactly as the engine wrote it")
+  check(require("src.ui.TownMap").new == PRISTINE_TOWNMAP_NEW,
+    "dex: and so is the town map's")
 
+  -- and the press it used to answer goes back to answering nothing, which is
+  -- vanilla's behaviour and not a regression: without Gen1Dex there is no
+  -- screen here to put an answer on
+  local game, stack = dexGame(data, { BULBASAUR = true })
+  local built, list = pcall(require("src.ui.PokedexMenu").new, game, {})
+  check(built, "dex: the vanilla list still constructs: " .. tostring(list))
   if built then
-    -- ---- a SEEN entry keeps the side menu the cartridge shipped
-    local known
-    for _, item in ipairs(list.items) do
-      if item.value == species then known = item end
+    local known, unknown
+    for _, item in ipairs(list.items or {}) do
+      if item.value == "BULBASAUR" then known = item end
+      if not item.value and not unknown then unknown = item end
     end
-    check(known ~= nil, "dex: the list has a row for " .. species)
     if known then
       list.onChoose(known, list)
       local joined = labelsOf(stack:top())
       check(joined:find("DATA", 1, true) ~= nil
               and joined:find("AREA", 1, true) ~= nil,
-        "dex: a seen entry is untouched, got " .. joined)
+        "dex: a seen entry is the cartridge's own side menu, got " .. joined)
       check(joined:find("HINT", 1, true) == nil,
-        "dex: with no extra row spliced into it -- the hint went under the "
+        "dex: with no extra row spliced into it -- the hint goes under the "
           .. "map instead, got " .. joined)
       stack:pop()
     end
-
-    -- ---- an UNDISCOVERED entry opens AREA, which vanilla refuses to do
-    local unknown
-    for _, item in ipairs(list.items) do
-      if not item.value then unknown = item break end
-    end
-    check(unknown ~= nil, "dex: the list has an undiscovered row")
     if unknown then
       local before = #stack.pushed
       list.onChoose(unknown, list)
-      check(#stack.pushed > before,
-        "dex: choosing it opens something, where vanilla returns early")
-      eq(labelsOf(stack:top()), "AREA/QUIT",
-        "dex: AREA and the way out, and nothing that spoils the entry")
+      eq(#stack.pushed, before,
+        "dex: and an undiscovered one still opens nothing, because opening "
+          .. "it is Gen1Dex's job now")
     end
   end
 
   run.release()
 end
 
--- ---- and next to the dex mod it was designed around
+-- ---- and next to the dex mod that owns the screen
 --
--- SPEC 9: "Test with the dex mod installed and enabled."  Gen1Dex registers
--- over the PokedexMenu screen id, so the list the player actually sees is
--- Gen1Dex's -- but it builds that list by calling the VANILLA constructor and
--- re-dressing the result, which is what keeps the wrap effective.  This
--- drives the id through the screens registry, so what is exercised is
--- Gen1Dex's factory calling the constructor this mod wrapped.
+-- SPEC 9: "Test with the dex mod installed and enabled."  This is the case
+-- the whole hand-off exists for: Gen1Dex draws the list, opens AREA on an
+-- entry the player has never met and paints the box under the map, and this
+-- mod supplies the words in it for the species it placed.
 --
 -- Set GEN1DEX to a Gen1Dex checkout to run it; skipped, loudly, when absent.
 
@@ -445,21 +440,22 @@ if GEN1DEX then
   eq(#run.errors, 0, "Gen1Dex: both mods load clean ("
     .. table.concat(run.errors, "; ") .. ")")
   check(data.screens ~= nil and data.screens.PokedexMenu ~= nil,
-    "Gen1Dex: it still owns the PokedexMenu screen id")
+    "Gen1Dex: it owns the PokedexMenu screen id")
+
+  local area = run.loader.exports.Gen1Dex and run.loader.exports.Gen1Dex.area
+  check(area ~= nil and type(area.caption) == "function",
+    "Gen1Dex: and publishes the AREA surface this mod writes on")
 
   local game, stack = dexGame(data, { BULBASAUR = true })
+  -- before anything asks this mod a question: mod.world memoizes the Game it
+  -- was first resolved against, and with no game injected the loader hands
+  -- back the boot singleton, whose save has no flags on it at all
+  run.loader.game = game
   local Screens = require("src.ui.Screens")
   local pushed, err = pcall(Screens.push, game, "PokedexMenu")
   check(pushed, "Gen1Dex: its dex list constructs: " .. tostring(err))
   if pushed then
     local list = stack:top()
-    -- This is the case that shipped broken.  Gen1Dex calls the vanilla
-    -- constructor -- so the wrap runs and installs its onChoose -- and then
-    -- REPLACES list.items wholesale with rows of its own.  Any lookup that
-    -- turned a row POSITION into a species was stranded by that, and a
-    -- stranded lookup returned quietly, which is why pressing A on an
-    -- undiscovered entry did nothing at all.  Its rows carry `species` on
-    -- every entry, so that is what gets read now.
     local unknown
     for _, item in ipairs((list or {}).items or {}) do
       if not item.value then unknown = item break end
@@ -473,87 +469,86 @@ if GEN1DEX then
       check(#stack.pushed > before,
         "Gen1Dex: choosing it opens something rather than returning quietly")
       eq(labelsOf(stack:top()), "AREA/QUIT",
-        "Gen1Dex: AREA still opens on an undiscovered entry inside its list")
-
-      -- and it opens on the RIGHT one: a position-based lookup could still
-      -- have produced a menu, just for somebody else's Pokemon
-      local area
-      for _, entry in ipairs((stack:top() or {}).items or {}) do
-        if entry.label == "AREA" then area = entry end
-      end
-      local opened
-      local TownMap = require("src.ui.TownMap")
-      local realNew = TownMap.new
-      TownMap.new = function(g, o)
-        opened = o and o.nestSpecies
-        return { draw = function() end, update = function() end }
-      end
-      if area then area.onSelect() end
-      TownMap.new = realNew
-      eq(opened, unknown.species,
-        "Gen1Dex: on the species the row is actually for")
+        "Gen1Dex: AREA opens on an undiscovered entry inside its list")
     end
   end
+
+  -- ---- and the words in the box are this mod's, for this mod's spawns
+  if area then
+    local exports = run.loader.exports.gen151
+    local placed
+    for _, row in ipairs(exports.rows or {}) do
+      if not row.gated then placed = row break end
+    end
+    check(placed ~= nil, "Gen1Dex: this mod placed something to caption")
+
+    local Hints = exports.hints
+    local ours = area.caption(game, placed.species)
+    local wanted = Hints.caption({ placed }, area.cols or 17)
+    check(type(ours) == "table" and ours[1] ~= nil,
+      "Gen1Dex: which is captioned on its screen")
+    eq(ours and ours[1], wanted and wanted[1],
+      "Gen1Dex: in this mod's own words, off the same resolved row as the "
+        .. "spawn -- so a hint cannot drift from the thing it describes")
+
+    -- a vanilla species is still answered, by Gen1Dex, out of the live
+    -- encounter tables: the hint is for all 151, not only what we moved
+    local vanillaSpecies
+    local ourSpecies = {}
+    for _, row in ipairs(exports.rows or {}) do ourSpecies[row.species] = true end
+    for _, record in pairs(data.encounters or {}) do
+      for _, slot in ipairs((record.grass or {}).slots or {}) do
+        if not ourSpecies[slot.species]
+           and (not vanillaSpecies or slot.species < vanillaSpecies) then
+          vanillaSpecies = slot.species
+        end
+      end
+    end
+    check(vanillaSpecies ~= nil,
+      "Gen1Dex: the dataset has a species this mod never touched")
+    check(vanillaSpecies == nil or type(area.caption(game, vanillaSpecies))
+            == "table",
+      "Gen1Dex: which is captioned anyway, by the dex mod's own reading")
+
+    -- ---- and MEW's answer is WITHHELD rather than merely absent
+    --
+    -- Gen1Dex would happily read MEW out of the encounter tables the moment
+    -- the gate patches it in, and out of the evolution table before that if
+    -- anything evolved into it.  `false` is how this mod says "mine, and not
+    -- yet": a caption would spoil the basement more precisely than a nest
+    -- ever could.
+    local mewRow
+    for _, row in ipairs(exports.rows or {}) do
+      if row.species == "MEW" then mewRow = row end
+    end
+    check(mewRow ~= nil and mewRow.gated == "mew",
+      "Gen1Dex: MEW's row is the gated one")
+    eq(area.caption(game, "MEW"), nil,
+      "Gen1Dex: and MEW has no caption while its gate is shut")
+
+    game.save.flags = game.save.flags or {}
+    game.save.flags.GEN151_MEW_FOUND = true
+    run.loader.events:emit("save.loaded", { save = game.save })
+    local opened = area.caption(game, "MEW")
+    check(type(opened) == "table" and opened[1] ~= nil,
+      "Gen1Dex: and gets one the moment the gate opens")
+    game.save.flags.GEN151_MEW_FOUND = nil
+    run.loader.events:emit("save.loaded", { save = game.save })
+  end
+
   run.release()
 else
   io.write("note: GEN1DEX is unset, so the dex-mod case was not run\n")
 end
 
--- ---- the species must come from the ROW, not from its position
---
--- The regression this is here for: the lookup used to turn a row's index into
--- a species by rebuilding the vanilla dex order and indexing it.  That holds
--- only while the list IS the vanilla list.  A dex mod is free to sort its
--- rows, filter them, or replace them outright, and the moment it does,
--- position N stops meaning species N -- silently, because a wrong index
--- either opens somebody else's AREA or falls off the end and opens nothing at
--- all.  A shuffled list is the cheapest way to say that in a test.
-
-do
-  local data = datasetFor("red")
-  local run = loadGen151(data)
-  local game, stack = dexGame(data, {})
-  local PokedexMenu = require("src.ui.PokedexMenu")
-  local ok, list = pcall(PokedexMenu.new, game, {})
-  check(ok, "dex order: the list builds: " .. tostring(list))
-  if ok then
-    -- reverse the rows, the way an A-Z mode or a filtered view would
-    local reversed = {}
-    for i = #list.items, 1, -1 do
-      reversed[#reversed + 1] = list.items[i]
-    end
-    local wanted = reversed[1] and reversed[1].species
-    check(type(wanted) == "string",
-      "dex order: the rows name their own species")
-    list.items = reversed
-
-    local opened
-    local TownMap = require("src.ui.TownMap")
-    local realNew = TownMap.new
-    TownMap.new = function(_, o)
-      opened = o and o.nestSpecies
-      return { draw = function() end, update = function() end }
-    end
-    list.onChoose(reversed[1], list)
-    local area
-    for _, entry in ipairs((stack:top() or {}).items or {}) do
-      if entry.label == "AREA" then area = entry end
-    end
-    check(area ~= nil, "dex order: the reordered row still opens the menu")
-    if area then area.onSelect() end
-    TownMap.new = realNew
-    eq(opened, wanted,
-      "dex order: on the species the ROW names, not the one its position "
-        .. "would have named")
-  end
-  run.release()
-end
-
 -- ---- and the bench can say all of that out loud, in one press
 --
 -- The last report of AREA not opening could not be reproduced from the
--- outside, and "a dex mod replaced the rows" and "a dex mod replaced the
--- handler" need opposite fixes.  This is the row that tells them apart.
+-- outside, and "the rows were replaced" and "the A handler was replaced" need
+-- opposite fixes.  This is the row that tells them apart -- most of it read
+-- back from Gen1Dex's own probe, since most of that chain is now its.  With
+-- no Gen1Dex installed the row says exactly that instead, which is the other
+-- half of the same question.
 
 do
   local data = datasetFor("red")
@@ -579,10 +574,8 @@ do
       for _, line in ipairs(page) do text[#text + 1] = line end
     end
     local joined = table.concat(text, " ")
-    check(joined:find("VANILLA", 1, true) ~= nil,
-      "probe: naming who owns the dex, got " .. joined)
-    check(joined:lower():find("named", 1, true) ~= nil,
-      "probe: and that the rows are readable, got " .. joined)
+    check(joined:find("GEN1DEX", 1, true) ~= nil,
+      "probe: naming the mod that owns that screen, got " .. joined)
   end
   run.release()
 end
@@ -622,24 +615,12 @@ do
   eq(exports and exports.hintSurface, true,
     'upgrade: hints = "dex" reads as ON, which is what that choice meant')
 
-  -- the dex wrap is the thing that was silently missing
-  local game, stack = dexGame(data, {})
-  local PokedexMenu = require("src.ui.PokedexMenu")
-  local ok, list = pcall(PokedexMenu.new, game, {})
-  check(ok, "upgrade: the dex list builds: " .. tostring(list))
-  check(ok and list.__gen151Wrapped == true,
-    "upgrade: and the dex wrap really is installed")
-  if ok then
-    local unknown
-    for _, item in ipairs(list.items or {}) do
-      if not item.value then unknown = item break end
-    end
-    if unknown then
-      list.onChoose(unknown, list)
-      eq(labelsOf(stack:top()), "AREA/QUIT",
-        "upgrade: so AREA opens on an undiscovered entry")
-    end
-  end
+  -- The hint surface is what was silently missing.  It is a provider handed
+  -- to Gen1Dex now rather than a wrap installed here, so what proves it read
+  -- the option right is the option itself -- and the screens staying
+  -- untouched, which they must whatever this row says.
+  check(require("src.ui.PokedexMenu").new == PRISTINE_DEX_NEW,
+    "upgrade: and neither engine screen is wrapped either way")
 
   -- ---- and the rest of the stale values were repaired rather than obeyed
   local seenTier = {}

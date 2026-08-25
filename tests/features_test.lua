@@ -1,5 +1,6 @@
--- The three features that only exist at runtime: the LINK CABLE's use flow,
--- the Mew gate's journals, and the FIELD NOTES screen.
+-- The features that only exist at runtime: the LINK CABLE's use flow, the
+-- Mew gate's journals, the four legendaries, and the words this mod hands to
+-- Gen1Dex's AREA screen.
 --
 --   cd /path/to/gen1recomp
 --   GEN151=/path/to/Gen151 luajit "$GEN151/tests/features_test.lua"
@@ -19,6 +20,12 @@ end
 
 local T = require("tests.modkit")
 local check, eq = T.check, T.eq
+
+-- Both engine screens, held from before anything loads.  This mod wrapped
+-- them for two releases and does not any more -- the AREA surface belongs to
+-- Gen1Dex -- and these two are what says so.
+local PRISTINE_DEX_NEW = require("src.ui.PokedexMenu").new
+local PRISTINE_TOWNMAP_NEW = require("src.ui.TownMap").new
 
 local vanilla = assert(loadfile(GEN151 .. "/tests/fixtures/vanilla.lua"))()
 local ROOT = GEN151:sub(1, 1) == "/" and "" or "."
@@ -407,11 +414,15 @@ do
   run.release()
 end
 
--- ----------------------------------------------------- AREA on an unknown
+-- ------------------------------------------------ what the AREA map says
 --
--- The whole hint surface, after the FIELD NOTES item and the companion mod
--- that came before it were both thrown away: the POKeDEX opens AREA on a
--- Pokemon you have never met, and the map it opens has a line under it.
+-- The SCREEN is Gen1Dex's: AREA on an entry you have never met, the box
+-- under the map, the presses that take it down and put it back.  What is
+-- left in this mod is the sentence -- the words for the species it placed,
+-- and the one species whose answer it deliberately withholds.
+--
+-- So the first half of this is a subtraction: on its own, this mod puts
+-- nothing on the screen and wraps nothing to get there.
 
 do
   local run, data = load()
@@ -419,12 +430,16 @@ do
   run.loader.game = game
 
   eq(game.save.inventory.FIELD_NOTES, nil,
-    "area: no key item is added to the bag any more")
+    "area: no key item is added to the bag")
   check(data.screens == nil or data.screens.Gen151FieldNotes == nil,
     "area: and no screen of its own is registered")
+  check(require("src.ui.PokedexMenu").new == PRISTINE_DEX_NEW,
+    "area: nor is the POKeDEX constructor wrapped")
+  check(require("src.ui.TownMap").new == PRISTINE_TOWNMAP_NEW,
+    "area: nor the town map's -- both of those are Gen1Dex's to wrap")
 
-  -- ---- a PLACED species is captioned from the same resolved rows as its
-  -- spawn, so a hint cannot drift from the thing it describes
+  -- ---- the words themselves, off the same resolved rows as the spawn, so a
+  -- hint cannot drift from the thing it describes
   local Hints = run.loader.exports.gen151.hints
   check(Hints ~= nil, "area: the hint vocabulary is published")
   local placed
@@ -433,8 +448,8 @@ do
   end
   check(placed ~= nil, "area: there is a placed species to caption")
 
-  -- 18 columns, because the hint sits in the game's own dialogue box now and
-  -- that is the interior width TextBox.paginate wraps to
+  -- 18 columns, because the caption sits in a box built from the game's own
+  -- frame tiles and that is the interior width TextBox.paginate wraps to
   local caption = Hints.caption({ placed }, 18)
   check(type(caption) == "table" and caption[1] ~= nil,
     "area: which produces a caption")
@@ -444,310 +459,144 @@ do
         :format(line, #line))
   end
 
-  -- ---- and so is a VANILLA one, which is the whole of the second ask: the
-  -- hint is for all 151, not just the ones this mod moved.  Nothing about
-  -- this depends on having caught it -- the caption is read out of the
-  -- encounter tables, which do not know or care what the player owns.
-  local TownMap = require("src.ui.TownMap")
-  local captured = {}
-  local realDraw = love.graphics.rectangle
-  local function captionOf(species)
-    local seen = {}
-    local screen = TownMap.new(game, { nestSpecies = species })
-    if type(screen) ~= "table" then return nil end
-    -- the strip is drawn by an instance-level draw the wrap installed; a
-    -- screen with no caption never installs one
-    return screen, screen.draw ~= TownMap.draw
-  end
-
-  -- Lowest id rather than whatever pairs() reaches first: a species that
-  -- changes run to run makes every assertion below change with it, and a
-  -- test that is a different test each time is not one.
-  local vanillaSpecies
-  local ours = {}
-  for _, row in ipairs(run.loader.exports.gen151.rows or {}) do
-    ours[row.species] = true
-  end
-  for _, record in pairs(data.encounters or {}) do
-    for _, slot in ipairs((record.grass or {}).slots or {}) do
-      if not ours[slot.species]
-         and (not vanillaSpecies or slot.species < vanillaSpecies) then
-        vanillaSpecies = slot.species
-      end
-    end
-  end
-  check(vanillaSpecies ~= nil,
-    "area: the fixture has a vanilla species this mod never touched")
-
-  local _, hasCaption = captionOf(vanillaSpecies)
-  check(hasCaption,
-    "area: which is captioned anyway, caught or not -- " ..
-      tostring(vanillaSpecies))
-
-  for _, owned in ipairs({ true, false }) do
-    game.save.pokedex.owned[vanillaSpecies] = owned or nil
-    game.save.pokedex.seen[vanillaSpecies] = owned or nil
-    local _, still = captionOf(vanillaSpecies)
-    check(still, "area: and stays captioned with owned=" .. tostring(owned))
-  end
-  game.save.pokedex.owned[vanillaSpecies] = nil
-  game.save.pokedex.seen[vanillaSpecies] = nil
-
-  -- ---- a press takes the strip away, because it covers two tile rows of
-  -- Kanto and one of them has nests in it
-  local screen = TownMap.new(game, { nestSpecies = vanillaSpecies })
-  local popped = false
-  game.stack = newStack()
-  game.stack.pop = function(self) popped = true return table.remove(self.pushed) end
-  local pressed = "a"
-  game.input = { wasPressed = function(_, btn) return btn == pressed end,
-                 isDown = function() return false end }
-  screen.game = game
-
-  -- Four rows at the bottom, not the dialogue box's six: 0,14 x 20,4 in
-  -- tiles, which Font.drawBox fills as 0,112 x 160,32 in pixels.  The height
-  -- is the assertion -- a six-row box passes every other check here and still
-  -- eats two more tile rows of Kanto than it needs to.
-  local painted = 0
-  local realRect = love.graphics.rectangle
-  love.graphics.rectangle = function(mode, x, y, w, h)
-    if x == 0 and y == 112 and w == 160 and h == 32 then
-      painted = painted + 1
-    end
-    return realRect(mode, x, y, w, h)
-  end
-  screen:draw()
-  eq(painted, 1, "area: the box is on screen to begin with, four rows tall")
-
-  screen:update(0)
-  check(not popped,
-    "area: the first A takes the hint down rather than closing the map")
-  painted = 0
-  screen:draw()
-  eq(painted, 0, "area: and the box really is gone")
-
-  -- ---- START brings it back, because dismissing a hint you were still
-  -- reading should not mean leaving the screen and coming in again
-  pressed = "start"
-  screen:update(0)
-  check(not popped, "area: START does not close the map")
-  painted = 0
-  screen:draw()
-  eq(painted, 1, "area: it brings the hint back")
-
-  -- and A still dismisses the reopened one rather than closing the screen
-  pressed = "a"
-  screen:update(0)
-  check(not popped, "area: A dismisses the reopened hint")
-  painted = 0
-  screen:draw()
-  eq(painted, 0, "area: which goes away again")
-
-  screen:update(0)
-  check(popped, "area: and only THEN does A close it, the way A always did")
-  love.graphics.rectangle = realRect
-
-  -- ---- with the hint down, the screen is the plain town map again
-  --
-  -- Vanilla's AREA branch answers A and B and nothing else, and returns from
-  -- draw before it gets to the cursor or the name banner.  So a player who
-  -- dismissed the hint was left looking at a map they could not read or move
-  -- around.  These are the two halves of "navigate it like the normal map":
-  -- the d-pad moves the selection, and the strip says what is selected.
-  do
-    local nav = TownMap.new(game, { nestSpecies = vanillaSpecies })
-    nav.game = game
-    check(type(nav.locs) == "table" and #nav.locs > 1,
-      "nav: the map has locations to move between")
-    check(nav.mode == "grid",
-      "nav: and is the real background grid, not the stale-asset list")
-    -- The fixture ships no Kanto art, so TownMap loaded no background and its
-    -- draw takes the fall-through path instead of the AREA branch.  An empty
-    -- tilemap is enough to put it back on the branch the player sees: the
-    -- blit loop runs zero times and the AREA code after it runs for real.
-    nav.bg = nav.bg or { map = {} }
-
-    local before = nav.sel
-    popped = false
-    pressed = "a"
-    nav:update(0)                       -- dismiss the hint first
-    check(not popped, "nav: A takes the hint down")
-
-    -- every direction, because moveGrid snaps to the nearest location ON the
-    -- pressed axis and a map this shape has neighbours in all four
-    local moved = {}
-    for _, dir in ipairs({ "down", "up", "right", "left" }) do
-      local from = nav.sel
-      pressed = dir
-      nav:update(0)
-      if nav.sel ~= from then moved[#moved + 1] = dir end
-      check(not popped, "nav: " .. dir .. " does not close the map")
-    end
-    check(#moved > 0,
-      "nav: the d-pad moves the selection, where vanilla ignored it")
-
-    -- and the strip names where the cursor is, the way the plain map does
-    local Font = require("src.render.Font")
-    local strip
-    local realDraw = Font.draw
-    Font.draw = function(text, x, y)
-      if y == 0 then strip = tostring(text) end
-      return realDraw(text, x, y)
-    end
-    nav:draw()
-    Font.draw = realDraw
-    local sel = nav.locs[nav.sel]
-    eq(strip, nav:bannerText(sel),
-      "nav: and the top strip names the selected place")
-
-    -- START puts the hint back over the map it was navigating
-    local back = 0
-    local realRect2 = love.graphics.rectangle
-    love.graphics.rectangle = function(mode, x, y, w, h)
-      if x == 0 and y == 112 and w == 160 and h == 32 then back = back + 1 end
-      return realRect2(mode, x, y, w, h)
-    end
-    nav:draw()
-    eq(back, 0, "nav: the hint is still down while navigating")
-    pressed = "start"
-    nav:update(0)
-    back = 0
-    nav:draw()
-    love.graphics.rectangle = realRect2
-    eq(back, 1, "nav: START brings it back")
-    pressed = "a"
-    nav.sel = before
-  end
-
-  -- ---- nothing the text draws may reach the column the prompt sits in
-  --
-  -- The bug: the second line was budgeted the full 18 columns of box
-  -- interior, and the arrow is drawn in the eighteenth.  "VERY RARE  2 SPOTS"
-  -- is exactly 18, so the arrow landed on the final S.  The six-row dialogue
-  -- box hid this -- it has a blank row under its text for the arrow to sit
-  -- in, and the four-row box does not.
-  --
-  -- Measured through a real draw rather than by counting the string, because
-  -- what collides is pixels: Font.draw takes a whole line and its width is
-  -- the sum of the glyph advances.
-  do
-    local Font = require("src.render.Font")
-    local ARROW_X = (0 + 20 - 2) * 8      -- the box's own arithmetic
-    local worst, widest = 0, nil
-    local realDraw, realCode = Font.draw, Font.drawCode
-    local arrowAt
-    Font.draw = function(text, x, y)
-      if y >= 96 then
-        local spans = Font.split(tostring(text))
-        local width = 0
-        for _, span in ipairs(spans) do
-          width = width + Font.advanceOf(span.code)
-        end
-        if x + width > worst then
-          worst, widest = x + width, tostring(text)
-        end
-      end
-      return realDraw(text, x, y)
-    end
-    Font.drawCode = function(code, x, y)
-      if y >= 96 then arrowAt = x end
-      return realCode(code, x, y)
-    end
-
-    -- every species the mod placed, so the widest caption in the whole table
-    -- is the one this is judged on rather than a species picked by hand
-    local seen = {}
-    for _, row in ipairs(run.loader.exports.gen151.rows or {}) do
-      if not seen[row.species] then
-        seen[row.species] = true
-        local one = TownMap.new(game, { nestSpecies = row.species })
-        if type(one) == "table" and one.draw then
-          one.game = game
-          one.blink = 0            -- arrow showing
-          one:draw()
-        end
-      end
-    end
-    Font.draw, Font.drawCode = realDraw, realCode
-
-    check(next(seen) ~= nil, "arrow: there were captions to draw")
-    eq(arrowAt, ARROW_X, "arrow: the prompt is in the box's last-but-one cell")
-    check(worst <= ARROW_X,
-      ("arrow: the widest caption line ends at %d, which reaches the prompt "
-        .. "cell at %d -- %q"):format(worst, ARROW_X, tostring(widest)))
-  end
-
-  -- ---- and the header is made to fit, because vanilla writes into an
-  -- 19-column strip without measuring: "CHARIZARD AREA UNKNOWN" is 22 and ran
-  -- off the right edge of the screen mid-word
-  local Font = require("src.render.Font")
-  local drawn = {}
-  local realDrawText = Font.draw
-  Font.draw = function(text, x, y)
-    if y == 0 then drawn[#drawn + 1] = tostring(text) end
-    return realDrawText(text, x, y)
-  end
-  local longName = "CHARIZARD"
-  check(game.data.pokemon[longName] ~= nil,
-    "area: the fixture has " .. longName .. ", which is the name that "
-      .. "overflowed")
-  local long = TownMap.new(game, { nestSpecies = longName })
-  long.game = game
-  long:draw()
-  Font.draw = realDrawText
-  local header = drawn[#drawn]
-  check(header ~= nil, "area: a header was drawn")
-  if header then
-    local spans = Font.split(header)
-    check(Font.spansFitting(spans, 19 * 8) >= #spans,
-      ("area: and it fits the strip, unlike %q"):format(header))
-    check(header:find(longName, 1, true) ~= nil,
-      "area: while still naming the Pokemon, got " .. header)
-  end
-
-  -- ---- MEW's caption stays sealed until its gate opens, because a caption
-  -- would spoil the basement more precisely than a nest ever could
-  local mewRow
-  for _, row in ipairs(run.loader.exports.gen151.rows or {}) do
-    if row.species == "MEW" then mewRow = row end
-  end
-  check(mewRow ~= nil and mewRow.gated == "mew",
-    "area: MEW's row is the gated one")
-  local _, mewCaptioned = captionOf("MEW")
-  check(not mewCaptioned,
-    "area: and MEW has no caption while its gate is shut")
-
   eq(Hints.caption({}, 18), nil,
     "area: a species with no rows produces no placement caption")
 
-  local PokedexMenu = require("src.ui.PokedexMenu")
-  check(PokedexMenu.new ~= nil and TownMap.new ~= nil,
-    "area: both engine screens are still callable after the wrap")
+  run.release()
+end
 
-  -- ---- an undiscovered entry opens a side menu, which vanilla refuses to do
-  local list = PokedexMenu.new(game, {})
-  check(type(list) == "table" and type(list.items) == "table",
-    "area: the dex list still builds")
-  local unknown
-  for _, item in ipairs(list.items or {}) do
-    if not item.value then unknown = item break end
+-- ---- and next to the mod that draws the screen
+--
+-- Set GEN1DEX to a Gen1Dex checkout to run it; skipped, loudly, when absent.
+
+local GEN1DEX = os.getenv("GEN1DEX")
+if GEN1DEX then
+  local data = datasetFor("red")
+  local paths = { GEN151, GEN1DEX }
+  local run = T.sdk.loadMods(paths, { data = data, fs = aliasFs(paths) })
+  eq(#run.errors, 0, "hints: both mods load clean ("
+    .. table.concat(run.errors, "; ") .. ")")
+
+  local game = stubGame(data)
+  -- before anything asks this mod a question: mod.world memoizes the Game it
+  -- first resolved against, and an uninjected loader hands back the boot
+  -- singleton, whose save has no flags on it
+  run.loader.game = game
+
+  local exports = run.loader.exports.gen151
+  local area = run.loader.exports.Gen1Dex and run.loader.exports.Gen1Dex.area
+  check(area ~= nil and type(area.caption) == "function",
+    "hints: Gen1Dex publishes the AREA surface this mod writes on")
+
+  local Font = require("src.render.Font")
+  local Hints = exports.hints
+  local cols = (area and area.cols) or 17
+
+  -- ---- every species this mod placed, captioned in this mod's own words
+  -- and inside the box Gen1Dex draws them in.  Measured in the pixels the
+  -- glyphs actually draw rather than in bytes, because a variable-advance
+  -- font skin makes those two different numbers -- and the second line is a
+  -- column shorter than the first, because the blinking prompt sits there.
+  -- The rows for one species, the way the mod's own provider gathers them:
+  -- every live placement plus every Super Rod row, because a species with
+  -- two homes is captioned once for both.
+  local function rowsFor(species)
+    local out = {}
+    for _, row in ipairs(exports.rows or {}) do
+      if row.species == species and not row.gated then out[#out + 1] = row end
+    end
+    for _, row in ipairs(exports.fishing or {}) do
+      if row.species == species then out[#out + 1] = row end
+    end
+    return out
   end
-  check(unknown ~= nil, "area: with an undiscovered entry in it")
-  game.stack = newStack()
-  list.onChoose(unknown, list)
-  local menu = game.stack:top()
-  check(menu ~= nil, "area: choosing it opens something, where vanilla "
-    .. "returns early and opens nothing")
-  local labels = {}
-  for _, entry in ipairs((menu or {}).items or {}) do
-    labels[#labels + 1] = entry.label
+
+  local species, order = {}, {}
+  for _, row in ipairs(exports.rows or {}) do
+    if not row.gated and not species[row.species] then
+      species[row.species] = true
+      order[#order + 1] = row.species
+    end
   end
-  eq(labels[1], "AREA", "area: whose first row is AREA")
-  eq(labels[2], "QUIT",
-    "area: and whose second is QUIT -- DATA on a Pokemon you have never met "
-      .. "would hand over the dex paragraph, which nobody asked for")
+  for _, row in ipairs(exports.fishing or {}) do
+    if not species[row.species] then
+      species[row.species] = true
+      order[#order + 1] = row.species
+    end
+  end
+
+  local checked, widest = 0, nil
+  for _, id in ipairs(order) do
+    local lines = area.caption(game, id)
+    check(type(lines) == "table" and lines[1] ~= nil,
+      "hints: " .. id .. " is captioned on the AREA screen")
+    local mine = Hints.caption(rowsFor(id), cols)
+    if lines and mine then
+      eq(lines[1], mine[1],
+        "hints: in this mod's words rather than the generic reading, for " .. id)
+      -- the second line is compared as a PREFIX: it is the tight one (the
+      -- blinking prompt sits in its last column) and the box does its own
+      -- cutting there, so "NEEDS THE SAFARI ZONE" arrives on screen cut.
+      -- What this is checking is that the words are ours, not that they
+      -- survived the box whole
+      check(mine[2] == nil
+              or (lines[2] ~= nil and mine[2]:sub(1, #lines[2]) == lines[2]),
+        ("hints: on both lines, for %s (got %s, want %s)")
+          :format(id, tostring(lines[2]), tostring(mine[2])))
+    end
+    for index, line in ipairs(lines or {}) do
+      local budget = index == 1 and 18 or cols
+      local spans = Font.split(line)
+      if Font.spansFitting(spans, budget * 8) < #spans then widest = line end
+      checked = checked + 1
+    end
+  end
+  check(checked > 0, "hints: there were captions to measure")
+  eq(widest, nil,
+    ("hints: and every line of every one fits its own budget, unlike %q")
+      :format(tostring(widest)))
+
+  -- ---- and the whole chain, on the screen the player really opens
+  local TownMap = require("src.ui.TownMap")
+  local sample
+  for _, row in ipairs(exports.rows or {}) do
+    if not row.gated then sample = row.species break end
+  end
+  local screen = TownMap.new(game, { nestSpecies = sample })
+  check(type(screen) == "table" and rawget(screen, "draw") ~= nil,
+    "hints: opening AREA on a placed species really installs the strip")
+
+  -- ---- MEW's answer is WITHHELD, not merely missing
+  --
+  -- Gen1Dex reads the encounter tables on its own, and the moment the gate
+  -- patches MEW in they would answer for it.  `false` is how this mod says
+  -- "mine, and not yet": a caption would spoil the basement more precisely
+  -- than a nest ever could.
+  local mewRow
+  for _, row in ipairs(exports.rows or {}) do
+    if row.species == "MEW" then mewRow = row end
+  end
+  check(mewRow ~= nil and mewRow.gated == "mew",
+    "hints: MEW's row is the gated one")
+  eq(area.caption(game, "MEW"), nil,
+    "hints: and it is uncaptioned while its gate is shut")
+  local sealed = TownMap.new(game, { nestSpecies = "MEW" })
+  eq(rawget(sealed, "draw"), nil,
+    "hints: so its AREA screen is the cartridge's own, strip and all")
+
+  game.save.flags.GEN151_MEW_FOUND = true
+  run.loader.events:emit("save.loaded", { save = game.save })
+  local opened = area.caption(game, "MEW")
+  check(type(opened) == "table" and opened[1] ~= nil,
+    "hints: and the caption turns up the moment the gate opens")
+  game.save.flags.GEN151_MEW_FOUND = nil
+  run.loader.events:emit("save.loaded", { save = game.save })
+  eq(area.caption(game, "MEW"), nil,
+    "hints: and goes away again on a save that never opened it")
 
   run.release()
+else
+  io.write("note: GEN1DEX is unset, so the caption cases were not run\n")
 end
 
 

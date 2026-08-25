@@ -13,16 +13,24 @@
 --   rarity.lua      the tier table the whole mod shares
 --   hints.lua       generated hint vocabulary
 --   linkcable.lua   the consumable trade-evolution item
---   dexarea.lua     AREA on an undiscovered entry, and the hint under the map
+--   dexhints.lua    what the AREA map says about a spawn this mod placed,
+--                   handed to Gen1Dex's screen through its provider hook
 --   legendaries.lua the four statics, retryable until caught
 --   mewgate.lua     the Mansion journals, and the spawn they unlock
 --   bench.lua       the test bench, behind an option that defaults off
 --
--- One permission, engine_internals, and dexarea.lua is the whole of why: the
--- POKeDEX and the town map are engine screens with no hook between them, and
--- putting the answer on the screen the player already opens is worth reaching
--- for them.  Everything else goes through mod.content, mod.hooks, mod.events,
--- mod.options, mod.ui, mod.world and mod.game.
+-- The AREA screen used to be here, and is not any more.  Opening AREA on an
+-- entry you have never met, the box under the map and the presses that take
+-- it down all live in Gen1Dex now -- the mod that owns the POKeDEX and draws
+-- the row the press lands on.  What is left is the sentence: dexhints.lua
+-- registers one provider with that screen and answers for the species this
+-- mod placed, withholds MEW's answer while its gate is shut, and passes on
+-- the other 128 for Gen1Dex to read out of the live encounter tables.
+--
+-- That leaves one permission, engine_internals, and one call behind it: the
+-- cable's own sound effect (linkcable.lua) reaches src.core.Sound, which the
+-- mod surface has no facade for.  Everything else goes through mod.content,
+-- mod.hooks, mod.events, mod.options, mod.ui, mod.world and mod.game.
 
 local MOD_ID = "gen151"
 
@@ -136,10 +144,12 @@ return function(mod)
       choices = { { "STAY TIL CAUGHT", "until_caught" }, { "ONE SHOT", "once" } },
       visible_if = { key = "enabled", equals = true } },
 
-    -- On, the POKeDEX opens AREA for a Pokemon you have never met and puts
-    -- a line under the map saying how to get there.  Off leaves the dex
-    -- exactly as the cartridge shipped it, which is the setting for anyone
-    -- who would rather find the additions the hard way.
+    -- On, the AREA map's caption names the map, the level band and the tier
+    -- for every spawn this mod placed -- on Gen1Dex's screen, which is where
+    -- that caption lives; without Gen1Dex installed there is no screen to
+    -- write on and this row does nothing.  Off leaves that screen saying
+    -- whatever it reads out of the encounter tables on its own, which is the
+    -- setting for anyone who would rather find the additions the hard way.
     { key = "hints", type = "toggle", label = "AREA HINTS", default = true,
       visible_if = { key = "enabled", equals = true } },
   }
@@ -330,9 +340,9 @@ return function(mod)
 
   local dexProbe
   if opt("hints") == true then
-    local dexarea = submodule(mod, "dexarea.lua")
-    if dexarea then
-      dexProbe = dexarea.install(mod, {
+    local dexhints = submodule(mod, "dexhints.lua")
+    if dexhints then
+      dexProbe = dexhints.install(mod, {
         hints = Hints,
         rows = resolved.rows,
         fishing = resolved.fishing,

@@ -3,7 +3,7 @@
 -- Everything Gen151 does to the encounter tables is covered by headless
 -- tests.  What those cannot reach is anything that has to be seen or heard:
 -- whether "ZzZzap" renders, whether the cable snap sounds like an electrical
--- fault or like a mistake, whether the FIELD NOTES list fits its box, whether
+-- fault or like a mistake, whether the AREA caption fits its box, whether
 -- AREA really blinks a nest on the maps Gen151 added to -- and whether a
 -- very-rare tier is a satisfying hunt or just a long one.
 --
@@ -53,7 +53,7 @@ local CHECKLIST = {
   "2 BREAK BOX.\fDoes ZzZzap render\nand land AFTER\fthe evolution?",
   "3 KIT, then use a\nLINK CABLE\fon the KADABRA.\nB should cancel.",
   "4 SPAWNS ON,\nthen walk.\fEvery battle is a\nGEN151 one.",
-  "5 POKeDEX, then\nAREA\fon a species you\nhave NOT met.\fIs there a hint\nunder the map?",
+  "5 POKeDEX, then\nAREA\fon a species you\nhave NOT met.\fIs there a hint\nunder the map?\fNeeds GEN1DEX:\nits screen now.",
   "6 DEX FILL, then\nAREA again.\fNest on the right\nmap?",
   "7 MEW: flip it\nOFF.\fAREA shows no\nnest.\fFlip ON. It does.",
   "8 CELADON MART 4F.\fIs LINK CABLE on\nthe shelf at 2100?",
@@ -315,11 +315,13 @@ function M.install(mod, ctx)
   -- Every link that has to hold for a press on an undiscovered dex entry to
   -- open AREA, named.  This exists because the last report of that not
   -- working could not be reproduced from the outside, and the difference
-  -- between "a dex mod replaced the rows" and "a dex mod replaced the
-  -- handler" decides which fix is the right one.
+  -- between "the rows were replaced" and "the A handler was replaced" decides
+  -- which fix is the right one.  Most of that chain is Gen1Dex's now -- the
+  -- screen is its screen -- so most of this line comes back from its probe;
+  -- what this mod adds is whether its own words were ever handed over.
   local function actDexWrap(game)
     if type(ctx.dexProbe) ~= "function" then
-      say(game, "AREA HINTS is off\nin this mod's\foptions.\fNothing is wrapped.")
+      say(game, "AREA HINTS is off\nin this mod's\foptions, or\fGEN1DEX is not\ninstalled -- and\fthat screen is\nits screen.")
       return
     end
     say(game, ctx.dexProbe(game))

@@ -35,6 +35,7 @@ local TextBox = require("src.render.TextBox")
 -- mod now, and its boxes are read by a human under exactly the same rules.
 local FILES = {
   "main.lua", "linkcable.lua", "mewgate.lua", "hints.lua", "bench.lua",
+  "dexhints.lua",
 }
 
 -- Every "..." and '...' literal in a chunk, with escapes decoded.  Long
