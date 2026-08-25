@@ -268,6 +268,11 @@ GEN151=/path/to/Gen151 GEN1DEX=/path/to/Gen1Dex \
 ./tools/regen.sh /path/to/gen1recomp /path/to/pokered /path/to/pokeyellow
 git diff --exit-code placements.lua hints.lua SPOILERS.md tests/fixtures thumbnail.png
 
+# the runtime features: the LINK CABLE's use flow, the Mansion journals and
+# the FIELD NOTES screen, all driven through the buses the mod registered on
+cd /path/to/gen1recomp
+GEN151=/path/to/Gen151 luajit "$GEN151/tests/features_test.lua"
+
 # or all of it at once, which is what CI should run
 ./tools/check.sh /path/to/gen1recomp /path/to/pokered /path/to/pokeyellow \
   /path/to/Gen1Dex
@@ -279,7 +284,10 @@ git diff --exit-code placements.lua hints.lua SPOILERS.md tests/fixtures thumbna
 The end-to-end suite asserts every prime directive against the real Kanto
 tables: no vanilla species, level or rate changed on any map on any version;
 everything added lands in a table that can be rolled again; every gap closes;
-and Mew is absent from `data.encounters` until its gate flips.
+and Mew is absent from `data.encounters` until its gate flips. The features
+suite drives the LINK CABLE onto a Kadabra and onto a Pidgey, reads all four
+journals one at a time, and opens the notebook — through the loader's own hook
+and event tables, so what runs is the wiring as installed.
 
 ---
 

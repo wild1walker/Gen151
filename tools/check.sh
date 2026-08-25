@@ -25,6 +25,9 @@ echo "== end to end, through the engine's headless loader"
 ( cd "$RECOMP" \
   && GEN151="$HERE" GEN1DEX="$GEN1DEX_DIR" luajit "$HERE/tests/mod_load_test.lua" )
 
+echo "== the runtime features: the cable, the journals, the notebook"
+( cd "$RECOMP" && GEN151="$HERE" luajit "$HERE/tests/features_test.lua" )
+
 echo "== modkit"
 python3 "$RECOMP/tools/modkit.py" validate "$HERE"
 python3 "$RECOMP/tools/modkit.py" lint "$HERE"

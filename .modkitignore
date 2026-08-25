@@ -15,6 +15,7 @@
 tests/roll_test.lua
 tests/placements_test.lua
 tests/mod_load_test.lua
+tests/features_test.lua
 tests/fixtures/vanilla.lua
 tests/fixtures/gapset.json
 
