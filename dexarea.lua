@@ -51,8 +51,13 @@ local ARROW_X = (BOX_TX + BOX_TW - 2) * 8
 local ARROW_Y = (BOX_TY + BOX_TH - 1) * 8 - 4
 
 -- The interior of that box is 18 columns, the same budget TextBox.paginate
--- wraps to.
-local CAPTION_COLS = 18
+-- wraps to -- but only for the FIRST line.  The blinking prompt sits in the
+-- last column of the second one, and in a four-row box there is no blank row
+-- under the text for it to sit in the way the dialogue box gives it one.  So
+-- the second line gets 17 and the arrow gets the eighteenth, rather than the
+-- arrow being drawn on top of the last glyph.
+local LINE_COLS = { 18, 17 }
+local CAPTION_COLS = LINE_COLS[2]
 
 -- The header strip the engine paints across the top of the AREA screen is
 -- 160px wide with its text inset 8px, so 19 columns of room -- and vanilla
@@ -181,14 +186,17 @@ function M.install(mod, ctx)
     return nil
   end
 
-  -- One clamp for every source, at the box's own budget, measured in drawn
-  -- pixels.  Each builder could mind its own width, and then a new builder
-  -- would forget to -- the box knows how wide it is, so the box decides.
+  -- One clamp for every source, at the box's own per-line budget, measured in
+  -- the pixels the glyphs draw rather than in bytes -- a variable-advance
+  -- font skin makes those different numbers.  Each builder could mind its own
+  -- width, and then a new builder would forget to; the box knows how wide it
+  -- is, so the box decides.
   local function clamp(lines)
     if not lines then return nil end
     for index, line in ipairs(lines) do
+      local budget = LINE_COLS[index] or LINE_COLS[#LINE_COLS]
       local spans = Font.split(line)
-      local room = Font.spansFitting(spans, CAPTION_COLS * 8)
+      local room = Font.spansFitting(spans, budget * 8)
       if room < #spans then
         lines[index] = line:sub(1, spans[math.max(room, 1)].to)
       end

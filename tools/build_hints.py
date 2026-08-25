@@ -145,9 +145,14 @@ H.SHORT_TIERS = {
   TROPHY = "ALMOST NEVER",
 }
 
--- rows for ONE species -> up to two lines, each within `cols`.  nil when
--- there is nothing to say, which is how a species this mod never placed
--- keeps the vanilla AREA screen exactly as it was.
+-- rows for ONE species -> up to two lines.  nil when there is nothing to say,
+-- which is how a species this mod never placed keeps the vanilla AREA screen
+-- exactly as it was.
+--
+-- `cols` is the budget for the SECOND line, which is the tight one: the box
+-- puts its blinking prompt in that line's last column.  Nothing is truncated
+-- here -- the caller clamps, in the pixels the glyphs actually draw, because
+-- a variable-advance font makes "columns" and "bytes" different numbers.
 function H.caption(rows, cols)
   if not rows or #rows == 0 then return nil end
   cols = cols or 19
@@ -168,16 +173,15 @@ function H.caption(rows, cols)
   else
     second = H.SHORT_TIERS[row.tier]
     if second and #rows > 1 then
-      local more = ("  %d SPOTS"):format(#rows)
+      -- one space, not two: the second line has one column less than the
+      -- first to spend, and "VERY RARE  2 SPOTS" is exactly one over
+      local more = (" %d SPOTS"):format(#rows)
       if #second + #more <= cols then second = second .. more end
     end
   end
 
   local out = { first }
   if second and second ~= "" then out[2] = second end
-  for index, line in ipairs(out) do
-    if #line > cols then out[index] = line:sub(1, cols) end
-  end
   return out
 end
 

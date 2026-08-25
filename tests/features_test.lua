@@ -440,8 +440,8 @@ do
     "area: which produces a caption")
   for _, line in ipairs(caption or {}) do
     check(#line <= 18,
-      "area: every caption line fits the box, but %q is %d wide",
-      line, #line)
+      ("area: every caption line fits the box, but %q is %d wide")
+        :format(line, #line))
   end
 
   -- ---- and so is a VANILLA one, which is the whole of the second ask: the
@@ -541,6 +541,64 @@ do
   check(popped, "area: and only THEN does A close it, the way A always did")
   love.graphics.rectangle = realRect
 
+  -- ---- nothing the text draws may reach the column the prompt sits in
+  --
+  -- The bug: the second line was budgeted the full 18 columns of box
+  -- interior, and the arrow is drawn in the eighteenth.  "VERY RARE  2 SPOTS"
+  -- is exactly 18, so the arrow landed on the final S.  The six-row dialogue
+  -- box hid this -- it has a blank row under its text for the arrow to sit
+  -- in, and the four-row box does not.
+  --
+  -- Measured through a real draw rather than by counting the string, because
+  -- what collides is pixels: Font.draw takes a whole line and its width is
+  -- the sum of the glyph advances.
+  do
+    local Font = require("src.render.Font")
+    local ARROW_X = (0 + 20 - 2) * 8      -- the box's own arithmetic
+    local worst, widest = 0, nil
+    local realDraw, realCode = Font.draw, Font.drawCode
+    local arrowAt
+    Font.draw = function(text, x, y)
+      if y >= 96 then
+        local spans = Font.split(tostring(text))
+        local width = 0
+        for _, span in ipairs(spans) do
+          width = width + Font.advanceOf(span.code)
+        end
+        if x + width > worst then
+          worst, widest = x + width, tostring(text)
+        end
+      end
+      return realDraw(text, x, y)
+    end
+    Font.drawCode = function(code, x, y)
+      if y >= 96 then arrowAt = x end
+      return realCode(code, x, y)
+    end
+
+    -- every species the mod placed, so the widest caption in the whole table
+    -- is the one this is judged on rather than a species picked by hand
+    local seen = {}
+    for _, row in ipairs(run.loader.exports.gen151.rows or {}) do
+      if not seen[row.species] then
+        seen[row.species] = true
+        local one = TownMap.new(game, { nestSpecies = row.species })
+        if type(one) == "table" and one.draw then
+          one.game = game
+          one.blink = 0            -- arrow showing
+          one:draw()
+        end
+      end
+    end
+    Font.draw, Font.drawCode = realDraw, realCode
+
+    check(next(seen) ~= nil, "arrow: there were captions to draw")
+    eq(arrowAt, ARROW_X, "arrow: the prompt is in the box's last-but-one cell")
+    check(worst <= ARROW_X,
+      ("arrow: the widest caption line ends at %d, which reaches the prompt "
+        .. "cell at %d -- %q"):format(worst, ARROW_X, tostring(widest)))
+  end
+
   -- ---- and the header is made to fit, because vanilla writes into an
   -- 19-column strip without measuring: "CHARIZARD AREA UNKNOWN" is 22 and ran
   -- off the right edge of the screen mid-word
@@ -564,7 +622,7 @@ do
   if header then
     local spans = Font.split(header)
     check(Font.spansFitting(spans, 19 * 8) >= #spans,
-      "area: and it fits the strip, unlike %q", header)
+      ("area: and it fits the strip, unlike %q"):format(header))
     check(header:find(longName, 1, true) ~= nil,
       "area: while still naming the Pokemon, got " .. header)
   end

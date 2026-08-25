@@ -3,6 +3,23 @@
 All notable changes to Gen151 are recorded here, in
 [keep a changelog](https://keepachangelog.com/en/1.1.0/) order.
 
+## [1.1.5] - 2026-08-25
+
+### Fixed
+
+- The blinking prompt was drawn on top of the last word of the hint. It sits
+  in the second line's eighteenth column, and that line was budgeted all
+  eighteen columns of box interior -- so `VERY RARE  2 SPOTS`, which is
+  exactly eighteen, put the arrow through its final S. The six-row dialogue
+  box hid this by giving the arrow a blank row of its own under the text; the
+  four-row box has no such row. The second line gets seventeen columns now and
+  the arrow gets the eighteenth, and the spot count is spaced with one space
+  rather than two so it still fits.
+- `features_test` now measures this through a real draw, over every species
+  the mod places, and fails if the widest caption line reaches the prompt's
+  cell. Several test messages were also passing format arguments to a check
+  that takes a plain string, so a failure printed `%q` instead of the value.
+
 ## [1.1.4] - 2026-08-25
 
 ### Changed
