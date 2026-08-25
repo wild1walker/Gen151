@@ -54,18 +54,38 @@ end
 -- a tape of every draw it served.  Comparing tapes is how "identical RNG draw
 -- for RNG draw" stops being a figure of speech.
 --
--- An LCG, read from the TOP bits.  The low bits of a power-of-two-modulus LCG
--- have a period as short as the mask, so `state % 256` would give a stream
--- whose structure changes systematically when an extra draw is interleaved --
--- which would make the statistical assertions below measure the generator
--- rather than the roll layer.  Portable arithmetic only: the engine targets
--- LuaJIT, which has no 5.4 bitwise operators.
+-- L'Ecuyer's combined multiple-recursive generator: two prime-modulus streams,
+-- differenced.  Portable arithmetic only -- every product stays under 2^53, so
+-- it is exact on LuaJIT's doubles as well as on 5.4's integers, and the engine
+-- targets LuaJIT, which has no 5.4 bitwise operators to reach for instead.
+--
+-- It was a single power-of-two LCG (`state = 1103515245 * state + 12345 mod
+-- 2^31`, read from the top bits) and that quietly broke the two SHARE
+-- assertions below.  Not through the low bits the old comment here worried
+-- about -- through the lattice.  Successive outputs of a power-of-two LCG lie
+-- on a coarse lattice, and every one of those assertions asks a CONDITIONAL
+-- question: given that the previous draw was small enough to produce an
+-- encounter (20/256 on Route 4), how is the next one distributed?  Small
+-- output followed by small output turned out to be far more likely than
+-- chance, so the measured substitution rate came out 35% above the weight that
+-- produced it -- 5.79% for a 4.30% tier -- and the suite reported the roll
+-- layer as broken.  It was not: the same experiment through math.random lands
+-- on 4.30%, and so does this generator, whose mean over twenty seeds is 1.007
+-- times the configured share.
+--
+-- The moral is in the assertions rather than in the generator: a statistical
+-- test drawing from the same stream as the thing it measures is measuring both
+-- of them.
 local function makeRng(seed)
-  local state = seed % 2147483648
+  -- both streams need a non-zero start inside their own modulus
+  local s1 = seed % 2147483562 + 1
+  local s2 = (seed * 7919) % 2147483398 + 1
   local self = { draws = 0, tape = {} }
   function self.next(min, max)
-    state = (1103515245 * state + 12345) % 2147483648
-    local value = min + math.floor(state / 2147483648 * (max - min + 1))
+    s1 = (40014 * s1) % 2147483563
+    s2 = (40692 * s2) % 2147483399
+    local z = (s1 - s2) % 2147483562
+    local value = min + math.floor(z / 2147483562 * (max - min + 1))
     if value > max then value = max end
     self.draws = self.draws + 1
     self.tape[self.draws] = value
@@ -303,11 +323,16 @@ do
   check(math.abs(gotCount - cleanCount) < 4 * sigma,
     "substitution changed the encounter count: %d vs %d", gotCount, cleanCount)
 
+  -- 4 sigma of the binomial the substitution draw actually is, rather than a
+  -- flat percentage: at 4.3% of ~16500 encounters one sigma is 25 hits, so a
+  -- flat 10% band was 2.6 sigma wide and would flake on a seed nobody chose
   local share = weight / Roll.RARITY_SCALE
   local added = got.SANDSHREW or 0
   local expected = gotCount * share
-  check(math.abs(added - expected) < expected * 0.10,
-    "added species share: got %d, expected about %.0f", added, expected)
+  local addedSigma = math.sqrt(gotCount * share * (1 - share))
+  check(math.abs(added - expected) < 4 * addedSigma,
+    "added species share: got %d, expected about %.0f (4 sigma = %.0f)",
+    added, expected, 4 * addedSigma)
 
   for species, count in pairs(clean) do
     if species:sub(1, 1) ~= "#" then
@@ -423,10 +448,12 @@ do
   check(math.abs(bites - cleanBites) < 4 * sigmaBite,
     "Super Rod bite odds moved: %d vs %d (4 sigma = %.0f)",
     bites, cleanBites, 4 * sigmaBite)
-  local expected = bites * (Rarity.TIERS.RARE / Roll.RARITY_SCALE)
-  check(math.abs(omanyte - expected) < expected * 0.20,
-    "Super Rod substitution share: got %d, expected about %.0f",
-    omanyte, expected)
+  local rodShare = Rarity.TIERS.RARE / Roll.RARITY_SCALE
+  local expected = bites * rodShare
+  local rodSigma = math.sqrt(bites * rodShare * (1 - rodShare))
+  check(math.abs(omanyte - expected) < 4 * rodSigma,
+    "Super Rod substitution share: got %d, expected about %.0f "
+      .. "(4 sigma = %.0f)", omanyte, expected, 4 * rodSigma)
 end
 
 -- ---------------------------------------------------------------------- done

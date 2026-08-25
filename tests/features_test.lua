@@ -462,6 +462,36 @@ do
   eq(Hints.caption({}, 18), nil,
     "area: a species with no rows produces no placement caption")
 
+  -- ---- and with no Gen1Dex installed, AREA is the cartridge's own screen
+  -- with this mod's nests on it, which is the whole of what Gen151 alone is
+  -- meant to do to that screen.  The nests are free: they come off the
+  -- appended slots in data.encounters, which TownMap scans for itself, and no
+  -- part of this mod goes anywhere near the screen to put them there.
+  local TownMap = require("src.ui.TownMap")
+  -- the fixture's town map knows two of its own maps and none of Kanto's, and
+  -- a nest is only drawn for a map the town map can place; the real dataset
+  -- has an entry for every one, so the placed row's map gets one here
+  local townMap = data.field.townMap
+  townMap.locations = townMap.locations or {}
+  townMap.locations[placed.map] = townMap.locations[placed.map]
+    or { x = 5, y = 5, name = "PLACED" }
+  local screen = TownMap.new(game, { nestSpecies = placed.species })
+  check(type(screen) == "table", "area: the AREA screen still builds")
+  eq(rawget(screen, "draw"), nil,
+    "area: with no caption strip installed over it -- the box is Gen1Dex's, "
+      .. "and Gen1Dex is not here")
+  eq(rawget(screen, "update"), nil,
+    "area: and no input of its own, so A closes it the way A always did")
+  check(type(screen.nests) == "table" and #screen.nests > 0,
+    "area: and " .. placed.species .. "'s nest blinks on it anyway, because "
+      .. "the spawn is in the encounter table the engine already reads")
+
+  -- MEW is the one that must NOT be marked, gate shut: no caption to withhold
+  -- and no nest either, because the row is not in the table yet
+  local mew = TownMap.new(game, { nestSpecies = "MEW" })
+  eq(#(mew.nests or {}), 0,
+    "area: and MEW's map is blank while its gate is shut")
+
   run.release()
 end
 

@@ -43,6 +43,34 @@ All notable changes to Gen151 are recorded here, in
   sound effect reaches `src.core.Sound`, which the mod surface has no facade
   for. The two screen wraps that used to be the reason for it are Gen1Dex's.
 
+### Fixed
+
+- **The roll suite's own RNG was reporting the roll layer as broken.** Its two
+  share assertions -- "an added species takes exactly its configured share" and
+  the Super Rod peer -- measured 5.79% for a 4.30% tier and failed. The layer
+  was right: the same experiment through `math.random` lands on 4.30%.
+
+  The harness generator was a single power-of-two LCG. Successive outputs of
+  one lie on a coarse lattice, and both assertions ask a *conditional*
+  question -- given that the previous draw was small enough to produce an
+  encounter, how is the next one distributed? Small-then-small came out far
+  likelier than chance, so the measured substitution rate ran a third above
+  the weight that produced it. It is L'Ecuyer's combined MRG now (two
+  prime-modulus streams, differenced, every product under 2^53 so it is exact
+  on LuaJIT's doubles too), whose mean over twenty seeds is 1.007 times the
+  configured share.
+
+  Both assertions now state a 4-sigma binomial band rather than a flat
+  percentage, which is what every other statistical check in that file already
+  did: at 4.3% of ~16,500 encounters one sigma is 25 hits, so the old flat 10%
+  band was 2.6 sigma wide and would have flaked on a seed nobody chose.
+
+- The AREA screen with no Gen1Dex installed is now asserted rather than
+  assumed: the cartridge's own screen, no caption strip, no input of its own,
+  and this mod's spawns still blinking their nests on it -- which they do off
+  the encounter table the engine already reads, with nothing of this mod's
+  anywhere near the screen.
+
 ## [1.4.0] - 2026-08-25
 
 ### Added
