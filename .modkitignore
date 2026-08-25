@@ -33,3 +33,9 @@ tools/regen.sh
 
 SPOILERS.md
 
+# The wordmark and the family strip the README leads with. Page furniture:
+# GitHub renders them, a player who installed the zip never sees them, and at
+# a couple of megabytes they would be most of the archive's weight.
+docs/banner.png
+docs/lineup.png
+

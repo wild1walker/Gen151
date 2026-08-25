@@ -1,4 +1,16 @@
-# Gen151
+<p align="center">
+  <a href="https://wild1walker.github.io/Gen1Wild/"><img src="docs/banner.png" alt="Gen1Wild" width="400"></a>
+</p>
+
+<h1 align="center">Gen151</h1>
+
+<p align="center">
+  <a href="https://wild1walker.github.io/Gen1Wild/"><img src="docs/lineup.png" alt="Check out my other mods!" width="880"></a>
+</p>
+
+<p align="center">
+  <b>All 151, renewably, in one save</b>
+</p>
 
 Every one of the 151 becomes obtainable **renewably** in a single save, on any
 one version, without trading — while every encounter that exists in the vanilla
