@@ -421,13 +421,44 @@ do
     end
   end
 
-  -- everything caught: a sentence, not a blank box
+  -- ---- the kit row: Gen 1 has no item descriptions, so this is the only
+  -- place the LINK CABLE gets explained
+  local _, listed = pcall(factory.new, game)
+  local kitRow
+  for _, item in ipairs((listed or {}).items or {}) do
+    if item.label == "LINK CABLE" then kitRow = item end
+  end
+  check(kitRow ~= nil, "notes: the LINK CABLE has an entry")
+  eq(listed.items[1].label, "LINK CABLE",
+    "notes: at the top, above the species")
+  if kitRow then
+    check(kitRow.value == nil,
+      "notes: and it is not mistaken for a species")
+    game.stack = newStack()
+    listed.onChoose(kitRow, listed)
+    local note = boxText(game.stack:top())
+    check(note ~= nil and note:lower():find("old link cable", 1, true) ~= nil,
+      "notes: which says what it is, got " .. tostring(note))
+    check(note ~= nil and note:lower():find("modified", 1, true) ~= nil,
+      "notes: and that it was modified")
+    for _, page in ipairs(game.stack:top().pages) do
+      for _, line in ipairs(page) do
+        check(#line <= 18,
+          "notes: every line fits the text box, but %q is %d wide",
+          line, #line)
+      end
+    end
+  end
+
+  -- everything caught: a sentence, not a blank box, and the kit survives it
   for id in pairs(data.pokemon) do game.save.pokedex.owned[id] = true end
   local _, full = pcall(factory.new, game)
   if type(full) == "table" and full.items then
-    eq(#full.items, 1, "notes: an empty notebook has exactly one row")
-    eq(full.items[1].label, "ALL FOUND!",
-      "notes: and that row is a sentence")
+    eq(#full.items, 2, "notes: a finished notebook keeps the kit row")
+    eq(full.items[1].label, "LINK CABLE",
+      "notes: the kit row first")
+    eq(full.items[2].label, "ALL FOUND!",
+      "notes: then the sentence")
   end
 
   run.release()

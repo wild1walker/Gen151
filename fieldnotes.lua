@@ -15,6 +15,12 @@
 -- The notebook lists what the player has NOT caught yet, which keeps it short
 -- and makes it read as a to-do list rather than a spoiler dump.  SPOILERS.md
 -- is where the whole table lives, for people who want it.
+--
+-- It also carries `kit`: a short entry for each thing Gen151 adds to the bag.
+-- Gen 1 has no item descriptions anywhere -- the mart shows a name and a
+-- price, the bag a name and a count -- so this is the only place a line like
+-- "an old LINK CABLE, modified" can live without inventing a surface the game
+-- does not have.
 
 local M = {}
 
@@ -70,6 +76,14 @@ function M.install(mod, ctx)
   for _, row in ipairs(ctx.rows) do record(row) end
   for _, row in ipairs(ctx.fishing) do record(row, "super_rod") end
 
+  -- what Gen151 put in the bag, above the species list
+  local kit = {}
+  for _, entry in ipairs(ctx.kit or {}) do
+    if type(entry) == "table" and entry.label and entry.text then
+      kit[#kit + 1] = entry
+    end
+  end
+
   -- dex order, so the notebook reads like the notebook of someone filling in
   -- a dex rather than like a hash table
   local function dexNumber(game, species)
@@ -90,6 +104,9 @@ function M.install(mod, ctx)
       end)
 
       local items = {}
+      for _, entry in ipairs(kit) do
+        items[#items + 1] = { label = entry.label, note = entry.text }
+      end
       for _, species in ipairs(rows) do
         local def = game.data.pokemon[species]
         items[#items + 1] = {
@@ -98,14 +115,20 @@ function M.install(mod, ctx)
         }
       end
 
-      -- An empty notebook is a sentence, not a blank box: it is the state a
-      -- finished playthrough leaves behind, and it should read like one.
-      if #items == 0 then
-        items[1] = { label = "ALL FOUND!" }
+      -- An empty species list is a sentence, not a blank box: it is the
+      -- state a finished playthrough leaves behind, and it should read like
+      -- one.  Appended, not written over items[1] -- the kit rows are still
+      -- there and are still worth reading.
+      if #items == #kit then
+        items[#items + 1] = { label = "ALL FOUND!" }
       end
 
       return mod.ui.ListMenu.new(game, NAME, items, {
         onChoose = function(item)
+          if item.note then
+            game.stack:push(mod.ui.TextBox.new(game, item.note))
+            return
+          end
           if not item.value then return end
           local def = game.data.pokemon[item.value]
           local name = (def and def.name) or item.value

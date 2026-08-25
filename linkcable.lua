@@ -106,6 +106,23 @@ local function registerSfx(mod)
   return true
 end
 
+-- Gen 1 has no item descriptions: the mart list is a name and a price, and
+-- the bag is a name and a count.  They arrive in Gen 2, with
+-- UpdateItemDescription under the list.  So the one line that explains why a
+-- cable evolves a POKeMON with nobody on the other end goes where this mod
+-- already has a screen of its own -- the FIELD NOTES -- rather than into a
+-- description surface the game would have to grow first.
+--
+-- Written to the 18-column text box, two lines to a page.
+function M.note()
+  return {
+    label = NAME,
+    text = "An old LINK CABLE,\nmodified."
+      .. "\fGood for one\ntrade evolution."
+      .. "\fIt does not\nsurvive the job.",
+  }
+end
+
 function M.install(mod, ctx)
   local romText = ctx.romText
 

@@ -139,6 +139,23 @@ Every line is composed from the same placement rows the roll layer is using, so
 a hint cannot drift from the spawn it describes. It also covers the two Super
 Rod placements, which AREA cannot see.
 
+The notebook is also where anything Gen151 adds to the bag gets explained, at
+the top of the list above the species. **Gen 1 has no item descriptions
+anywhere** — the mart shows a name and a price, the bag a name and a count;
+descriptions arrive in Gen 2 — so this is the only surface a line like this can
+live on without the game growing one first:
+
+```
+An old LINK CABLE,
+modified.
+        [ next page ]
+Good for one
+trade evolution.
+        [ next page ]
+It does not
+survive the job.
+```
+
 **A HINT row in the Pokedex** ships as a separate companion mod,
 `gen151_hints`, because it is the one feature that needs the
 `engine_internals` permission and the base mod should not have to request it.

@@ -222,6 +222,10 @@ return function(mod)
 
   if mewGate then mewGate.install(resolved.rows) end
 
+  -- Anything Gen151 adds to the bag gets a line in the FIELD NOTES, because
+  -- Gen 1 has no item descriptions and that is the only surface there is.
+  local kit = {}
+
   if opt("trade_evolutions") == "link_cable" then
     local cable = submodule(mod, "linkcable.lua")
     if cable then
@@ -229,6 +233,7 @@ return function(mod)
         romText = romText,
         sfx = function() return opt("cable_sfx") == true end,
       })
+      kit[#kit + 1] = cable.note()
     end
   end
 
@@ -240,6 +245,7 @@ return function(mod)
         rows = resolved.rows,
         fishing = resolved.fishing,
         romText = romText,
+        kit = kit,
       })
     end
   end
