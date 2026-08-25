@@ -3,6 +3,25 @@
 All notable changes to Gen151 are recorded here, in
 [keep a changelog](https://keepachangelog.com/en/1.1.0/) order.
 
+## [1.5.1] - 2026-08-25
+
+### Changed
+
+- **MEW's sealed AREA screen now says something.** It drew a blank map, which
+  is indistinguishable from a hint that failed. Gen1Dex 1.4.0 puts its own
+  `NO RECORD REMAINS` / `GO ADVENTURING!` line over a species nobody can answer
+  for, and this mod's refusal for MEW now reads as exactly that -- the same
+  screen ARTICUNO, ZAPDOS, MOLTRES and MEWTWO get, since the four statics live
+  in no wild table and never had a hint either.
+
+  That sameness is the point rather than a side effect: a seal that read
+  differently from an ordinary blank would tell the player MEW is in there
+  somewhere, which is the one thing the seal exists not to say. The suite now
+  compares the two screens glyph for glyph.
+
+  Needs Gen1Dex 1.4.0 for the line; against 1.3.0 the seal is silent as before,
+  and against no Gen1Dex at all the AREA screen stays the cartridge's own.
+
 ## [1.5.0] - 2026-08-25
 
 ### Changed

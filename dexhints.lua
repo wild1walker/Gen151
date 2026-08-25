@@ -28,7 +28,11 @@
 --           while its gate is shut.  Withholding is not the same as having
 --           nothing to say, and it has to outrank the generic reading --
 --           a caption would spoil the basement more precisely than a nest
---           ever could
+--           ever could.  Gen1Dex then draws its own no-record line over the
+--           map, which is what it draws over a species nobody can answer for
+--           at all: MEW's sealed screen and ARTICUNO's are the same screen,
+--           to the glyph, and a seal that read differently would tell the
+--           player MEW is in there somewhere
 --   nil     no opinion.  Every one of the other 128 species, which Gen1Dex
 --           answers for out of the live encounter tables
 
@@ -101,8 +105,9 @@ function M.install(mod, ctx)
   area.provide(function(_, species)
     local live, gated = rowsFor(species)
     if #live > 0 then return Hints.caption(live, cols) end
-    -- placed, gated, and the gate is still shut: say nothing, and say it
-    -- loudly enough that the encounter tables do not answer in our place
+    -- placed, gated, and the gate is still shut: refuse, loudly enough that
+    -- the encounter tables do not answer in our place.  What the player sees
+    -- is Gen1Dex's no-record line -- the same one a legendary gets
     if gated then return false end
     return nil
   end, mod.id)

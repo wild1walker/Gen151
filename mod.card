@@ -37,7 +37,8 @@ return {
       "The AREA screen the captions go on belongs to Gen1Dex 1.3.0 or newer "
         .. "-- the mod that draws the dex row the press lands on.  Without "
         .. "it AREA HINTS has nothing to write on, and nothing else about "
-        .. "this mod changes",
+        .. "this mod changes.  MEW's sealed screen reads as Gen1Dex's "
+        .. "no-record line from 1.4.0, and as a blank map before that",
       "engine_internals is still declared, for one call: the LINK CABLE's "
         .. "own sound effect reaches src.core.Sound, which the mod surface "
         .. "has no facade for",

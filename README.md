@@ -226,8 +226,12 @@ find and so blink no nest at all.
 **Mew is the exception, on purpose.** While its gate is shut it is not in the
 encounter table, so there is no nest — and Gen151 answers for it with a
 refusal rather than a silence, so the generic reading cannot fill the gap
-either. A caption would give away the basement more precisely than a nest ever
-could. The moment the gate opens, Mew is captioned like anything else.
+either. What the player gets is Gen1Dex's own no-record line, which is exactly
+what Articuno, Zapdos, Moltres and Mewtwo get: statics live in no wild table,
+so nobody has a hint for them. Mew's sealed screen and a legendary's are the
+same screen to the glyph — a seal that read differently would say *there is
+something here*, which is the one thing it exists not to say. The moment the
+gate opens, Mew is captioned like anything else.
 
 **Without Gen1Dex there is no screen to write on.** AREA is the cartridge's
 own — no hint, no AREA on an entry you have never met — the mod says so once

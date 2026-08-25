@@ -609,10 +609,42 @@ if GEN1DEX then
   check(mewRow ~= nil and mewRow.gated == "mew",
     "hints: MEW's row is the gated one")
   eq(area.caption(game, "MEW"), nil,
-    "hints: and it is uncaptioned while its gate is shut")
-  local sealed = TownMap.new(game, { nestSpecies = "MEW" })
-  eq(rawget(sealed, "draw"), nil,
-    "hints: so its AREA screen is the cartridge's own, strip and all")
+    "hints: and it has no answer while its gate is shut")
+
+  -- The seal is not silence, and it must not look like one either.  Gen1Dex
+  -- draws the same words over a species nobody can answer for, and MEW's
+  -- screen has to be that screen exactly -- ARTICUNO is the control: a static
+  -- that lives in no wild table and evolves from nothing, which nobody has
+  -- ever had a hint for.  A seal that read differently from an ordinary blank
+  -- would tell a player MEW is in there somewhere, which is the one thing it
+  -- exists not to say.
+  local function stripOf(species)
+    local lines = {}
+    local realDraw = Font.draw
+    Font.draw = function(text, x, y)
+      if y >= 96 then lines[#lines + 1] = tostring(text) end
+      return realDraw(text, x, y)
+    end
+    local screen = TownMap.new(game, { nestSpecies = species })
+    screen.game = game
+    if rawget(screen, "draw") then screen:draw() end
+    Font.draw = realDraw
+    return table.concat(lines, " / ")
+  end
+
+  eq(area.caption(game, "ARTICUNO"), nil,
+    "hints: a static legendary has no answer either, from anybody")
+  if type(area.unknown) == "table" then
+    local blank = stripOf("ARTICUNO")
+    check(blank ~= "", "hints: and its AREA screen says so out loud")
+    eq(blank, table.concat(area.unknown, " / "),
+      "hints: in Gen1Dex's own words for a species with no record")
+    eq(stripOf("MEW"), blank,
+      "hints: and MEW's sealed screen is that screen exactly, to the glyph")
+  else
+    io.write("note: this Gen1Dex predates the no-record line (1.4.0), so the "
+      .. "sealed-screen case was not run\n")
+  end
 
   game.save.flags.GEN151_MEW_FOUND = true
   run.loader.events:emit("save.loaded", { save = game.save })
