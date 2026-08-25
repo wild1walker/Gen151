@@ -26,6 +26,11 @@ on:
     paths-ignore:
       - '.github/**'
       - '**.md'
+      # page furniture: docs/ is README artwork, not mod code.  Without this
+      # a banner refresh is a push to main that tries to cut a release, and
+      # since the tag is already out the run does not no-op -- it fails on
+      # "tag already exists", which is a red X for changing a picture.
+      - 'docs/**'
   workflow_dispatch:
     inputs:
       version:
