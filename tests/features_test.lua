@@ -169,10 +169,19 @@ do
     "vanilla", "cable: in battle it defers rather than wording its own no")
 
   -- ---- on a Kadabra it opens with the machine hum
+  --
+  -- The bag list and the party picker are passed in the way BagMenu passes
+  -- them, because the mod is responsible for both on the far side: the open
+  -- list has to end up showing the right count, and the picker has to come
+  -- down.
   game.stack = newStack()
   local kadabra = { species = "KADABRA", level = 20 }
-  hooks:call("item.use", vanillaUse, game, nil, "LINK_CABLE", kadabra, nil,
-             nil, nil)
+  local bag = { items = { { value = "LINK_CABLE", right = "x2" },
+                          { value = "POTION", right = "x3" } }, index = 1 }
+  local pickerClosed = false
+  local picker = { close = function() pickerClosed = true end }
+  hooks:call("item.use", vanillaUse, game, nil, "LINK_CABLE", kadabra, bag,
+             nil, picker)
   local first = game.stack:top()
   eq(boxText(first), ". . .", "cable: it opens on the engine's beat idiom")
   check(first.auto ~= nil and first.auto.sound ~= nil,
@@ -193,6 +202,77 @@ do
     "cable: and it stays up under the evolution screen")
   eq(game.save.inventory.LINK_CABLE, 2,
     "cable: still not consumed on the far side of the intro")
+
+  -- ---- the evolution screen is asked for on the right terms
+  --
+  -- EvolutionState itself is not constructed here: it loads sprites and runs
+  -- Stats.calc, neither of which this fixture can answer, and neither of
+  -- which is what the mod is responsible for.  What the mod IS responsible
+  -- for is the two arguments the whole design turns on -- the species and
+  -- `via` -- and what it does when the screen hands control back.
+  local captured
+  local Screens = require("src.ui.Screens")
+  local realPush = Screens.push
+  Screens.push = function(g, id, ...)
+    if id == "EvolutionState" then
+      captured = { ... }
+      return
+    end
+    return realPush(g, id, ...)
+  end
+  intro.stay.onShown()
+  Screens.push = realPush
+
+  check(captured ~= nil, "cable: it pushes the evolution screen")
+  if captured then
+    eq(captured[1], kadabra, "cable: on the Pokemon that was chosen")
+    eq(captured[2], "ALAKAZAM", "cable: into the right species")
+    eq(captured[4], "TRADE",
+      "cable: as a TRADE evolution, which is what makes it non-cancelable "
+        .. "and therefore always complete")
+    eq(game.save.inventory.LINK_CABLE, 2,
+      "cable: and STILL not consumed while the evolution is running")
+  end
+
+  -- ---- and only when the evolution comes back does the cable die
+  captured[3]()
+  eq(game.save.inventory.LINK_CABLE, 1,
+    "cable: the evolution finishing is what consumes it")
+  eq(bag.items[1].right, "x1",
+    "cable: the open bag list is corrected to the new count")
+
+  local breakBox = game.stack:top()
+  check(not pickerClosed,
+    "cable: the party picker is still up while the break message is on "
+      .. "screen, the way vanilla holds it through showMessages")
+  check(type(breakBox.onDone) == "function",
+    "cable: and dismissing the break message is what takes it down")
+  breakBox.onDone()
+  check(pickerClosed, "cable: which it does")
+  local breakText = boxText(game.stack:top())
+  check(breakText ~= nil and breakText:find("ZzZzap", 1, true) ~= nil,
+    "cable: the break message zaps, got " .. tostring(breakText))
+  check(breakText ~= nil and breakText:lower():find("broke", 1, true) ~= nil,
+    "cable: and says the cable broke")
+  check(breakText ~= nil
+          and breakText:find("ZzZzap", 1, true) > breakText:find(".", 1, true),
+    "cable: after the beat, not before it")
+  check(game.stack:top() ~= intro,
+    "cable: and the is-evolving box is taken down first")
+
+  -- ---- the last one leaves the bag entirely
+  game.save.bagOrder = { "LINK_CABLE", "POTION" }
+  captured[3]()
+  eq(game.save.inventory.LINK_CABLE, nil,
+    "cable: spending the last one clears the slot")
+  eq(#game.save.bagOrder, 1,
+    "cable: and drops it out of the bag order")
+  eq(game.save.bagOrder[1], "POTION",
+    "cable: without disturbing what was next to it")
+  eq(#bag.items, 1,
+    "cable: and the row leaves the open bag list too")
+  eq(bag.items[1].value, "POTION",
+    "cable: leaving what was next to it selected")
 
   run.release()
 end
