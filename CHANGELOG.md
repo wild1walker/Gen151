@@ -3,6 +3,29 @@
 All notable changes to Gen151 are recorded here, in
 [keep a changelog](https://keepachangelog.com/en/1.1.0/) order.
 
+## [1.2.0] - 2026-08-25
+
+### Added
+
+- **The AREA map can be navigated once the hint is down.** The d-pad moves the
+  cursor between locations with the plain town map's own snap-to-nearest, and
+  the top strip names the selected place instead of the species you looked up.
+  START still brings the hint back. Vanilla's AREA screen answers A and B and
+  nothing else, and returns from its draw before it reaches either the cursor
+  or the banner, so dismissing the hint left you on a map you could neither
+  read nor move around.
+
+  Whether the d-pad moves anything and whether this draws a cursor are
+  separate questions: on a build with no Kanto art the engine falls through to
+  a list that already draws its own cursor and banner, so only the movement is
+  added there.
+
+### Fixed
+
+- `features_test` picked its example species out of `pairs()` order, so it was
+  a different test on every run -- and one assertion compared a species id
+  against a header built from its display name, which is how that surfaced.
+
 ## [1.1.5] - 2026-08-25
 
 ### Fixed

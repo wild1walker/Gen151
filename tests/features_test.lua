@@ -460,14 +460,20 @@ do
     return screen, screen.draw ~= TownMap.draw
   end
 
+  -- Lowest id rather than whatever pairs() reaches first: a species that
+  -- changes run to run makes every assertion below change with it, and a
+  -- test that is a different test each time is not one.
   local vanillaSpecies
-  for mapId, record in pairs(data.encounters or {}) do
+  local ours = {}
+  for _, row in ipairs(run.loader.exports.gen151.rows or {}) do
+    ours[row.species] = true
+  end
+  for _, record in pairs(data.encounters or {}) do
     for _, slot in ipairs((record.grass or {}).slots or {}) do
-      local ours = false
-      for _, row in ipairs(run.loader.exports.gen151.rows or {}) do
-        if row.species == slot.species then ours = true end
+      if not ours[slot.species]
+         and (not vanillaSpecies or slot.species < vanillaSpecies) then
+        vanillaSpecies = slot.species
       end
-      if not ours then vanillaSpecies = vanillaSpecies or slot.species end
     end
   end
   check(vanillaSpecies ~= nil,
@@ -540,6 +546,78 @@ do
   screen:update(0)
   check(popped, "area: and only THEN does A close it, the way A always did")
   love.graphics.rectangle = realRect
+
+  -- ---- with the hint down, the screen is the plain town map again
+  --
+  -- Vanilla's AREA branch answers A and B and nothing else, and returns from
+  -- draw before it gets to the cursor or the name banner.  So a player who
+  -- dismissed the hint was left looking at a map they could not read or move
+  -- around.  These are the two halves of "navigate it like the normal map":
+  -- the d-pad moves the selection, and the strip says what is selected.
+  do
+    local nav = TownMap.new(game, { nestSpecies = vanillaSpecies })
+    nav.game = game
+    check(type(nav.locs) == "table" and #nav.locs > 1,
+      "nav: the map has locations to move between")
+    check(nav.mode == "grid",
+      "nav: and is the real background grid, not the stale-asset list")
+    -- The fixture ships no Kanto art, so TownMap loaded no background and its
+    -- draw takes the fall-through path instead of the AREA branch.  An empty
+    -- tilemap is enough to put it back on the branch the player sees: the
+    -- blit loop runs zero times and the AREA code after it runs for real.
+    nav.bg = nav.bg or { map = {} }
+
+    local before = nav.sel
+    popped = false
+    pressed = "a"
+    nav:update(0)                       -- dismiss the hint first
+    check(not popped, "nav: A takes the hint down")
+
+    -- every direction, because moveGrid snaps to the nearest location ON the
+    -- pressed axis and a map this shape has neighbours in all four
+    local moved = {}
+    for _, dir in ipairs({ "down", "up", "right", "left" }) do
+      local from = nav.sel
+      pressed = dir
+      nav:update(0)
+      if nav.sel ~= from then moved[#moved + 1] = dir end
+      check(not popped, "nav: " .. dir .. " does not close the map")
+    end
+    check(#moved > 0,
+      "nav: the d-pad moves the selection, where vanilla ignored it")
+
+    -- and the strip names where the cursor is, the way the plain map does
+    local Font = require("src.render.Font")
+    local strip
+    local realDraw = Font.draw
+    Font.draw = function(text, x, y)
+      if y == 0 then strip = tostring(text) end
+      return realDraw(text, x, y)
+    end
+    nav:draw()
+    Font.draw = realDraw
+    local sel = nav.locs[nav.sel]
+    eq(strip, nav:bannerText(sel),
+      "nav: and the top strip names the selected place")
+
+    -- START puts the hint back over the map it was navigating
+    local back = 0
+    local realRect2 = love.graphics.rectangle
+    love.graphics.rectangle = function(mode, x, y, w, h)
+      if x == 0 and y == 112 and w == 160 and h == 32 then back = back + 1 end
+      return realRect2(mode, x, y, w, h)
+    end
+    nav:draw()
+    eq(back, 0, "nav: the hint is still down while navigating")
+    pressed = "start"
+    nav:update(0)
+    back = 0
+    nav:draw()
+    love.graphics.rectangle = realRect2
+    eq(back, 1, "nav: START brings it back")
+    pressed = "a"
+    nav.sel = before
+  end
 
   -- ---- nothing the text draws may reach the column the prompt sits in
   --

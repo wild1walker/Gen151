@@ -223,6 +223,13 @@ function M.install(mod, ctx)
     return Font.spansFitting(spans, cols * 8) >= #spans
   end
 
+  local function shorten(text, cols)
+    local spans = Font.split(text)
+    local room = Font.spansFitting(spans, cols * 8)
+    if room >= #spans then return text end
+    return text:sub(1, spans[math.max(room, 1)].to)
+  end
+
   local function drawBox(lines, arrow)
     Font.drawBox(BOX_TX, BOX_TY, BOX_TW, BOX_TH)
     love.graphics.setColor(0, 0, 0, 1)
@@ -250,6 +257,35 @@ function M.install(mod, ctx)
     return name
   end
 
+  -- TownMap's own markerXY (src/ui/TownMap.lua:129).  The Kanto art is inset
+  -- two tiles across and one down inside the screen, so a location's entry
+  -- coordinate from the ROM is not its pixel -- which is why a nest looks two
+  -- tiles right of where town_map_entries.asm says it is, and is not.
+  -- Mirrored rather than reached for, because it is a local in that file: the
+  -- cursor drawn here has to land on the same pixels as the nests and the
+  -- player marker, which the engine draws through that same expression.
+  local function markerXY(loc)
+    return loc.x * 8 + 16, loc.y * 8 + 8
+  end
+
+  -- The selection box the plain town map blinks on the cursor, in AREA mode
+  -- where vanilla never drew one.
+  local function drawCursor(screen)
+    local sel = screen.locs and screen.locs[screen.sel]
+    if not sel or (screen.blink or 0) >= 25 then return end
+    local x, y = markerXY(sel)
+    if screen.bg and screen.bg.cursor then
+      love.graphics.setColor(1, 1, 1, 1)
+      -- the asset is a 16x16 hollow frame centred on its own (8,8), so -4,-4
+      -- encloses the cell -- the engine's comment, and its arithmetic
+      love.graphics.draw(screen.bg.cursor, x - 4, y - 4)
+    else
+      love.graphics.setColor(0, 0, 0, 1)
+      love.graphics.rectangle("line", x + 0.5, y + 0.5, 7, 7)
+      love.graphics.setColor(1, 1, 1, 1)
+    end
+  end
+
   local function drawHeader(text)
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.rectangle("fill", 0, HEADER_Y, 160, 8)
@@ -275,13 +311,43 @@ function M.install(mod, ctx)
 
     local header = headerFor(screen, species)
 
+    -- Two different questions, and conflating them was wrong.
+    --
+    -- Whether the d-pad should MOVE anything is about having somewhere to
+    -- move to, and vanilla's AREA branch ignores the d-pad on every build.
+    --
+    -- Whether to DRAW a cursor and a banner is about which path the engine's
+    -- own draw took: it returns early from the AREA branch only when the real
+    -- background art loaded.  Without it, TownMap falls through to a list that
+    -- already draws its own cursor and its own banner, and a second pair on
+    -- top of those is not navigation, it is a mess.
+    --
+    -- Both are asked per frame rather than captured, because the background
+    -- is loaded by the constructor and a caller may still be assembling the
+    -- screen when the wrap returns.
+    local function canMove(self)
+      return type(self.locs) == "table" and #self.locs > 1
+    end
+    local function drawsOwnChrome(self)
+      return self.mode == "grid" and self.bg ~= nil
+    end
+
     screen.draw = function(self)
       baseDraw(self)
-      if header then drawHeader(header) end
       if showing then
+        if header then drawHeader(header) end
         -- blinking in time with the map's own nests rather than to a clock
         -- of its own: one screen, one pulse
         drawBox(lines, (self.blink or 0) < 25)
+      elseif drawsOwnChrome(self) then
+        -- hint down: the screen becomes the plain town map, cursor and all,
+        -- and the strip says where the cursor is rather than what you were
+        -- looking up.  START puts the hint back.
+        local sel = self.locs[self.sel]
+        if sel then drawHeader(shorten(self:bannerText(sel), HEADER_COLS)) end
+        drawCursor(self)
+      elseif header then
+        drawHeader(header)
       end
     end
 
@@ -308,6 +374,20 @@ function M.install(mod, ctx)
           pressSound()
           return
         end
+      elseif canMove(self)
+          and (input:wasPressed("up") or input:wasPressed("down")
+               or input:wasPressed("left") or input:wasPressed("right")) then
+        -- the plain map's own snap-to-nearest, sound and all
+        if self.mode == "grid" then
+          local dx = (input:wasPressed("right") and 1 or 0)
+            - (input:wasPressed("left") and 1 or 0)
+          local dy = (input:wasPressed("down") and 1 or 0)
+            - (input:wasPressed("up") and 1 or 0)
+          self:moveGrid(dx, dy)
+        else
+          self:moveList(input:wasPressed("down") and 1 or -1)
+        end
+        return baseUpdate(self, dt)
       elseif input:wasPressed("start") then
         -- and START brings it back, because dismissing a hint you have not
         -- finished reading should not mean leaving the screen and coming in

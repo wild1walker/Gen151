@@ -173,6 +173,13 @@ dismissing a hint you were still reading shouldn't mean leaving the screen and
 coming back in; START does nothing else on this screen, so nothing is taken
 away to pay for it. B still leaves immediately.
 
+**And with the hint down it's the plain town map again**: the d-pad moves the
+cursor between locations and the top strip names the one you're on, exactly as
+it does outside the Pokédex. Vanilla's AREA screen answers A and B and nothing
+else, and stops drawing before it reaches the cursor or the banner — so
+dismissing the hint used to leave you looking at a map you could neither read
+nor move around.
+
 It is four rows rather than the dialogue box's six. The dialogue box
 double-spaces its lines because it's typing a story at you and has nothing
 behind it; this is a two-line label over a map, and the sixteen pixels that
