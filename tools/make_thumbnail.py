@@ -1,29 +1,40 @@
 """Draw thumbnail.png -- original artwork, no ROM-derived bytes.
 
-The mod index shows a thumbnail next to each entry.  Rather than ship pixels
-lifted from anywhere, this draws one: the four-shade DMG green ramp, a tall
-grass silhouette, and "151" in a glyph set defined here in full.  A pure-Python
-PNG writer keeps it dependency-free, so `tools/regen.sh` can rebuild it on any
-checkout.
+The mod index shows a thumbnail next to each entry.  Nothing here is lifted:
+"151" in a glyph set defined in this file, over a field of tall grass built
+from one repeated tuft, in a four-shade pink ramp.  A pure-Python PNG writer
+keeps it dependency-free so tools/regen.sh can rebuild it on any checkout.
 
-    python3 tools/make_thumbnail.py [--out thumbnail.png] [--scale 4]
+Four shades and hard pixel edges, because that is the grammar the rest of the
+screen is drawn in -- but pink rather than the DMG's green, so the tile reads
+as this mod's own rather than as a screenshot of the game.
+
+    python3 tools/make_thumbnail.py [--out thumbnail.png] [--size 128]
 """
 
 import argparse
 import struct
 import zlib
 
-# The DMG's four shades, darkest last -- the ramp every Game Boy screen is
-# drawn from.
+# Four shades, lightest first: the Game Boy's ramp structure in pink.  Spaced
+# so any two adjacent shades stay legible against each other at thumbnail
+# size, which is the only thing a four-colour ramp has to get right.
 PALETTE = [
-    (0x9B, 0xBC, 0x0F),  # 0 lightest
-    (0x8B, 0xAC, 0x0F),  # 1
-    (0x30, 0x62, 0x30),  # 2
-    (0x0F, 0x38, 0x0F),  # 3 darkest
+    (0xFF, 0xD9, 0xEC),  # 0 lightest -- the sky
+    (0xF2, 0xA0, 0xC4),  # 1
+    (0xB0, 0x4E, 0x84),  # 2
+    (0x45, 0x18, 0x36),  # 3 darkest -- the numerals and the near grass
 ]
 
-# A 5x7 glyph per digit, as index rows.  Defined here in full so the numerals
-# owe nothing to any font sheet.
+SKY = 0
+GRASS_FAR = 1
+GRASS_MID = 2
+GRASS_NEAR = 3
+INK = 3
+SHADOW = 2
+
+# A 5x7 glyph per digit, as rows.  Defined here in full so the numerals owe
+# nothing to any font sheet.
 DIGITS = {
     "1": [
         "..#..",
@@ -45,7 +56,7 @@ DIGITS = {
     ],
 }
 
-# One tuft of tall grass, 8x5, the shape the overworld uses for a grass cell.
+# One tuft of tall grass, 8x5: the shape an overworld grass cell wears.
 GRASS = [
     "..#..#..",
     ".######.",
@@ -54,67 +65,93 @@ GRASS = [
     "..####..",
 ]
 
+# The field, back to front: (row, x offset, shade).  Staggering the offsets
+# keeps the repeated tuft from reading as a checkerboard, and darkening as it
+# comes forward is what gives sixty-four pixels any depth at all.
+FIELD = (
+    (36, -2, GRASS_FAR),
+    (40, 3, GRASS_FAR),
+    (44, -5, GRASS_MID),
+    (48, 1, GRASS_MID),
+    (52, -3, GRASS_NEAR),
+    (56, 4, GRASS_NEAR),
+)
 
-def blank(w, h, shade=0):
+GRID = 64
+TEXT = "151"
+TEXT_TOP = 15
+TEXT_SCALE = 3
+GLYPH_GAP = 1
+
+
+def blank(w, h, shade):
     return [[shade] * w for _ in range(h)]
 
 
-def stamp(canvas, rows, x, y, shade, edge=None):
-    h = len(canvas)
-    w = len(canvas[0])
+def stamp(canvas, rows, x, y, shade, shadow=None):
+    height, width = len(canvas), len(canvas[0])
     for dy, line in enumerate(rows):
         for dx, ch in enumerate(line):
             if ch != "#":
                 continue
+            if shadow is not None:
+                for ox, oy in ((1, 0), (0, 1), (1, 1)):
+                    px, py = x + dx + ox, y + dy + oy
+                    if 0 <= py < height and 0 <= px < width \
+                            and canvas[py][px] not in (shade, shadow):
+                        canvas[py][px] = shadow
             px, py = x + dx, y + dy
-            if 0 <= px < w and 0 <= py < h:
+            if 0 <= py < height and 0 <= px < width:
                 canvas[py][px] = shade
-            if edge is None:
-                continue
-            for ox, oy in ((1, 0), (0, 1), (1, 1)):
-                ex, ey = px + ox, py + oy
-                if 0 <= ex < w and 0 <= ey < h and canvas[ey][ex] == 0:
-                    canvas[ey][ex] = edge
 
 
-def draw(size=128):
-    # Work at 32x32 and scale up, so every edge lands on a whole pixel the way
-    # a tile-based screen's would.
-    grid = 32
-    canvas = blank(grid, grid, 0)
+def scale_glyph(rows, factor):
+    out = []
+    for line in rows:
+        wide = "".join(ch * factor for ch in line)
+        for _ in range(factor):
+            out.append(wide)
+    return out
 
-    # frame
-    for i in range(grid):
-        canvas[0][i] = 3
-        canvas[grid - 1][i] = 3
-        canvas[i][0] = 3
-        canvas[i][grid - 1] = 3
-        canvas[1][i] = canvas[1][i] if i in (0, grid - 1) else 2
-        canvas[grid - 2][i] = canvas[grid - 2][i] if i in (0, grid - 1) else 2
-    for i in range(1, grid - 1):
-        canvas[i][1] = 2
-        canvas[i][grid - 2] = 2
 
-    # a band of tall grass across the lower third: what the whole mod is about
-    for x in range(3, grid - 3, 8):
-        stamp(canvas, GRASS, x, 22, 2)
-    for x in range(7, grid - 3, 8):
-        stamp(canvas, GRASS, x, 25, 3)
+def draw():
+    canvas = blank(GRID, GRID, SKY)
 
-    # "151", centred in the upper half
-    text = "151"
-    glyph_w = 5
-    gap = 2
-    total = len(text) * glyph_w + (len(text) - 1) * gap
-    x = (grid - total) // 2
-    for ch in text:
-        stamp(canvas, DIGITS[ch], x, 8, 3, edge=2)
-        x += glyph_w + gap
+    for row, offset, shade in FIELD:
+        for x in range(offset, GRID, len(GRASS[0])):
+            stamp(canvas, GRASS, x, row, shade)
 
-    scale = size // grid
-    out = blank(grid * scale, grid * scale, 0)
-    for y in range(grid):
-        for x in range(grid):
+    # "151", tripled, above the field.  The drop shadow is one pixel down and
+    # right, which is how the game shades its own display numerals.
+    glyph_w = len(DIGITS[TEXT[0]][0])
+    step = (glyph_w + GLYPH_GAP) * TEXT_SCALE
+    total = (len(TEXT) * glyph_w
+             + (len(TEXT) - 1) * GLYPH_GAP) * TEXT_SCALE
+    x = (GRID - total) // 2
+    for ch in TEXT:
+        stamp(canvas, scale_glyph(DIGITS[ch], TEXT_SCALE), x, TEXT_TOP, INK,
+              shadow=SHADOW)
+        x += step
+
+    # frame, drawn last so nothing overlaps it
+    for i in range(GRID):
+        canvas[0][i] = INK
+        canvas[GRID - 1][i] = INK
+        canvas[i][0] = INK
+        canvas[i][GRID - 1] = INK
+    for i in range(1, GRID - 1):
+        canvas[1][i] = SHADOW
+        canvas[GRID - 2][i] = SHADOW
+        canvas[i][1] = SHADOW
+        canvas[i][GRID - 2] = SHADOW
+    return canvas
+
+
+def upscale(canvas, size):
+    scale = max(1, size // GRID)
+    out = blank(GRID * scale, GRID * scale, SKY)
+    for y in range(GRID):
+        for x in range(GRID):
             shade = canvas[y][x]
             for dy in range(scale):
                 for dx in range(scale):
@@ -123,8 +160,7 @@ def draw(size=128):
 
 
 def write_png(path, pixels):
-    height = len(pixels)
-    width = len(pixels[0])
+    height, width = len(pixels), len(pixels[0])
     raw = bytearray()
     for row in pixels:
         raw.append(0)  # filter type 0
@@ -150,8 +186,14 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default="thumbnail.png")
     ap.add_argument("--size", type=int, default=128)
+    ap.add_argument("--ascii", action="store_true",
+                    help="print the grid as text, for tuning the layout")
     args = ap.parse_args()
-    write_png(args.out, draw(args.size))
+    canvas = draw()
+    if args.ascii:
+        for row in canvas:
+            print("".join(" .oO"[shade] for shade in row))
+    write_png(args.out, upscale(canvas, args.size))
 
 
 if __name__ == "__main__":
