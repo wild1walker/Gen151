@@ -278,6 +278,7 @@ version exclusives but not a wild Mew should not have to fork it.
 | CABLE SOUND | on | the snap; charming once, possibly grating on the fourth use |
 | MEW EVENT | on | the Mansion journals and what they unlock |
 | TEST BENCH | off | the built-in bench, below — not part of normal play |
+| LEGENDARIES | stay til caught | one shot each, but a fled or fainted one comes back |
 | RARITY % | 100 | scales every tier at once; 0 disables every substitution; above 100 it also lifts the per-placement ceiling |
 | AREA HINTS | on | AREA on undiscovered entries, and the line under the map |
 
@@ -289,11 +290,23 @@ There is no legendary option, because there is nothing to toggle — see below.
 
 ### Legendaries
 
-Articuno, Zapdos, Moltres and Mewtwo keep their vanilla statics, untouched. No
-respawn, no wild slot, no option to add one. They are the sole exception to the
-renewability rule, and this is deliberate rather than an oversight — please do
-not file it as a bug. The practical consequence is that soft-resetting before
-the catch stays the way to handle a bad outcome, exactly as in vanilla.
+Articuno, Zapdos, Moltres and Mewtwo keep their vanilla statics: same object,
+same level, same one-at-a-time. No wild slot, no second copy — you get exactly
+one of each, so they remain the sole exception to the renewability rule.
+
+What they no longer are is **losable**. On the cartridge the beat flag is set
+on *any* non-blackout end — win, catch or flee alike (`Commands.static_battle`,
+quoting `home/trainers.asm`) — so knocking one out by accident or panicking and
+running deletes that species from the file. That isn't a rare encounter, it's a
+saving throw, and the countermeasure players actually use is to save in front of
+it and reset on a bad outcome: a workaround for a mechanic rather than a
+mechanic.
+
+So: beat one or flee it and **it's standing there again when you come back**.
+Catch it and it's gone for good, exactly as in vanilla. Set **LEGENDARIES** to
+ONE SHOT for the cartridge's behaviour, saving throw and all.
+
+It also repairs a save that already lost one before this mod was installed.
 
 ### Snorlax
 

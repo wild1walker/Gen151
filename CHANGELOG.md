@@ -3,6 +3,32 @@
 All notable changes to Gen151 are recorded here, in
 [keep a changelog](https://keepachangelog.com/en/1.1.0/) order.
 
+## [1.4.0] - 2026-08-25
+
+### Added
+
+- **The four legendaries stay until they are caught.** Vanilla sets
+  `EVENT_BEAT_<SPECIES>` on ANY non-blackout end -- win, catch or flee alike
+  (`Commands.static_battle`, quoting `home/trainers.asm`) -- and hides the
+  object, so knocking one out by accident or panicking and running deletes that
+  species from the file forever. That is not a rare encounter, it is a saving
+  throw, and the countermeasure players use is to save in front of it and reset
+  on a bad outcome.
+
+  Nothing about the encounter changes: same object, same level, still exactly
+  one of each, so they are still the sole exception to renewability. What goes
+  away is losing one permanently. Catch it and it is gone as always; beat it or
+  flee it and it is back when you re-enter its map. It also repairs a save that
+  lost one before this mod was installed. **LEGENDARIES = ONE SHOT** restores
+  the cartridge's behaviour.
+
+  No hardcoded map list: the flag is `EVENT_BEAT_<SPECIES>` and the object is
+  `<MAP>_<SPECIES>`, both derived and both confirmed against the engine's own
+  `toggle_objects` table. The restore runs on map entry rather than at
+  `battle.ended`, because `static_battle` sets the flag and hides the object
+  *after* the battle ends -- reacting any earlier lands between the two and
+  destroys the only signal that anything needs restoring.
+
 ## [1.3.1] - 2026-08-25
 
 ### Fixed

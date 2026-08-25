@@ -751,6 +751,89 @@ do
 end
 
 
+-- --------------------------------------------------- the four legendaries
+--
+-- Vanilla sets EVENT_BEAT_<SPECIES> on ANY non-blackout end -- win, catch or
+-- flee alike (src/script/Commands.lua static_battle, quoting
+-- home/trainers.asm) -- and hides the object.  So knocking one out by
+-- accident, or panicking and running, deletes that species from the file.
+-- This puts it back unless it was actually caught.
+
+do
+  local run, data = load()
+  local game = stubGame(data)
+  run.loader.game = game
+
+  local MAP = "SEAFOAM_ISLANDS_B4F"
+  local OBJ = "SEAFOAMISLANDSB4F_ARTICUNO"
+
+  local function beaten()
+    game.save.flags.EVENT_BEAT_ARTICUNO = true
+    game.save.objectToggles = { [MAP] = { [OBJ] = false } }
+  end
+
+  -- ---- fled or knocked out: it comes back
+  beaten()
+  run.loader.events:emit("map.entered", { mapId = MAP })
+  eq(game.save.flags.EVENT_BEAT_ARTICUNO, nil,
+    "legendary: the beat flag is cleared, so the script will battle again")
+  eq(game.save.objectToggles[MAP][OBJ], true,
+    "legendary: and its object is back on the map")
+
+  -- ---- caught: vanilla behaviour exactly, because there is nothing to fix
+  beaten()
+  game.save.pokedex.owned.ARTICUNO = true
+  run.loader.events:emit("map.entered", { mapId = MAP })
+  eq(game.save.flags.EVENT_BEAT_ARTICUNO, true,
+    "legendary: a CAUGHT one stays caught")
+  eq(game.save.objectToggles[MAP][OBJ], false,
+    "legendary: and its object stays gone")
+  game.save.pokedex.owned.ARTICUNO = nil
+
+  -- ---- idempotent: the sweep runs on every map entry forever
+  beaten()
+  for _ = 1, 3 do
+    run.loader.events:emit("map.entered", { mapId = MAP })
+  end
+  eq(game.save.objectToggles[MAP][OBJ], true,
+    "legendary: repeated entries leave it showing, not flickering")
+
+  -- ---- another map's entry does not touch it
+  beaten()
+  run.loader.events:emit("map.entered", { mapId = "ROUTE_1" })
+  eq(game.save.flags.EVENT_BEAT_ARTICUNO, true,
+    "legendary: entering somewhere else changes nothing")
+
+  -- ---- and it never touches an object that is not this species'
+  game.save.objectToggles[MAP].SEAFOAMISLANDSB4F_BOULDER = false
+  run.loader.events:emit("map.entered", { mapId = MAP })
+  eq(game.save.objectToggles[MAP].SEAFOAMISLANDSB4F_BOULDER, false,
+    "legendary: a hidden boulder on the same map is left alone")
+
+  run.release()
+end
+
+-- ---- and with the option set to ONE SHOT, nothing is installed at all
+
+do
+  local data = datasetFor("red")
+  local paths = { GEN151 }
+  local run = T.sdk.loadMods(paths, { data = data, fs = aliasFs(paths, {
+    ["options.lua"] = 'return { modOptions = { gen151 = '
+      .. '{ legendaries = "once" } } }',
+  }) })
+  local game = stubGame(data)
+  run.loader.game = game
+  game.save.flags.EVENT_BEAT_ARTICUNO = true
+  game.save.objectToggles = {
+    SEAFOAM_ISLANDS_B4F = { SEAFOAMISLANDSB4F_ARTICUNO = false },
+  }
+  run.loader.events:emit("map.entered", { mapId = "SEAFOAM_ISLANDS_B4F" })
+  eq(game.save.flags.EVENT_BEAT_ARTICUNO, true,
+    "legendary: ONE SHOT leaves the cartridge's behaviour exactly alone")
+  run.release()
+end
+
 -- --------------------------------------------------------- the debug bench
 --
 -- The bench exists to reach what a headless suite cannot, so most of it can

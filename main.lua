@@ -14,6 +14,7 @@
 --   hints.lua       generated hint vocabulary
 --   linkcable.lua   the consumable trade-evolution item
 --   dexarea.lua     AREA on an undiscovered entry, and the hint under the map
+--   legendaries.lua the four statics, retryable until caught
 --   mewgate.lua     the Mansion journals, and the spawn they unlock
 --   bench.lua       the test bench, behind an option that defaults off
 --
@@ -123,6 +124,16 @@ return function(mod)
     -- download and import separately is a bench that is not there when you
     -- want it.
     { key = "bench", type = "toggle", label = "TEST BENCH", default = false,
+      visible_if = { key = "enabled", equals = true } },
+
+    -- The one place "every species has a route" did not hold: a legendary's
+    -- route can be permanently destroyed by pressing the wrong button, and
+    -- the countermeasure players use -- save in front of it, reset on a bad
+    -- outcome -- is a workaround rather than a mechanic.  ONCE is the
+    -- cartridge's behaviour for anyone who wants the saving throw back.
+    { key = "legendaries", type = "choice", label = "LEGENDARIES",
+      default = "until_caught",
+      choices = { { "STAY TIL CAUGHT", "until_caught" }, { "ONE SHOT", "once" } },
       visible_if = { key = "enabled", equals = true } },
 
     -- On, the POKeDEX opens AREA for a Pokemon you have never met and puts
@@ -328,6 +339,11 @@ return function(mod)
         unlocked = mewGate and mewGate.unlocked or nil,
       })
     end
+  end
+
+  if opt("legendaries") == "until_caught" then
+    local legendaries = submodule(mod, "legendaries.lua")
+    if legendaries then legendaries.install(mod, {}) end
   end
 
   -- Last, so the bench's high-priority wrap on encounter.roll goes on above a

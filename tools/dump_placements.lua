@@ -138,11 +138,13 @@ end
 io.write([[
 ## Not placed, on purpose
 
-**Articuno, Zapdos, Moltres and Mewtwo** keep their vanilla statics, untouched.
-No respawn, no wild slot, no option to add one.  They are the sole exception to
-the rule that everything Gen151 touches must be renewable, and the practical
-consequence is that the soft-reset-before-the-catch discipline stays the way to
-handle a bad outcome, exactly as in vanilla.
+**Articuno, Zapdos, Moltres and Mewtwo** keep their vanilla statics: same
+object, same level, no wild slot, exactly one of each.  They are the sole
+exception to the rule that everything Gen151 touches must be renewable.  They
+are no longer losable, though -- beat one or flee it and it is back when you
+re-enter its map, because vanilla sets the beat flag on any non-blackout end
+and that turned four species into a saving throw.  LEGENDARIES = ONE SHOT
+restores the cartridge's behaviour.
 
 **Alakazam, Machamp, Golem and Gengar** are not spawns.  Their pre-evolutions
 are already in the vanilla grass on every version; what was missing was the
