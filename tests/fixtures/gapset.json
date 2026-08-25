@@ -349,16 +349,16 @@
     ],
     "ARTICUNO": [
      {
-      "file": "scripts/SeafoamIslandsB4F.asm",
-      "kind": "script",
-      "line": 162,
-      "text": "ld a, ARTICUNO"
-     },
-     {
       "file": "data/maps/objects/SeafoamIslandsB4F.asm",
       "kind": "map_object",
       "line": 22,
       "text": "object_event  6,  1, SPRITE_BIRD, STAY, DOWN, TEXT_SEAFOAMISLANDSB4F_ARTICUNO, ARTICUNO, 50"
+     },
+     {
+      "file": "scripts/SeafoamIslandsB4F.asm",
+      "kind": "script",
+      "line": 162,
+      "text": "ld a, ARTICUNO"
      }
     ],
     "BULBASAUR": [
@@ -545,6 +545,12 @@
       "text": "wants SPEAROW, gives FARFETCHD"
      },
      {
+      "file": "data/events/trades.asm",
+      "kind": "npc_trade",
+      "line": 22,
+      "text": "npctrade SPEAROW,    FARFETCHD, TRADE_DIALOGSET_HAPPY,     \"DUX\""
+     },
+     {
       "file": "data/trainers/parties.asm",
       "kind": "other",
       "line": 453,
@@ -561,12 +567,6 @@
       "kind": "other",
       "line": 466,
       "text": "db 42, FARFETCHD, FEAROW, 0"
-     },
-     {
-      "file": "data/events/trades.asm",
-      "kind": "npc_trade",
-      "line": 22,
-      "text": "npctrade SPEAROW,    FARFETCHD, TRADE_DIALOGSET_HAPPY,     \"DUX\""
      }
     ],
     "GENGAR": [
@@ -707,48 +707,48 @@
     ],
     "HITMONCHAN": [
      {
+      "file": "data/trainers/parties.asm",
+      "kind": "other",
+      "line": 475,
+      "text": "db 37, HITMONLEE, HITMONCHAN, 0"
+     },
+     {
+      "file": "data/trainers/parties.asm",
+      "kind": "other",
+      "line": 641,
+      "text": "db $FF, 53, ONIX, 55, HITMONCHAN, 55, HITMONLEE, 56, ONIX, 58, MACHAMP, 0"
+     },
+     {
       "file": "scripts/FightingDojo.asm",
       "kind": "script",
       "line": 268,
       "text": "ld a, HITMONCHAN"
-     },
-     {
-      "file": "data/trainers/parties.asm",
-      "kind": "other",
-      "line": 475,
-      "text": "db 37, HITMONLEE, HITMONCHAN, 0"
-     },
-     {
-      "file": "data/trainers/parties.asm",
-      "kind": "other",
-      "line": 641,
-      "text": "db $FF, 53, ONIX, 55, HITMONCHAN, 55, HITMONLEE, 56, ONIX, 58, MACHAMP, 0"
      }
     ],
     "HITMONLEE": [
-     {
-      "file": "scripts/FightingDojo.asm",
-      "kind": "script",
-      "line": 234,
-      "text": "ld a, HITMONLEE"
-     },
-     {
-      "file": "data/trainers/parties.asm",
-      "kind": "other",
-      "line": 475,
-      "text": "db 37, HITMONLEE, HITMONCHAN, 0"
-     },
-     {
-      "file": "data/trainers/parties.asm",
-      "kind": "other",
-      "line": 641,
-      "text": "db $FF, 53, ONIX, 55, HITMONCHAN, 55, HITMONLEE, 56, ONIX, 58, MACHAMP, 0"
-     },
      {
       "file": "data/credits/credits_mons.asm",
       "kind": "other",
       "line": 9,
       "text": "db HITMONLEE"
+     },
+     {
+      "file": "data/trainers/parties.asm",
+      "kind": "other",
+      "line": 475,
+      "text": "db 37, HITMONLEE, HITMONCHAN, 0"
+     },
+     {
+      "file": "data/trainers/parties.asm",
+      "kind": "other",
+      "line": 641,
+      "text": "db $FF, 53, ONIX, 55, HITMONCHAN, 55, HITMONLEE, 56, ONIX, 58, MACHAMP, 0"
+     },
+     {
+      "file": "scripts/FightingDojo.asm",
+      "kind": "script",
+      "line": 234,
+      "text": "ld a, HITMONLEE"
      }
     ],
     "JYNX": [
@@ -759,16 +759,16 @@
       "text": "wants POLIWHIRL, gives JYNX"
      },
      {
-      "file": "data/trainers/parties.asm",
-      "kind": "other",
-      "line": 699,
-      "text": "db $FF, 54, DEWGONG, 53, CLOYSTER, 54, SLOWBRO, 56, JYNX, 56, LAPRAS, 0"
-     },
-     {
       "file": "data/events/trades.asm",
       "kind": "npc_trade",
       "line": 24,
       "text": "npctrade POLIWHIRL,  JYNX,      TRADE_DIALOGSET_EVOLUTION, \"LOLA\""
+     },
+     {
+      "file": "data/trainers/parties.asm",
+      "kind": "other",
+      "line": 699,
+      "text": "db $FF, 54, DEWGONG, 53, CLOYSTER, 54, SLOWBRO, 56, JYNX, 56, LAPRAS, 0"
      }
     ],
     "KABUTO": [
@@ -781,18 +781,6 @@
     ],
     "LAPRAS": [
      {
-      "file": "scripts/FuchsiaCity.asm",
-      "kind": "script",
-      "line": 123,
-      "text": "ld a, LAPRAS"
-     },
-     {
-      "file": "scripts/SilphCo7F.asm",
-      "kind": "script",
-      "line": 310,
-      "text": "lb bc, LAPRAS, 15"
-     },
-     {
       "file": "data/trainers/parties.asm",
       "kind": "other",
       "line": 213,
@@ -803,6 +791,18 @@
       "kind": "other",
       "line": 699,
       "text": "db $FF, 54, DEWGONG, 53, CLOYSTER, 54, SLOWBRO, 56, JYNX, 56, LAPRAS, 0"
+     },
+     {
+      "file": "scripts/FuchsiaCity.asm",
+      "kind": "script",
+      "line": 123,
+      "text": "ld a, LAPRAS"
+     },
+     {
+      "file": "scripts/SilphCo7F.asm",
+      "kind": "script",
+      "line": 310,
+      "text": "lb bc, LAPRAS, 15"
      }
     ],
     "LICKITUNG": [
@@ -811,6 +811,12 @@
       "kind": "npc_trade",
       "line": 0,
       "text": "wants SLOWBRO, gives LICKITUNG"
+     },
+     {
+      "file": "data/events/trades.asm",
+      "kind": "npc_trade",
+      "line": 23,
+      "text": "npctrade SLOWBRO,    LICKITUNG, TRADE_DIALOGSET_CASUAL,    \"MARC\""
      },
      {
       "file": "data/trainers/parties.asm",
@@ -823,12 +829,6 @@
       "kind": "other",
       "line": 213,
       "text": "db 40, CHARMELEON, LAPRAS, LICKITUNG, 0"
-     },
-     {
-      "file": "data/events/trades.asm",
-      "kind": "npc_trade",
-      "line": 23,
-      "text": "npctrade SLOWBRO,    LICKITUNG, TRADE_DIALOGSET_CASUAL,    \"MARC\""
      }
     ],
     "MACHAMP": [
@@ -897,30 +897,30 @@
     ],
     "MEWTWO": [
      {
-      "file": "scripts/CeruleanCaveB1F.asm",
-      "kind": "script",
-      "line": 37,
-      "text": "ld a, MEWTWO"
-     },
-     {
       "file": "data/maps/objects/CeruleanCaveB1F.asm",
       "kind": "map_object",
       "line": 15,
       "text": "object_event 27, 13, SPRITE_MONSTER, STAY, DOWN, TEXT_CERULEANCAVEB1F_MEWTWO, MEWTWO, 70"
+     },
+     {
+      "file": "scripts/CeruleanCaveB1F.asm",
+      "kind": "script",
+      "line": 37,
+      "text": "ld a, MEWTWO"
      }
     ],
     "MOLTRES": [
-     {
-      "file": "scripts/VictoryRoad2F.asm",
-      "kind": "script",
-      "line": 142,
-      "text": "ld a, MOLTRES"
-     },
      {
       "file": "data/maps/objects/VictoryRoad2F.asm",
       "kind": "map_object",
       "line": 36,
       "text": "object_event 11,  5, SPRITE_BIRD, STAY, UP, TEXT_VICTORYROAD2F_MOLTRES, MOLTRES, 50"
+     },
+     {
+      "file": "scripts/VictoryRoad2F.asm",
+      "kind": "script",
+      "line": 142,
+      "text": "ld a, MOLTRES"
      }
     ],
     "MR_MIME": [
@@ -929,6 +929,12 @@
       "kind": "npc_trade",
       "line": 0,
       "text": "wants ABRA, gives MR_MIME"
+     },
+     {
+      "file": "data/events/trades.asm",
+      "kind": "npc_trade",
+      "line": 19,
+      "text": "npctrade ABRA,       MR_MIME,   TRADE_DIALOGSET_CASUAL,    \"MARCEL\""
      },
      {
       "file": "data/trainers/parties.asm",
@@ -959,12 +965,6 @@
       "kind": "other",
       "line": 662,
       "text": "db $FF, 38, KADABRA, 37, MR_MIME, 38, VENOMOTH, 43, ALAKAZAM, 0"
-     },
-     {
-      "file": "data/events/trades.asm",
-      "kind": "npc_trade",
-      "line": 19,
-      "text": "npctrade ABRA,       MR_MIME,   TRADE_DIALOGSET_CASUAL,    \"MARCEL\""
      }
     ],
     "ODDISH": [
@@ -1063,12 +1063,6 @@
     ],
     "PORYGON": [
      {
-      "file": "scripts/SilphCo11F.asm",
-      "kind": "script",
-      "line": 389,
-      "text": "ld a, PORYGON"
-     },
-     {
       "file": "data/events/prize_mon_levels.asm",
       "kind": "event_data",
       "line": 18,
@@ -1079,6 +1073,12 @@
       "kind": "event_data",
       "line": 41,
       "text": "db PORYGON"
+     },
+     {
+      "file": "scripts/SilphCo11F.asm",
+      "kind": "script",
+      "line": 389,
+      "text": "ld a, PORYGON"
      }
     ],
     "SNORLAX": [
@@ -1129,16 +1129,16 @@
     ],
     "ZAPDOS": [
      {
-      "file": "scripts/PowerPlant.asm",
-      "kind": "script",
-      "line": 113,
-      "text": "ld a, ZAPDOS"
-     },
-     {
       "file": "data/maps/objects/PowerPlant.asm",
       "kind": "map_object",
       "line": 36,
       "text": "object_event  4,  9, SPRITE_BIRD, STAY, UP, TEXT_POWERPLANT_ZAPDOS, ZAPDOS, 50"
+     },
+     {
+      "file": "scripts/PowerPlant.asm",
+      "kind": "script",
+      "line": 113,
+      "text": "ld a, ZAPDOS"
      }
     ]
    },
@@ -4436,16 +4436,16 @@
     ],
     "ARTICUNO": [
      {
-      "file": "scripts/SeafoamIslandsB4F.asm",
-      "kind": "script",
-      "line": 162,
-      "text": "ld a, ARTICUNO"
-     },
-     {
       "file": "data/maps/objects/SeafoamIslandsB4F.asm",
       "kind": "map_object",
       "line": 22,
       "text": "object_event  6,  1, SPRITE_BIRD, STAY, DOWN, TEXT_SEAFOAMISLANDSB4F_ARTICUNO, ARTICUNO, 50"
+     },
+     {
+      "file": "scripts/SeafoamIslandsB4F.asm",
+      "kind": "script",
+      "line": 162,
+      "text": "ld a, ARTICUNO"
      }
     ],
     "BELLSPROUT": [
@@ -4644,6 +4644,12 @@
       "text": "wants SPEAROW, gives FARFETCHD"
      },
      {
+      "file": "data/events/trades.asm",
+      "kind": "npc_trade",
+      "line": 22,
+      "text": "npctrade SPEAROW,    FARFETCHD, TRADE_DIALOGSET_HAPPY,     \"DUX\""
+     },
+     {
       "file": "data/trainers/parties.asm",
       "kind": "other",
       "line": 453,
@@ -4660,12 +4666,6 @@
       "kind": "other",
       "line": 466,
       "text": "db 42, FARFETCHD, FEAROW, 0"
-     },
-     {
-      "file": "data/events/trades.asm",
-      "kind": "npc_trade",
-      "line": 22,
-      "text": "npctrade SPEAROW,    FARFETCHD, TRADE_DIALOGSET_HAPPY,     \"DUX\""
      }
     ],
     "GENGAR": [
@@ -4684,48 +4684,48 @@
     ],
     "HITMONCHAN": [
      {
+      "file": "data/trainers/parties.asm",
+      "kind": "other",
+      "line": 475,
+      "text": "db 37, HITMONLEE, HITMONCHAN, 0"
+     },
+     {
+      "file": "data/trainers/parties.asm",
+      "kind": "other",
+      "line": 641,
+      "text": "db $FF, 53, ONIX, 55, HITMONCHAN, 55, HITMONLEE, 56, ONIX, 58, MACHAMP, 0"
+     },
+     {
       "file": "scripts/FightingDojo.asm",
       "kind": "script",
       "line": 268,
       "text": "ld a, HITMONCHAN"
-     },
-     {
-      "file": "data/trainers/parties.asm",
-      "kind": "other",
-      "line": 475,
-      "text": "db 37, HITMONLEE, HITMONCHAN, 0"
-     },
-     {
-      "file": "data/trainers/parties.asm",
-      "kind": "other",
-      "line": 641,
-      "text": "db $FF, 53, ONIX, 55, HITMONCHAN, 55, HITMONLEE, 56, ONIX, 58, MACHAMP, 0"
      }
     ],
     "HITMONLEE": [
-     {
-      "file": "scripts/FightingDojo.asm",
-      "kind": "script",
-      "line": 234,
-      "text": "ld a, HITMONLEE"
-     },
-     {
-      "file": "data/trainers/parties.asm",
-      "kind": "other",
-      "line": 475,
-      "text": "db 37, HITMONLEE, HITMONCHAN, 0"
-     },
-     {
-      "file": "data/trainers/parties.asm",
-      "kind": "other",
-      "line": 641,
-      "text": "db $FF, 53, ONIX, 55, HITMONCHAN, 55, HITMONLEE, 56, ONIX, 58, MACHAMP, 0"
-     },
      {
       "file": "data/credits/credits_mons.asm",
       "kind": "other",
       "line": 9,
       "text": "db HITMONLEE"
+     },
+     {
+      "file": "data/trainers/parties.asm",
+      "kind": "other",
+      "line": 475,
+      "text": "db 37, HITMONLEE, HITMONCHAN, 0"
+     },
+     {
+      "file": "data/trainers/parties.asm",
+      "kind": "other",
+      "line": 641,
+      "text": "db $FF, 53, ONIX, 55, HITMONCHAN, 55, HITMONLEE, 56, ONIX, 58, MACHAMP, 0"
+     },
+     {
+      "file": "scripts/FightingDojo.asm",
+      "kind": "script",
+      "line": 234,
+      "text": "ld a, HITMONLEE"
      }
     ],
     "JYNX": [
@@ -4736,16 +4736,16 @@
       "text": "wants POLIWHIRL, gives JYNX"
      },
      {
-      "file": "data/trainers/parties.asm",
-      "kind": "other",
-      "line": 699,
-      "text": "db $FF, 54, DEWGONG, 53, CLOYSTER, 54, SLOWBRO, 56, JYNX, 56, LAPRAS, 0"
-     },
-     {
       "file": "data/events/trades.asm",
       "kind": "npc_trade",
       "line": 24,
       "text": "npctrade POLIWHIRL,  JYNX,      TRADE_DIALOGSET_EVOLUTION, \"LOLA\""
+     },
+     {
+      "file": "data/trainers/parties.asm",
+      "kind": "other",
+      "line": 699,
+      "text": "db $FF, 54, DEWGONG, 53, CLOYSTER, 54, SLOWBRO, 56, JYNX, 56, LAPRAS, 0"
      }
     ],
     "KABUTO": [
@@ -4758,18 +4758,6 @@
     ],
     "LAPRAS": [
      {
-      "file": "scripts/FuchsiaCity.asm",
-      "kind": "script",
-      "line": 123,
-      "text": "ld a, LAPRAS"
-     },
-     {
-      "file": "scripts/SilphCo7F.asm",
-      "kind": "script",
-      "line": 310,
-      "text": "lb bc, LAPRAS, 15"
-     },
-     {
       "file": "data/trainers/parties.asm",
       "kind": "other",
       "line": 213,
@@ -4780,6 +4768,18 @@
       "kind": "other",
       "line": 699,
       "text": "db $FF, 54, DEWGONG, 53, CLOYSTER, 54, SLOWBRO, 56, JYNX, 56, LAPRAS, 0"
+     },
+     {
+      "file": "scripts/FuchsiaCity.asm",
+      "kind": "script",
+      "line": 123,
+      "text": "ld a, LAPRAS"
+     },
+     {
+      "file": "scripts/SilphCo7F.asm",
+      "kind": "script",
+      "line": 310,
+      "text": "lb bc, LAPRAS, 15"
      }
     ],
     "LICKITUNG": [
@@ -4788,6 +4788,12 @@
       "kind": "npc_trade",
       "line": 0,
       "text": "wants SLOWBRO, gives LICKITUNG"
+     },
+     {
+      "file": "data/events/trades.asm",
+      "kind": "npc_trade",
+      "line": 23,
+      "text": "npctrade SLOWBRO,    LICKITUNG, TRADE_DIALOGSET_CASUAL,    \"MARC\""
      },
      {
       "file": "data/trainers/parties.asm",
@@ -4800,12 +4806,6 @@
       "kind": "other",
       "line": 213,
       "text": "db 40, CHARMELEON, LAPRAS, LICKITUNG, 0"
-     },
-     {
-      "file": "data/events/trades.asm",
-      "kind": "npc_trade",
-      "line": 23,
-      "text": "npctrade SLOWBRO,    LICKITUNG, TRADE_DIALOGSET_CASUAL,    \"MARC\""
      }
     ],
     "MACHAMP": [
@@ -4817,12 +4817,6 @@
      }
     ],
     "MEOWTH": [
-     {
-      "file": "scripts/CeladonMansion1F.asm",
-      "kind": "script",
-      "line": 19,
-      "text": "ld a, MEOWTH"
-     },
      {
       "file": "data/trainers/parties.asm",
       "kind": "other",
@@ -4888,34 +4882,40 @@
       "kind": "other",
       "line": 389,
       "text": "db 29, CLEFAIRY, MEOWTH, 0"
+     },
+     {
+      "file": "scripts/CeladonMansion1F.asm",
+      "kind": "script",
+      "line": 19,
+      "text": "ld a, MEOWTH"
      }
     ],
     "MEWTWO": [
-     {
-      "file": "scripts/CeruleanCaveB1F.asm",
-      "kind": "script",
-      "line": 37,
-      "text": "ld a, MEWTWO"
-     },
      {
       "file": "data/maps/objects/CeruleanCaveB1F.asm",
       "kind": "map_object",
       "line": 15,
       "text": "object_event 27, 13, SPRITE_MONSTER, STAY, DOWN, TEXT_CERULEANCAVEB1F_MEWTWO, MEWTWO, 70"
+     },
+     {
+      "file": "scripts/CeruleanCaveB1F.asm",
+      "kind": "script",
+      "line": 37,
+      "text": "ld a, MEWTWO"
      }
     ],
     "MOLTRES": [
-     {
-      "file": "scripts/VictoryRoad2F.asm",
-      "kind": "script",
-      "line": 142,
-      "text": "ld a, MOLTRES"
-     },
      {
       "file": "data/maps/objects/VictoryRoad2F.asm",
       "kind": "map_object",
       "line": 36,
       "text": "object_event 11,  5, SPRITE_BIRD, STAY, UP, TEXT_VICTORYROAD2F_MOLTRES, MOLTRES, 50"
+     },
+     {
+      "file": "scripts/VictoryRoad2F.asm",
+      "kind": "script",
+      "line": 142,
+      "text": "ld a, MOLTRES"
      }
     ],
     "MR_MIME": [
@@ -4924,6 +4924,12 @@
       "kind": "npc_trade",
       "line": 0,
       "text": "wants ABRA, gives MR_MIME"
+     },
+     {
+      "file": "data/events/trades.asm",
+      "kind": "npc_trade",
+      "line": 19,
+      "text": "npctrade ABRA,       MR_MIME,   TRADE_DIALOGSET_CASUAL,    \"MARCEL\""
      },
      {
       "file": "data/trainers/parties.asm",
@@ -4954,12 +4960,6 @@
       "kind": "other",
       "line": 662,
       "text": "db $FF, 38, KADABRA, 37, MR_MIME, 38, VENOMOTH, 43, ALAKAZAM, 0"
-     },
-     {
-      "file": "data/events/trades.asm",
-      "kind": "npc_trade",
-      "line": 19,
-      "text": "npctrade ABRA,       MR_MIME,   TRADE_DIALOGSET_CASUAL,    \"MARCEL\""
      }
     ],
     "OMANYTE": [
@@ -4972,12 +4972,6 @@
     ],
     "PORYGON": [
      {
-      "file": "scripts/SilphCo11F.asm",
-      "kind": "script",
-      "line": 389,
-      "text": "ld a, PORYGON"
-     },
-     {
       "file": "data/events/prize_mon_levels.asm",
       "kind": "event_data",
       "line": 9,
@@ -4988,6 +4982,12 @@
       "kind": "event_data",
       "line": 41,
       "text": "db PORYGON"
+     },
+     {
+      "file": "scripts/SilphCo11F.asm",
+      "kind": "script",
+      "line": 389,
+      "text": "ld a, PORYGON"
      }
     ],
     "SANDSHREW": [
@@ -5156,16 +5156,16 @@
     ],
     "ZAPDOS": [
      {
-      "file": "scripts/PowerPlant.asm",
-      "kind": "script",
-      "line": 113,
-      "text": "ld a, ZAPDOS"
-     },
-     {
       "file": "data/maps/objects/PowerPlant.asm",
       "kind": "map_object",
       "line": 36,
       "text": "object_event  4,  9, SPRITE_BIRD, STAY, UP, TEXT_POWERPLANT_ZAPDOS, ZAPDOS, 50"
+     },
+     {
+      "file": "scripts/PowerPlant.asm",
+      "kind": "script",
+      "line": 113,
+      "text": "ld a, ZAPDOS"
      }
     ]
    },
@@ -8427,37 +8427,19 @@
     ],
     "ARTICUNO": [
      {
-      "file": "scripts/SeafoamIslandsB4F.asm",
-      "kind": "script",
-      "line": 163,
-      "text": "ld a, ARTICUNO"
-     },
-     {
       "file": "data/maps/objects/SeafoamIslandsB4F.asm",
       "kind": "map_object",
       "line": 22,
       "text": "object_event  6,  1, SPRITE_BIRD, STAY, DOWN, TEXT_SEAFOAMISLANDSB4F_ARTICUNO, ARTICUNO, 50"
+     },
+     {
+      "file": "scripts/SeafoamIslandsB4F.asm",
+      "kind": "script",
+      "line": 163,
+      "text": "ld a, ARTICUNO"
      }
     ],
     "BULBASAUR": [
-     {
-      "file": "scripts/CeruleanMelaniesHouse.asm",
-      "kind": "script",
-      "line": 31,
-      "text": "ld a, BULBASAUR"
-     },
-     {
-      "file": "scripts/CeruleanMelaniesHouse.asm",
-      "kind": "script",
-      "line": 37,
-      "text": "lb bc, BULBASAUR, 10"
-     },
-     {
-      "file": "scripts/CeruleanMelaniesHouse.asm",
-      "kind": "script",
-      "line": 91,
-      "text": "ld a, BULBASAUR"
-     },
      {
       "file": "data/trainers/parties.asm",
       "kind": "other",
@@ -8481,21 +8463,27 @@
       "kind": "other",
       "line": 400,
       "text": "db 29, BULBASAUR, IVYSAUR, 0"
+     },
+     {
+      "file": "scripts/CeruleanMelaniesHouse.asm",
+      "kind": "script",
+      "line": 31,
+      "text": "ld a, BULBASAUR"
+     },
+     {
+      "file": "scripts/CeruleanMelaniesHouse.asm",
+      "kind": "script",
+      "line": 37,
+      "text": "lb bc, BULBASAUR, 10"
+     },
+     {
+      "file": "scripts/CeruleanMelaniesHouse.asm",
+      "kind": "script",
+      "line": 91,
+      "text": "ld a, BULBASAUR"
      }
     ],
     "CHARMANDER": [
-     {
-      "file": "scripts/Route24.asm",
-      "kind": "script",
-      "line": 295,
-      "text": "ld a, CHARMANDER"
-     },
-     {
-      "file": "scripts/Route24.asm",
-      "kind": "script",
-      "line": 301,
-      "text": "lb bc, CHARMANDER, 10"
-     },
      {
       "file": "data/trainers/parties.asm",
       "kind": "other",
@@ -8525,21 +8513,21 @@
       "kind": "other",
       "line": 304,
       "text": "db 34, CHARMANDER, CHARMELEON, 0"
+     },
+     {
+      "file": "scripts/Route24.asm",
+      "kind": "script",
+      "line": 295,
+      "text": "ld a, CHARMANDER"
+     },
+     {
+      "file": "scripts/Route24.asm",
+      "kind": "script",
+      "line": 301,
+      "text": "lb bc, CHARMANDER, 10"
      }
     ],
     "EEVEE": [
-     {
-      "file": "scripts/CeladonMansionRoofHouse.asm",
-      "kind": "script",
-      "line": 16,
-      "text": "lb bc, EEVEE, 25"
-     },
-     {
-      "file": "scripts/OaksLab.asm",
-      "kind": "script",
-      "line": 232,
-      "text": "ld a, EEVEE"
-     },
      {
       "file": "data/trainers/parties.asm",
       "kind": "other",
@@ -8581,6 +8569,18 @@
       "kind": "other",
       "line": 692,
       "text": "db $FF, 25, FEAROW, 23, VULPIX, 22, MAGNEMITE, 20, SANDSHREW, 25, EEVEE, 0"
+     },
+     {
+      "file": "scripts/CeladonMansionRoofHouse.asm",
+      "kind": "script",
+      "line": 16,
+      "text": "lb bc, EEVEE, 25"
+     },
+     {
+      "file": "scripts/OaksLab.asm",
+      "kind": "script",
+      "line": 232,
+      "text": "ld a, EEVEE"
      }
     ],
     "EKANS": [
@@ -8671,68 +8671,68 @@
     ],
     "GENGAR": [
      {
-      "file": "data/trainers/parties.asm",
-      "kind": "other",
-      "line": 751,
-      "text": "db $FF, 56, GENGAR, 56, GOLBAT, 55, HAUNTER, 58, ARBOK, 60, GENGAR, 0"
-     },
-     {
-      "file": "data/trainers/parties.asm",
-      "kind": "other",
-      "line": 751,
-      "text": "db $FF, 56, GENGAR, 56, GOLBAT, 55, HAUNTER, 58, ARBOK, 60, GENGAR, 0"
-     },
-     {
       "file": "data/credits/credits_mons.asm",
       "kind": "other",
       "line": 20,
       "text": "db GENGAR"
+     },
+     {
+      "file": "data/trainers/parties.asm",
+      "kind": "other",
+      "line": 751,
+      "text": "db $FF, 56, GENGAR, 56, GOLBAT, 55, HAUNTER, 58, ARBOK, 60, GENGAR, 0"
+     },
+     {
+      "file": "data/trainers/parties.asm",
+      "kind": "other",
+      "line": 751,
+      "text": "db $FF, 56, GENGAR, 56, GOLBAT, 55, HAUNTER, 58, ARBOK, 60, GENGAR, 0"
      }
     ],
     "HITMONCHAN": [
+     {
+      "file": "data/trainers/parties.asm",
+      "kind": "other",
+      "line": 479,
+      "text": "db 37, HITMONLEE, HITMONCHAN, 0"
+     },
+     {
+      "file": "data/trainers/parties.asm",
+      "kind": "other",
+      "line": 652,
+      "text": "db $FF, 53, ONIX, 55, HITMONCHAN, 55, HITMONLEE, 56, ONIX, 58, MACHAMP, 0"
+     },
      {
       "file": "scripts/FightingDojo.asm",
       "kind": "script",
       "line": 268,
       "text": "ld a, HITMONCHAN"
-     },
-     {
-      "file": "data/trainers/parties.asm",
-      "kind": "other",
-      "line": 479,
-      "text": "db 37, HITMONLEE, HITMONCHAN, 0"
-     },
-     {
-      "file": "data/trainers/parties.asm",
-      "kind": "other",
-      "line": 652,
-      "text": "db $FF, 53, ONIX, 55, HITMONCHAN, 55, HITMONLEE, 56, ONIX, 58, MACHAMP, 0"
      }
     ],
     "HITMONLEE": [
-     {
-      "file": "scripts/FightingDojo.asm",
-      "kind": "script",
-      "line": 234,
-      "text": "ld a, HITMONLEE"
-     },
-     {
-      "file": "data/trainers/parties.asm",
-      "kind": "other",
-      "line": 479,
-      "text": "db 37, HITMONLEE, HITMONCHAN, 0"
-     },
-     {
-      "file": "data/trainers/parties.asm",
-      "kind": "other",
-      "line": 652,
-      "text": "db $FF, 53, ONIX, 55, HITMONCHAN, 55, HITMONLEE, 56, ONIX, 58, MACHAMP, 0"
-     },
      {
       "file": "data/credits/credits_mons.asm",
       "kind": "other",
       "line": 9,
       "text": "db HITMONLEE"
+     },
+     {
+      "file": "data/trainers/parties.asm",
+      "kind": "other",
+      "line": 479,
+      "text": "db 37, HITMONLEE, HITMONCHAN, 0"
+     },
+     {
+      "file": "data/trainers/parties.asm",
+      "kind": "other",
+      "line": 652,
+      "text": "db $FF, 53, ONIX, 55, HITMONCHAN, 55, HITMONLEE, 56, ONIX, 58, MACHAMP, 0"
+     },
+     {
+      "file": "scripts/FightingDojo.asm",
+      "kind": "script",
+      "line": 234,
+      "text": "ld a, HITMONLEE"
      }
     ],
     "JYNX": [
@@ -9013,18 +9013,6 @@
     ],
     "LAPRAS": [
      {
-      "file": "scripts/FuchsiaCity.asm",
-      "kind": "script",
-      "line": 123,
-      "text": "ld a, LAPRAS"
-     },
-     {
-      "file": "scripts/SilphCo7F.asm",
-      "kind": "script",
-      "line": 296,
-      "text": "lb bc, LAPRAS, 15"
-     },
-     {
       "file": "data/trainers/parties.asm",
       "kind": "other",
       "line": 225,
@@ -9035,6 +9023,18 @@
       "kind": "other",
       "line": 709,
       "text": "db $FF, 54, DEWGONG, 53, CLOYSTER, 54, SLOWBRO, 56, JYNX, 56, LAPRAS, 0"
+     },
+     {
+      "file": "scripts/FuchsiaCity.asm",
+      "kind": "script",
+      "line": 123,
+      "text": "ld a, LAPRAS"
+     },
+     {
+      "file": "scripts/SilphCo7F.asm",
+      "kind": "script",
+      "line": 296,
+      "text": "lb bc, LAPRAS, 15"
      }
     ],
     "MACHAMP": [
@@ -9046,12 +9046,6 @@
      }
     ],
     "MEOWTH": [
-     {
-      "file": "scripts/CeladonMansion1F.asm",
-      "kind": "script",
-      "line": 16,
-      "text": "ld a, MEOWTH"
-     },
      {
       "file": "data/trainers/parties.asm",
       "kind": "other",
@@ -9141,6 +9135,12 @@
       "kind": "other",
       "line": 611,
       "text": "db 31, WEEZING, ARBOK, MEOWTH, 0"
+     },
+     {
+      "file": "scripts/CeladonMansion1F.asm",
+      "kind": "script",
+      "line": 16,
+      "text": "ld a, MEOWTH"
      }
     ],
     "MEW": [
@@ -9151,50 +9151,50 @@
       "text": "wants MEW, gives MEW"
      },
      {
+      "file": "data/events/trades.asm",
+      "kind": "npc_trade",
+      "line": 22,
+      "text": "npctrade MEW,        MEW,      TRADE_DIALOGSET_HAPPY,     \"BART\""
+     },
+     {
+      "file": "data/events/trades.asm",
+      "kind": "npc_trade",
+      "line": 22,
+      "text": "npctrade MEW,        MEW,      TRADE_DIALOGSET_HAPPY,     \"BART\""
+     },
+     {
       "file": "data/text/text_3.asm",
       "kind": "other",
       "line": 528,
       "text": "text \"Sorry, MEW can't\""
-     },
-     {
-      "file": "data/events/trades.asm",
-      "kind": "npc_trade",
-      "line": 22,
-      "text": "npctrade MEW,        MEW,      TRADE_DIALOGSET_HAPPY,     \"BART\""
-     },
-     {
-      "file": "data/events/trades.asm",
-      "kind": "npc_trade",
-      "line": 22,
-      "text": "npctrade MEW,        MEW,      TRADE_DIALOGSET_HAPPY,     \"BART\""
      }
     ],
     "MEWTWO": [
-     {
-      "file": "scripts/CeruleanCaveB1F.asm",
-      "kind": "script",
-      "line": 39,
-      "text": "ld a, MEWTWO"
-     },
      {
       "file": "data/maps/objects/CeruleanCaveB1F.asm",
       "kind": "map_object",
       "line": 17,
       "text": "object_event 27, 13, SPRITE_MONSTER, STAY, DOWN, TEXT_CERULEANCAVEB1F_MEWTWO, MEWTWO, 70"
+     },
+     {
+      "file": "scripts/CeruleanCaveB1F.asm",
+      "kind": "script",
+      "line": 39,
+      "text": "ld a, MEWTWO"
      }
     ],
     "MOLTRES": [
-     {
-      "file": "scripts/VictoryRoad2F.asm",
-      "kind": "script",
-      "line": 145,
-      "text": "ld a, MOLTRES"
-     },
      {
       "file": "data/maps/objects/VictoryRoad2F.asm",
       "kind": "map_object",
       "line": 36,
       "text": "object_event 11,  5, SPRITE_BIRD, STAY, UP, TEXT_VICTORYROAD2F_MOLTRES, MOLTRES, 50"
+     },
+     {
+      "file": "scripts/VictoryRoad2F.asm",
+      "kind": "script",
+      "line": 145,
+      "text": "ld a, MOLTRES"
      }
     ],
     "MR_MIME": [
@@ -9203,6 +9203,12 @@
       "kind": "npc_trade",
       "line": 0,
       "text": "wants CLEFAIRY, gives MR_MIME"
+     },
+     {
+      "file": "data/events/trades.asm",
+      "kind": "npc_trade",
+      "line": 19,
+      "text": "npctrade CLEFAIRY,   MR_MIME,  TRADE_DIALOGSET_CASUAL,    \"MILES\""
      },
      {
       "file": "data/trainers/parties.asm",
@@ -9227,12 +9233,6 @@
       "kind": "other",
       "line": 432,
       "text": "db 48, MR_MIME, 0"
-     },
-     {
-      "file": "data/events/trades.asm",
-      "kind": "npc_trade",
-      "line": 19,
-      "text": "npctrade CLEFAIRY,   MR_MIME,  TRADE_DIALOGSET_CASUAL,    \"MILES\""
      }
     ],
     "OMANYTE": [
@@ -9245,16 +9245,16 @@
     ],
     "PIKACHU": [
      {
-      "file": "scripts/SummerBeachHouse.asm",
-      "kind": "script",
-      "line": 72,
-      "text": "ld a, PIKACHU"
-     },
-     {
       "file": "data/credits/credits_text.asm",
       "kind": "other",
       "line": 223,
       "text": "db -6, \"PIKACHU VOICE@\""
+     },
+     {
+      "file": "scripts/SummerBeachHouse.asm",
+      "kind": "script",
+      "line": 72,
+      "text": "ld a, PIKACHU"
      }
     ],
     "PORYGON": [
@@ -9293,6 +9293,12 @@
     ],
     "SQUIRTLE": [
      {
+      "file": "data/trainers/parties.asm",
+      "kind": "other",
+      "line": 162,
+      "text": "db 20, SQUIRTLE, 0"
+     },
+     {
       "file": "scripts/VermilionCity_2.asm",
       "kind": "script",
       "line": 18,
@@ -9303,15 +9309,21 @@
       "kind": "script",
       "line": 24,
       "text": "lb bc, SQUIRTLE, 10"
-     },
-     {
-      "file": "data/trainers/parties.asm",
-      "kind": "other",
-      "line": 162,
-      "text": "db 20, SQUIRTLE, 0"
      }
     ],
     "VULPIX": [
+     {
+      "file": "data/events/prize_mon_levels.asm",
+      "kind": "event_data",
+      "line": 3,
+      "text": "db VULPIX,     18"
+     },
+     {
+      "file": "data/events/prizes.asm",
+      "kind": "event_data",
+      "line": 8,
+      "text": "db VULPIX"
+     },
      {
       "file": "data/trainers/parties.asm",
       "kind": "other",
@@ -9389,18 +9401,6 @@
       "kind": "other",
       "line": 692,
       "text": "db $FF, 25, FEAROW, 23, VULPIX, 22, MAGNEMITE, 20, SANDSHREW, 25, EEVEE, 0"
-     },
-     {
-      "file": "data/events/prize_mon_levels.asm",
-      "kind": "event_data",
-      "line": 3,
-      "text": "db VULPIX,     18"
-     },
-     {
-      "file": "data/events/prizes.asm",
-      "kind": "event_data",
-      "line": 8,
-      "text": "db VULPIX"
      }
     ],
     "WEEDLE": [
@@ -9449,16 +9449,16 @@
     ],
     "ZAPDOS": [
      {
-      "file": "scripts/PowerPlant.asm",
-      "kind": "script",
-      "line": 113,
-      "text": "ld a, ZAPDOS"
-     },
-     {
       "file": "data/maps/objects/PowerPlant.asm",
       "kind": "map_object",
       "line": 36,
       "text": "object_event  4,  9, SPRITE_BIRD, STAY, UP, TEXT_POWERPLANT_ZAPDOS, ZAPDOS, 50"
+     },
+     {
+      "file": "scripts/PowerPlant.asm",
+      "kind": "script",
+      "line": 113,
+      "text": "ld a, ZAPDOS"
      }
     ]
    },

@@ -534,8 +534,14 @@ def acquisition_evidence(data, species):
                     break
             tagged.append({"kind": kind, "file": rel, "line": lineno,
                            "text": text})
+        # Sorted, because this file is checked in and diffed as the drift
+        # guard: os.walk does not promise an order, so an unsorted list is
+        # the same evidence in a different sequence on a different
+        # filesystem, and the guard would fire on every machine but the one
+        # that last generated it.
+        tagged.sort(key=lambda row: (row["file"], row["line"], row["text"]))
         out[name] = tagged
-    for name in species:
+    for name in sorted(species):
         for row in data["trades"]:
             if row["get"] == name:
                 out.setdefault(name, []).insert(
@@ -553,7 +559,10 @@ def scan_scripts_for(root, defines, species):
         base_dir = os.path.join(root, base)
         if not os.path.isdir(base_dir):
             continue
-        for dirpath, _, files in os.walk(base_dir):
+        for dirpath, dirs, files in os.walk(base_dir):
+            # os.walk yields subdirectories in filesystem order; sorting them
+            # in place makes the traversal itself reproducible too
+            dirs.sort()
             rel_dir = os.path.relpath(dirpath, root).replace("\\", "/")
             if rel_dir.startswith("data/wild") or rel_dir.startswith("data/pokemon"):
                 continue
