@@ -7,7 +7,14 @@ that only exist once a game is running.
 cp -r Gen151/gen151_debug <gen1recomp>/mods/gen151_debug
 ```
 
-Then in game: **OPTIONS → GEN151 BENCH**. No developer build, no console.
+Then in game, either door:
+
+- **START → BENCH**, the top item of the pause menu.
+- **OPTIONS → GEN151 BENCH**, directly under the MODS row.
+
+No developer build, no console. There are two because OPTIONS shows four rows
+at a time over a list around thirty long, so a bench appended to the end of it
+sits seven screenfuls down and reads as missing.
 
 **This is a development tool, not part of normal play.** It is a separate mod
 so that not installing it — or deleting it — is all it takes, and so Gen151

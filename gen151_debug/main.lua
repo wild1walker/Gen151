@@ -193,7 +193,11 @@ return function(mod)
   local function actCableSfx(game)
     local play = sound(game, "SFX_GEN151_CABLE_SNAP")
     if not play then
-      say(game, "No SFX_GEN151_CABLE\n_SNAP registered.\fIs the CABLE SOUND\noption on?")
+      -- The sfx is registered by linkcable.lua, which only runs when TRADE
+      -- EVOS is LINK CABLE -- CABLE SOUND decides whether the snap PLAYS,
+      -- not whether it exists, so naming it here sent the last reader to
+      -- the wrong switch.
+      say(game, "No SFX_GEN151_CABLE\n_SNAP registered.\fIn MODS -> Gen151,\nis TRADE EVOS set\nto LINK CABLE?")
       return
     end
     play()
@@ -334,21 +338,60 @@ return function(mod)
     end,
   })
 
-  -- Reachable from OPTIONS, the way the engine's own example tool mod is:
-  -- no developer build, no console, and next(), so every other mod's rows
-  -- survive this one.
+  -- ------------------------------------------------------------- two doors
+  --
+  -- The bench had one way in, appended to OPTIONS, and that turned out to be
+  -- no way in at all: OPTIONS shows FOUR rows at a time (OptionRows.VISIBLE)
+  -- over a list about thirty long on a desktop build, so an appended row sits
+  -- seven screenfuls down, under a moreArrow, at the very bottom.  A tester
+  -- who opens OPTIONS and looks is right to conclude it is not there.
+  --
+  -- So: two doors, both above the fold.
+
+  -- One, in OPTIONS, spliced next to MODS instead of appended.  MODS is where
+  -- a player already goes to reach Gen151's own switches, so the bench is in
+  -- the screenful they are looking at anyway.  next() first, and append if
+  -- some other mod removed the MODS row, so nothing here can orphan the entry
+  -- or eat another mod's rows.
   mod.hooks:wrap("ui.options.rows", function(nextLink, game, rows)
     local out = nextLink(game, rows)
     if type(out) ~= "table" then return out end
-    out[#out + 1] = {
+    local row = {
       id = "gen151_debug",
       label = "GEN151 BENCH",
       value = function() return force.on and "FORCED" or "OPEN" end,
       activate = function(g) mod.ui.push(g, SCREEN) end,
     }
+    local at = #out + 1
+    for i, existing in ipairs(out) do
+      if existing.id == "mods" then
+        at = i + 1
+        break
+      end
+    end
+    table.insert(out, at, row)
     return out
   end)
 
-  mod.log:info("bench installed: %d rows on %d maps, OPTIONS -> GEN151 BENCH",
+  -- Two, at the top of the START menu, which is the door that cannot be
+  -- missed: it is four items tall before it scrolls, the bench belongs at
+  -- hand while walking through grass, and a mod that replaces the OPTIONS
+  -- screen wholesale cannot take this one away as well.  Displacing POKeDEX
+  -- by one row is a cost a debug mod gets to pay.
+  --
+  -- Menu:select pops the menu BEFORE it calls onSelect (src/ui/Menu.lua), so
+  -- a plain push here lands on a clean stack -- the same shape POKeDEX uses.
+  mod.hooks:wrap("ui.start_menu.items", function(nextLink, game, items)
+    local out = nextLink(game, items)
+    if type(out) ~= "table" then return out end
+    table.insert(out, 1, {
+      label = "BENCH",
+      onSelect = function() mod.ui.push(game, SCREEN) end,
+    })
+    return out
+  end)
+
+  mod.log:info("bench installed: %d rows on %d maps; START -> BENCH, or "
+    .. "OPTIONS -> GEN151 BENCH (beside MODS)",
     #(E.rows or {}) + #(E.fishing or {}), #mapOrder)
 end

@@ -3,6 +3,22 @@
 All notable changes to Gen151 are recorded here, in
 [keep a changelog](https://keepachangelog.com/en/1.1.0/) order.
 
+## [1.0.1] - 2026-08-25
+
+A companion fix. Gen151 itself is unchanged; the version moves because one
+release covers every mod in this repo.
+
+### Fixed
+
+- `gen151_debug`: the bench was unreachable in practice. Its only way in was a
+  row appended to the end of the OPTIONS list, which shows four rows at a time
+  over a list around thirty long -- so the row sat seven screenfuls down and
+  looked like it had never been added. It now sits directly under the MODS
+  row, and the START menu carries a **BENCH** item at the top as a second door.
+- `gen151_debug`: the CABLE SFX row blamed CABLE SOUND when no sound was
+  registered. The snap is built by the LINK CABLE code, so the switch that
+  decides whether it exists is TRADE EVOS.
+
 ## [1.0.0] - 2026-08-25
 
 First release.

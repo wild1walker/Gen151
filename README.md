@@ -270,7 +270,8 @@ shipped its own bucket list — which is the failure mode above.
 The headless suites cover everything that can be checked without a screen. For
 the rest — whether `ZzZzap` renders, whether the cable snap sounds right,
 whether AREA blinks the nest, whether a very-rare tier is a hunt or a chore —
-there is a companion **`gen151_debug`**, reachable from OPTIONS → GEN151 BENCH.
+there is a companion **`gen151_debug`**, reachable from START → BENCH or from
+OPTIONS → GEN151 BENCH.
 It forces the spawns, hands over the kit, plays the sounds on demand and flips
 the Mew gate, so a pass that would take an evening takes a few minutes. It asks
 for no permissions, and it is a separate mod so that deleting it before release

@@ -486,15 +486,41 @@ do
   check(run.loader.mods.gen151_debug ~= nil, "bench: it was discovered")
 
   -- ---- it puts itself on the OPTIONS menu and leaves the rest alone
+  --
+  -- Next to MODS, not at the end: OptionRows.VISIBLE is 4 and the desktop
+  -- list is about thirty rows long, so an APPENDED row is seven screenfuls
+  -- down and reads as missing.  This asserts the position, because the
+  -- position is the bug that was reported.
   local rows = run.loader.hooks:call("ui.options.rows",
-    function(_, given) return given end, game, { { id = "SOMEONE_ELSE" } })
-  local bench
-  for _, row in ipairs(rows) do
-    if row.id == "gen151_debug" then bench = row end
+    function(_, given) return given end, game,
+    { { id = "SOMEONE_ELSE" }, { id = "mods" }, { id = "controls" } })
+  local at
+  for i, row in ipairs(rows) do
+    if row.id == "gen151_debug" then at = i end
   end
-  check(bench ~= nil, "bench: it adds an OPTIONS row")
+  check(at ~= nil, "bench: it adds an OPTIONS row")
+  eq(at, 3, "bench: directly under MODS, inside the first screenful")
+  eq(#rows, 4, "bench: without dropping anyone else's")
   check(rows[1] and rows[1].id == "SOMEONE_ELSE",
-    "bench: without dropping anyone else's")
+    "bench: and without reordering them")
+  check(rows[4] and rows[4].id == "controls",
+    "bench: the rows after MODS survive too")
+
+  -- no MODS row to anchor to: append rather than lose the entry
+  local noAnchor = run.loader.hooks:call("ui.options.rows",
+    function(_, given) return given end, game, { { id = "SOMEONE_ELSE" } })
+  eq(#noAnchor, 2, "bench: with no MODS row it still lands")
+  eq(noAnchor[2] and noAnchor[2].id, "gen151_debug",
+    "bench: appended, which keeps it reachable either way")
+
+  -- ---- and on the START menu, which is the door that cannot scroll away
+  local items = run.loader.hooks:call("ui.start_menu.items",
+    function(_, given) return given end, game,
+    { { label = "POKeDEX" }, { label = "QUIT" } })
+  eq(#items, 3, "bench: it adds a START menu item")
+  eq(items[1] and items[1].label, "BENCH", "bench: at the top, above the fold")
+  check(type(items[1].onSelect) == "function", "bench: which opens something")
+  eq(items[3] and items[3].label, "QUIT", "bench: leaving the rest in order")
 
   -- ---- the bench screen builds
   local factory = data.screens and data.screens.Gen151DebugBench

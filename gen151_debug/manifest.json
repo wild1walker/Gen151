@@ -1,7 +1,7 @@
 {
   "id": "gen151_debug",
   "name": "Gen151 Debug",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "api": 2,
   "entry": "main.lua",
   "profile": "content",
