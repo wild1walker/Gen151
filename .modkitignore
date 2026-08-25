@@ -1,0 +1,9 @@
+# Kept out of the distributed package.
+#
+# tests/ requires engine modules, which is a private-require finding against a
+# shipped archive, and pack treats warnings as fatal.  tools/ is the
+# derivation pipeline: it parses the pret disassembly to regenerate
+# placements.lua, hints.lua and the fixtures, and it is of no use to a player.
+tests/
+tools/
+SPOILERS.md

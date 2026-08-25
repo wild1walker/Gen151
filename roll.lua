@@ -99,6 +99,44 @@ end
 
 Roll.trimmed = trimmed
 
+-- Which row a draw lands on, and at what level.
+--
+-- The level comes out of the SAME draw rather than a second one: a row carries
+-- the donor table's whole level spread (SPEC 5, "match the destination map's
+-- existing level band"), and the offset inside the row's own window picks
+-- among them.  Reusing the entropy keeps the promise that a map with nothing
+-- to substitute costs exactly zero extra draws -- a second draw for the level
+-- would have made that "zero or one, depending".
+local function pickRow(rows, pick)
+  local acc = 0
+  for i = 1, #rows do
+    local row = rows[i]
+    if row.weight > 0 and (not row.active or row.active()) then
+      local start = acc
+      acc = acc + row.weight
+      if pick < acc then
+        local level = row.level
+        if not level and row.levels and #row.levels > 0 then
+          level = row.levels[1 + ((pick - start) % #row.levels)]
+        end
+        return { species = row.species, level = level }
+      end
+    end
+  end
+  return nil
+end
+
+local function activeTotal(rows)
+  local total = 0
+  for i = 1, #rows do
+    local row = rows[i]
+    if row.weight > 0 and (not row.active or row.active()) then
+      total = total + row.weight
+    end
+  end
+  return total
+end
+
 -- vanilla(def, ctx) is the rest of the hook chain, ending in Encounter.roll.
 function Roll:roll(vanilla, encDef, ctx, rng)
   local byMap = self.maps[ctx and ctx.mapId]
@@ -110,28 +148,8 @@ function Roll:roll(vanilla, encDef, ctx, rng)
   if not enc then return nil end
 
   -- stage two -- substitution.  Sum first: an all-zero map must not draw.
-  local total = 0
-  local rows = entry.rows
-  for i = 1, #rows do
-    local row = rows[i]
-    if row.weight > 0 and (not row.active or row.active()) then
-      total = total + row.weight
-    end
-  end
-  if total <= 0 then return enc end
-
-  local pick = rng(0, Roll.RARITY_SCALE - 1)
-  local acc = 0
-  for i = 1, #rows do
-    local row = rows[i]
-    if row.weight > 0 and (not row.active or row.active()) then
-      acc = acc + row.weight
-      if pick < acc then
-        return { species = row.species, level = row.level }
-      end
-    end
-  end
-  return enc
+  if activeTotal(entry.rows) <= 0 then return enc end
+  return pickRow(entry.rows, rng(0, Roll.RARITY_SCALE - 1)) or enc
 end
 
 -- The Super Rod peer.  The fishing chain hands over the map's candidate list
@@ -147,26 +165,8 @@ function Roll:fish(vanilla, rod, mapId, pool, rng)
   local byRod = self.fishing and self.fishing[mapId]
   local rows = byRod and byRod[rod]
   if not rows then return enc end
-  local total = 0
-  for i = 1, #rows do
-    local row = rows[i]
-    if row.weight > 0 and (not row.active or row.active()) then
-      total = total + row.weight
-    end
-  end
-  if total <= 0 then return enc end
-  local pick = rng(0, Roll.RARITY_SCALE - 1)
-  local acc = 0
-  for i = 1, #rows do
-    local row = rows[i]
-    if row.weight > 0 and (not row.active or row.active()) then
-      acc = acc + row.weight
-      if pick < acc then
-        return { species = row.species, level = row.level }
-      end
-    end
-  end
-  return enc
+  if activeTotal(rows) <= 0 then return enc end
+  return pickRow(rows, rng(0, Roll.RARITY_SCALE - 1)) or enc
 end
 
 function Roll:addFishing(mapId, rod, row)

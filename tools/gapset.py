@@ -384,6 +384,7 @@ def version_data(recomp, root, defines, yellow=False):
         "root": root,
         "defines": defines,
         "mapOrder": map_order,
+        "speciesOrderRaw": consts["speciesOrder"],
         "speciesOrder": species_order,
         "encounters": encounters,
         "superRod": super_rod,
@@ -572,6 +573,46 @@ def scan_scripts_for(root, defines, species):
     return hits
 
 
+def species_records(root, defines, dex, evolutions, label_map,
+                    species_order):
+    """species -> { name, dex, evolutions } -- enough for a headless fixture.
+
+    Names come from data/pokemon/names.asm, which is a fixed-width table in
+    internal index order; the dex number comes from the dex constant order.
+    """
+    path = os.path.join(root, "data/pokemon/names.asm")
+    names = []
+    for _, line in read_asm_lines(path, defines):
+        m = re.match(r'dname\s+"(.+?)"', line.strip())
+        if m:
+            names.append(m.group(1).replace("@", "").strip())
+    dex_index = {name: i + 1 for i, name in enumerate(dex)}
+    # names.asm and constants.speciesOrder are both in internal index order
+    display_names = {}
+    for i, species in enumerate(species_order):
+        if i < len(names) and species != "UNUSED":
+            display_names[species] = names[i]
+    out = {}
+    for label, species in label_map.items():
+        if species in ("UNUSED", None) or species not in dex_index:
+            continue
+        rows = []
+        for evo in evolutions.get(label, []):
+            row = {"method": evo["method"], "species": evo["into"]}
+            if "level" in evo:
+                row["level"] = evo["level"]
+            if "item" in evo:
+                row["item"] = evo["item"]
+            rows.append(row)
+        out[species] = {
+            "id": species,
+            "name": display_names.get(species, species),
+            "dex": dex_index.get(species, 0),
+            "evolutions": rows,
+        }
+    return out
+
+
 def dex_order(root, defines):
     """constants/pokedex_constants.asm gives DEX_<NAME> in dex order."""
     path = os.path.join(root, "constants/pokedex_constants.asm")
@@ -622,6 +663,10 @@ def write_lua_fixture(path, out, report):
             "encounters": data["encounters"],
             "superRod": data["superRod"],
             "goodRod": data["goodRod"],
+            "pokemon": species_records(
+                data["root"], data["defines"], report["dex"],
+                data["evolutions"], data["labelMap"],
+                data["speciesOrderRaw"]),
             "setA": report["versions"][name]["setA"],
             "setC": report["versions"][name]["setC"],
             "missing": report["versions"][name]["missing"],

@@ -1,0 +1,47 @@
+-- Sharing metadata.  Read by tooling and the manager's detail pane, never by
+-- the loader's merge, so an absent or malformed card can never break a load.
+return {
+  summary = "All 151 renewably obtainable in one save, without touching a vanilla slot.",
+  author = "Wild",
+  tags = { "content", "encounters", "completion", "data-only" },
+  differences = {
+    changed = {
+      "Vanilla species' SHARE of encounters on a placed map shifts by the "
+        .. "configured substitution rate; probability is conserved and "
+        .. "something has to give",
+      "Celadon Department Store 4F sells a LINK CABLE beside the evolution "
+        .. "stones",
+    },
+    added = {
+      "Renewable wild spawns for every species that had none: version "
+        .. "exclusives, starters, gift mons, NPC-trade mons, the fossils and "
+        .. "Snorlax",
+      "LINK CABLE, a consumable that runs one trade evolution",
+      "FIELD NOTES, a key item listing where to look for what is still "
+        .. "missing",
+      "An optional, default-off Mew unlock behind the Pokemon Mansion "
+        .. "journals",
+    },
+    known = {
+      "The encounter RATE per map is never touched, so a species placed on a "
+        .. "map with a low rate is genuinely slow to find; the RARITY % "
+        .. "option is there for players who would rather it were not",
+      "Red and Blue give only Routes 19, 20 and 21 a live surf rate, so "
+        .. "water placement is nearly unavailable there and almost "
+        .. "everything lands in grass or on the Super Rod instead",
+      "The roll layer deliberately ignores any `buckets` list on an "
+        .. "encounter record, so another encounter mod's 11th-and-beyond "
+        .. "slots stay unreachable on maps Gen151 touches -- which is what "
+        .. "they already were without a bucket list of their own",
+      "The dex HINT row lives in the companion mod gen151_hints, because it "
+        .. "is the one feature that needs the engine_internals permission",
+    },
+  },
+  credits = {
+    { who = "pret/pokered and pret/pokeyellow",
+      for_ = "the disassembly every placement in this mod is derived from" },
+    { who = "Pokemon Gen 1 Recompilation Project",
+      for_ = "the encounter, merge and hook seams this mod is built on" },
+  },
+  compat = { engine = ">=1.0.0 <2.0.0", modApi = 2 },
+}

@@ -3120,6 +3120,1340 @@ return {
         "MEWTWO",
         "MEW",
       },
+      pokemon = {
+        ABRA = {
+          dex = 63,
+          evolutions = {
+            {
+              level = 16,
+              method = "LEVEL",
+              species = "KADABRA",
+            },
+          },
+          id = "ABRA",
+          name = "ABRA",
+        },
+        AERODACTYL = {
+          dex = 142,
+          evolutions = {},
+          id = "AERODACTYL",
+          name = "AERODACTYL",
+        },
+        ALAKAZAM = {
+          dex = 65,
+          evolutions = {},
+          id = "ALAKAZAM",
+          name = "ALAKAZAM",
+        },
+        ARBOK = {
+          dex = 24,
+          evolutions = {},
+          id = "ARBOK",
+          name = "ARBOK",
+        },
+        ARCANINE = {
+          dex = 59,
+          evolutions = {},
+          id = "ARCANINE",
+          name = "ARCANINE",
+        },
+        ARTICUNO = {
+          dex = 144,
+          evolutions = {},
+          id = "ARTICUNO",
+          name = "ARTICUNO",
+        },
+        BEEDRILL = {
+          dex = 15,
+          evolutions = {},
+          id = "BEEDRILL",
+          name = "BEEDRILL",
+        },
+        BELLSPROUT = {
+          dex = 69,
+          evolutions = {
+            {
+              level = 21,
+              method = "LEVEL",
+              species = "WEEPINBELL",
+            },
+          },
+          id = "BELLSPROUT",
+          name = "BELLSPROUT",
+        },
+        BLASTOISE = {
+          dex = 9,
+          evolutions = {},
+          id = "BLASTOISE",
+          name = "BLASTOISE",
+        },
+        BULBASAUR = {
+          dex = 1,
+          evolutions = {
+            {
+              level = 16,
+              method = "LEVEL",
+              species = "IVYSAUR",
+            },
+          },
+          id = "BULBASAUR",
+          name = "BULBASAUR",
+        },
+        BUTTERFREE = {
+          dex = 12,
+          evolutions = {},
+          id = "BUTTERFREE",
+          name = "BUTTERFREE",
+        },
+        CATERPIE = {
+          dex = 10,
+          evolutions = {
+            {
+              level = 7,
+              method = "LEVEL",
+              species = "METAPOD",
+            },
+          },
+          id = "CATERPIE",
+          name = "CATERPIE",
+        },
+        CHANSEY = {
+          dex = 113,
+          evolutions = {},
+          id = "CHANSEY",
+          name = "CHANSEY",
+        },
+        CHARIZARD = {
+          dex = 6,
+          evolutions = {},
+          id = "CHARIZARD",
+          name = "CHARIZARD",
+        },
+        CHARMANDER = {
+          dex = 4,
+          evolutions = {
+            {
+              level = 16,
+              method = "LEVEL",
+              species = "CHARMELEON",
+            },
+          },
+          id = "CHARMANDER",
+          name = "CHARMANDER",
+        },
+        CHARMELEON = {
+          dex = 5,
+          evolutions = {
+            {
+              level = 36,
+              method = "LEVEL",
+              species = "CHARIZARD",
+            },
+          },
+          id = "CHARMELEON",
+          name = "CHARMELEON",
+        },
+        CLEFABLE = {
+          dex = 36,
+          evolutions = {},
+          id = "CLEFABLE",
+          name = "CLEFABLE",
+        },
+        CLEFAIRY = {
+          dex = 35,
+          evolutions = {
+            {
+              item = "MOON_STONE",
+              method = "ITEM",
+              species = "CLEFABLE",
+            },
+          },
+          id = "CLEFAIRY",
+          name = "CLEFAIRY",
+        },
+        CLOYSTER = {
+          dex = 91,
+          evolutions = {},
+          id = "CLOYSTER",
+          name = "CLOYSTER",
+        },
+        CUBONE = {
+          dex = 104,
+          evolutions = {
+            {
+              level = 28,
+              method = "LEVEL",
+              species = "MAROWAK",
+            },
+          },
+          id = "CUBONE",
+          name = "CUBONE",
+        },
+        DEWGONG = {
+          dex = 87,
+          evolutions = {},
+          id = "DEWGONG",
+          name = "DEWGONG",
+        },
+        DIGLETT = {
+          dex = 50,
+          evolutions = {
+            {
+              level = 26,
+              method = "LEVEL",
+              species = "DUGTRIO",
+            },
+          },
+          id = "DIGLETT",
+          name = "DIGLETT",
+        },
+        DITTO = {
+          dex = 132,
+          evolutions = {},
+          id = "DITTO",
+          name = "DITTO",
+        },
+        DODRIO = {
+          dex = 85,
+          evolutions = {},
+          id = "DODRIO",
+          name = "DODRIO",
+        },
+        DODUO = {
+          dex = 84,
+          evolutions = {
+            {
+              level = 31,
+              method = "LEVEL",
+              species = "DODRIO",
+            },
+          },
+          id = "DODUO",
+          name = "DODUO",
+        },
+        DRAGONAIR = {
+          dex = 148,
+          evolutions = {
+            {
+              level = 55,
+              method = "LEVEL",
+              species = "DRAGONITE",
+            },
+          },
+          id = "DRAGONAIR",
+          name = "DRAGONAIR",
+        },
+        DRAGONITE = {
+          dex = 149,
+          evolutions = {},
+          id = "DRAGONITE",
+          name = "DRAGONITE",
+        },
+        DRATINI = {
+          dex = 147,
+          evolutions = {
+            {
+              level = 30,
+              method = "LEVEL",
+              species = "DRAGONAIR",
+            },
+          },
+          id = "DRATINI",
+          name = "DRATINI",
+        },
+        DROWZEE = {
+          dex = 96,
+          evolutions = {
+            {
+              level = 26,
+              method = "LEVEL",
+              species = "HYPNO",
+            },
+          },
+          id = "DROWZEE",
+          name = "DROWZEE",
+        },
+        DUGTRIO = {
+          dex = 51,
+          evolutions = {},
+          id = "DUGTRIO",
+          name = "DUGTRIO",
+        },
+        EEVEE = {
+          dex = 133,
+          evolutions = {
+            {
+              item = "FIRE_STONE",
+              method = "ITEM",
+              species = "FLAREON",
+            },
+            {
+              item = "THUNDER_STONE",
+              method = "ITEM",
+              species = "JOLTEON",
+            },
+            {
+              item = "WATER_STONE",
+              method = "ITEM",
+              species = "VAPOREON",
+            },
+          },
+          id = "EEVEE",
+          name = "EEVEE",
+        },
+        EKANS = {
+          dex = 23,
+          evolutions = {
+            {
+              level = 22,
+              method = "LEVEL",
+              species = "ARBOK",
+            },
+          },
+          id = "EKANS",
+          name = "EKANS",
+        },
+        ELECTABUZZ = {
+          dex = 125,
+          evolutions = {},
+          id = "ELECTABUZZ",
+          name = "ELECTABUZZ",
+        },
+        ELECTRODE = {
+          dex = 101,
+          evolutions = {},
+          id = "ELECTRODE",
+          name = "ELECTRODE",
+        },
+        EXEGGCUTE = {
+          dex = 102,
+          evolutions = {
+            {
+              item = "LEAF_STONE",
+              method = "ITEM",
+              species = "EXEGGUTOR",
+            },
+          },
+          id = "EXEGGCUTE",
+          name = "EXEGGCUTE",
+        },
+        EXEGGUTOR = {
+          dex = 103,
+          evolutions = {},
+          id = "EXEGGUTOR",
+          name = "EXEGGUTOR",
+        },
+        FARFETCHD = {
+          dex = 83,
+          evolutions = {},
+          id = "FARFETCHD",
+          name = "FARFETCH'D",
+        },
+        FEAROW = {
+          dex = 22,
+          evolutions = {},
+          id = "FEAROW",
+          name = "FEAROW",
+        },
+        FLAREON = {
+          dex = 136,
+          evolutions = {},
+          id = "FLAREON",
+          name = "FLAREON",
+        },
+        GASTLY = {
+          dex = 92,
+          evolutions = {
+            {
+              level = 25,
+              method = "LEVEL",
+              species = "HAUNTER",
+            },
+          },
+          id = "GASTLY",
+          name = "GASTLY",
+        },
+        GENGAR = {
+          dex = 94,
+          evolutions = {},
+          id = "GENGAR",
+          name = "GENGAR",
+        },
+        GEODUDE = {
+          dex = 74,
+          evolutions = {
+            {
+              level = 25,
+              method = "LEVEL",
+              species = "GRAVELER",
+            },
+          },
+          id = "GEODUDE",
+          name = "GEODUDE",
+        },
+        GLOOM = {
+          dex = 44,
+          evolutions = {
+            {
+              item = "LEAF_STONE",
+              method = "ITEM",
+              species = "VILEPLUME",
+            },
+          },
+          id = "GLOOM",
+          name = "GLOOM",
+        },
+        GOLBAT = {
+          dex = 42,
+          evolutions = {},
+          id = "GOLBAT",
+          name = "GOLBAT",
+        },
+        GOLDEEN = {
+          dex = 118,
+          evolutions = {
+            {
+              level = 33,
+              method = "LEVEL",
+              species = "SEAKING",
+            },
+          },
+          id = "GOLDEEN",
+          name = "GOLDEEN",
+        },
+        GOLDUCK = {
+          dex = 55,
+          evolutions = {},
+          id = "GOLDUCK",
+          name = "GOLDUCK",
+        },
+        GOLEM = {
+          dex = 76,
+          evolutions = {},
+          id = "GOLEM",
+          name = "GOLEM",
+        },
+        GRAVELER = {
+          dex = 75,
+          evolutions = {
+            {
+              method = "TRADE",
+              species = "GOLEM",
+            },
+          },
+          id = "GRAVELER",
+          name = "GRAVELER",
+        },
+        GRIMER = {
+          dex = 88,
+          evolutions = {
+            {
+              level = 38,
+              method = "LEVEL",
+              species = "MUK",
+            },
+          },
+          id = "GRIMER",
+          name = "GRIMER",
+        },
+        GROWLITHE = {
+          dex = 58,
+          evolutions = {
+            {
+              item = "FIRE_STONE",
+              method = "ITEM",
+              species = "ARCANINE",
+            },
+          },
+          id = "GROWLITHE",
+          name = "GROWLITHE",
+        },
+        GYARADOS = {
+          dex = 130,
+          evolutions = {},
+          id = "GYARADOS",
+          name = "GYARADOS",
+        },
+        HAUNTER = {
+          dex = 93,
+          evolutions = {
+            {
+              method = "TRADE",
+              species = "GENGAR",
+            },
+          },
+          id = "HAUNTER",
+          name = "HAUNTER",
+        },
+        HITMONCHAN = {
+          dex = 107,
+          evolutions = {},
+          id = "HITMONCHAN",
+          name = "HITMONCHAN",
+        },
+        HITMONLEE = {
+          dex = 106,
+          evolutions = {},
+          id = "HITMONLEE",
+          name = "HITMONLEE",
+        },
+        HORSEA = {
+          dex = 116,
+          evolutions = {
+            {
+              level = 32,
+              method = "LEVEL",
+              species = "SEADRA",
+            },
+          },
+          id = "HORSEA",
+          name = "HORSEA",
+        },
+        HYPNO = {
+          dex = 97,
+          evolutions = {},
+          id = "HYPNO",
+          name = "HYPNO",
+        },
+        IVYSAUR = {
+          dex = 2,
+          evolutions = {
+            {
+              level = 32,
+              method = "LEVEL",
+              species = "VENUSAUR",
+            },
+          },
+          id = "IVYSAUR",
+          name = "IVYSAUR",
+        },
+        JIGGLYPUFF = {
+          dex = 39,
+          evolutions = {
+            {
+              item = "MOON_STONE",
+              method = "ITEM",
+              species = "WIGGLYTUFF",
+            },
+          },
+          id = "JIGGLYPUFF",
+          name = "JIGGLYPUFF",
+        },
+        JOLTEON = {
+          dex = 135,
+          evolutions = {},
+          id = "JOLTEON",
+          name = "JOLTEON",
+        },
+        JYNX = {
+          dex = 124,
+          evolutions = {},
+          id = "JYNX",
+          name = "JYNX",
+        },
+        KABUTO = {
+          dex = 140,
+          evolutions = {
+            {
+              level = 40,
+              method = "LEVEL",
+              species = "KABUTOPS",
+            },
+          },
+          id = "KABUTO",
+          name = "KABUTO",
+        },
+        KABUTOPS = {
+          dex = 141,
+          evolutions = {},
+          id = "KABUTOPS",
+          name = "KABUTOPS",
+        },
+        KADABRA = {
+          dex = 64,
+          evolutions = {
+            {
+              method = "TRADE",
+              species = "ALAKAZAM",
+            },
+          },
+          id = "KADABRA",
+          name = "KADABRA",
+        },
+        KAKUNA = {
+          dex = 14,
+          evolutions = {
+            {
+              level = 10,
+              method = "LEVEL",
+              species = "BEEDRILL",
+            },
+          },
+          id = "KAKUNA",
+          name = "KAKUNA",
+        },
+        KANGASKHAN = {
+          dex = 115,
+          evolutions = {},
+          id = "KANGASKHAN",
+          name = "KANGASKHAN",
+        },
+        KINGLER = {
+          dex = 99,
+          evolutions = {},
+          id = "KINGLER",
+          name = "KINGLER",
+        },
+        KOFFING = {
+          dex = 109,
+          evolutions = {
+            {
+              level = 35,
+              method = "LEVEL",
+              species = "WEEZING",
+            },
+          },
+          id = "KOFFING",
+          name = "KOFFING",
+        },
+        KRABBY = {
+          dex = 98,
+          evolutions = {
+            {
+              level = 28,
+              method = "LEVEL",
+              species = "KINGLER",
+            },
+          },
+          id = "KRABBY",
+          name = "KRABBY",
+        },
+        LAPRAS = {
+          dex = 131,
+          evolutions = {},
+          id = "LAPRAS",
+          name = "LAPRAS",
+        },
+        LICKITUNG = {
+          dex = 108,
+          evolutions = {},
+          id = "LICKITUNG",
+          name = "LICKITUNG",
+        },
+        MACHAMP = {
+          dex = 68,
+          evolutions = {},
+          id = "MACHAMP",
+          name = "MACHAMP",
+        },
+        MACHOKE = {
+          dex = 67,
+          evolutions = {
+            {
+              method = "TRADE",
+              species = "MACHAMP",
+            },
+          },
+          id = "MACHOKE",
+          name = "MACHOKE",
+        },
+        MACHOP = {
+          dex = 66,
+          evolutions = {
+            {
+              level = 28,
+              method = "LEVEL",
+              species = "MACHOKE",
+            },
+          },
+          id = "MACHOP",
+          name = "MACHOP",
+        },
+        MAGIKARP = {
+          dex = 129,
+          evolutions = {
+            {
+              level = 20,
+              method = "LEVEL",
+              species = "GYARADOS",
+            },
+          },
+          id = "MAGIKARP",
+          name = "MAGIKARP",
+        },
+        MAGMAR = {
+          dex = 126,
+          evolutions = {},
+          id = "MAGMAR",
+          name = "MAGMAR",
+        },
+        MAGNEMITE = {
+          dex = 81,
+          evolutions = {
+            {
+              level = 30,
+              method = "LEVEL",
+              species = "MAGNETON",
+            },
+          },
+          id = "MAGNEMITE",
+          name = "MAGNEMITE",
+        },
+        MAGNETON = {
+          dex = 82,
+          evolutions = {},
+          id = "MAGNETON",
+          name = "MAGNETON",
+        },
+        MANKEY = {
+          dex = 56,
+          evolutions = {
+            {
+              level = 28,
+              method = "LEVEL",
+              species = "PRIMEAPE",
+            },
+          },
+          id = "MANKEY",
+          name = "MANKEY",
+        },
+        MAROWAK = {
+          dex = 105,
+          evolutions = {},
+          id = "MAROWAK",
+          name = "MAROWAK",
+        },
+        MEOWTH = {
+          dex = 52,
+          evolutions = {
+            {
+              level = 28,
+              method = "LEVEL",
+              species = "PERSIAN",
+            },
+          },
+          id = "MEOWTH",
+          name = "MEOWTH",
+        },
+        METAPOD = {
+          dex = 11,
+          evolutions = {
+            {
+              level = 10,
+              method = "LEVEL",
+              species = "BUTTERFREE",
+            },
+          },
+          id = "METAPOD",
+          name = "METAPOD",
+        },
+        MEW = {
+          dex = 151,
+          evolutions = {},
+          id = "MEW",
+          name = "MEW",
+        },
+        MEWTWO = {
+          dex = 150,
+          evolutions = {},
+          id = "MEWTWO",
+          name = "MEWTWO",
+        },
+        MOLTRES = {
+          dex = 146,
+          evolutions = {},
+          id = "MOLTRES",
+          name = "MOLTRES",
+        },
+        MR_MIME = {
+          dex = 122,
+          evolutions = {},
+          id = "MR_MIME",
+          name = "MR.MIME",
+        },
+        MUK = {
+          dex = 89,
+          evolutions = {},
+          id = "MUK",
+          name = "MUK",
+        },
+        NIDOKING = {
+          dex = 34,
+          evolutions = {},
+          id = "NIDOKING",
+          name = "NIDOKING",
+        },
+        NIDOQUEEN = {
+          dex = 31,
+          evolutions = {},
+          id = "NIDOQUEEN",
+          name = "NIDOQUEEN",
+        },
+        NIDORAN_F = {
+          dex = 29,
+          evolutions = {
+            {
+              level = 16,
+              method = "LEVEL",
+              species = "NIDORINA",
+            },
+          },
+          id = "NIDORAN_F",
+          name = "NIDORAN♀",
+        },
+        NIDORAN_M = {
+          dex = 32,
+          evolutions = {
+            {
+              level = 16,
+              method = "LEVEL",
+              species = "NIDORINO",
+            },
+          },
+          id = "NIDORAN_M",
+          name = "NIDORAN♂",
+        },
+        NIDORINA = {
+          dex = 30,
+          evolutions = {
+            {
+              item = "MOON_STONE",
+              method = "ITEM",
+              species = "NIDOQUEEN",
+            },
+          },
+          id = "NIDORINA",
+          name = "NIDORINA",
+        },
+        NIDORINO = {
+          dex = 33,
+          evolutions = {
+            {
+              item = "MOON_STONE",
+              method = "ITEM",
+              species = "NIDOKING",
+            },
+          },
+          id = "NIDORINO",
+          name = "NIDORINO",
+        },
+        NINETALES = {
+          dex = 38,
+          evolutions = {},
+          id = "NINETALES",
+          name = "NINETALES",
+        },
+        ODDISH = {
+          dex = 43,
+          evolutions = {
+            {
+              level = 21,
+              method = "LEVEL",
+              species = "GLOOM",
+            },
+          },
+          id = "ODDISH",
+          name = "ODDISH",
+        },
+        OMANYTE = {
+          dex = 138,
+          evolutions = {
+            {
+              level = 40,
+              method = "LEVEL",
+              species = "OMASTAR",
+            },
+          },
+          id = "OMANYTE",
+          name = "OMANYTE",
+        },
+        OMASTAR = {
+          dex = 139,
+          evolutions = {},
+          id = "OMASTAR",
+          name = "OMASTAR",
+        },
+        ONIX = {
+          dex = 95,
+          evolutions = {},
+          id = "ONIX",
+          name = "ONIX",
+        },
+        PARAS = {
+          dex = 46,
+          evolutions = {
+            {
+              level = 24,
+              method = "LEVEL",
+              species = "PARASECT",
+            },
+          },
+          id = "PARAS",
+          name = "PARAS",
+        },
+        PARASECT = {
+          dex = 47,
+          evolutions = {},
+          id = "PARASECT",
+          name = "PARASECT",
+        },
+        PERSIAN = {
+          dex = 53,
+          evolutions = {},
+          id = "PERSIAN",
+          name = "PERSIAN",
+        },
+        PIDGEOT = {
+          dex = 18,
+          evolutions = {},
+          id = "PIDGEOT",
+          name = "PIDGEOT",
+        },
+        PIDGEOTTO = {
+          dex = 17,
+          evolutions = {
+            {
+              level = 36,
+              method = "LEVEL",
+              species = "PIDGEOT",
+            },
+          },
+          id = "PIDGEOTTO",
+          name = "PIDGEOTTO",
+        },
+        PIDGEY = {
+          dex = 16,
+          evolutions = {
+            {
+              level = 18,
+              method = "LEVEL",
+              species = "PIDGEOTTO",
+            },
+          },
+          id = "PIDGEY",
+          name = "PIDGEY",
+        },
+        PIKACHU = {
+          dex = 25,
+          evolutions = {
+            {
+              item = "THUNDER_STONE",
+              method = "ITEM",
+              species = "RAICHU",
+            },
+          },
+          id = "PIKACHU",
+          name = "PIKACHU",
+        },
+        PINSIR = {
+          dex = 127,
+          evolutions = {},
+          id = "PINSIR",
+          name = "PINSIR",
+        },
+        POLIWAG = {
+          dex = 60,
+          evolutions = {
+            {
+              level = 25,
+              method = "LEVEL",
+              species = "POLIWHIRL",
+            },
+          },
+          id = "POLIWAG",
+          name = "POLIWAG",
+        },
+        POLIWHIRL = {
+          dex = 61,
+          evolutions = {
+            {
+              item = "WATER_STONE",
+              method = "ITEM",
+              species = "POLIWRATH",
+            },
+          },
+          id = "POLIWHIRL",
+          name = "POLIWHIRL",
+        },
+        POLIWRATH = {
+          dex = 62,
+          evolutions = {},
+          id = "POLIWRATH",
+          name = "POLIWRATH",
+        },
+        PONYTA = {
+          dex = 77,
+          evolutions = {
+            {
+              level = 40,
+              method = "LEVEL",
+              species = "RAPIDASH",
+            },
+          },
+          id = "PONYTA",
+          name = "PONYTA",
+        },
+        PORYGON = {
+          dex = 137,
+          evolutions = {},
+          id = "PORYGON",
+          name = "PORYGON",
+        },
+        PRIMEAPE = {
+          dex = 57,
+          evolutions = {},
+          id = "PRIMEAPE",
+          name = "PRIMEAPE",
+        },
+        PSYDUCK = {
+          dex = 54,
+          evolutions = {
+            {
+              level = 33,
+              method = "LEVEL",
+              species = "GOLDUCK",
+            },
+          },
+          id = "PSYDUCK",
+          name = "PSYDUCK",
+        },
+        RAICHU = {
+          dex = 26,
+          evolutions = {},
+          id = "RAICHU",
+          name = "RAICHU",
+        },
+        RAPIDASH = {
+          dex = 78,
+          evolutions = {},
+          id = "RAPIDASH",
+          name = "RAPIDASH",
+        },
+        RATICATE = {
+          dex = 20,
+          evolutions = {},
+          id = "RATICATE",
+          name = "RATICATE",
+        },
+        RATTATA = {
+          dex = 19,
+          evolutions = {
+            {
+              level = 20,
+              method = "LEVEL",
+              species = "RATICATE",
+            },
+          },
+          id = "RATTATA",
+          name = "RATTATA",
+        },
+        RHYDON = {
+          dex = 112,
+          evolutions = {},
+          id = "RHYDON",
+          name = "RHYDON",
+        },
+        RHYHORN = {
+          dex = 111,
+          evolutions = {
+            {
+              level = 42,
+              method = "LEVEL",
+              species = "RHYDON",
+            },
+          },
+          id = "RHYHORN",
+          name = "RHYHORN",
+        },
+        SANDSHREW = {
+          dex = 27,
+          evolutions = {
+            {
+              level = 22,
+              method = "LEVEL",
+              species = "SANDSLASH",
+            },
+          },
+          id = "SANDSHREW",
+          name = "SANDSHREW",
+        },
+        SANDSLASH = {
+          dex = 28,
+          evolutions = {},
+          id = "SANDSLASH",
+          name = "SANDSLASH",
+        },
+        SCYTHER = {
+          dex = 123,
+          evolutions = {},
+          id = "SCYTHER",
+          name = "SCYTHER",
+        },
+        SEADRA = {
+          dex = 117,
+          evolutions = {},
+          id = "SEADRA",
+          name = "SEADRA",
+        },
+        SEAKING = {
+          dex = 119,
+          evolutions = {},
+          id = "SEAKING",
+          name = "SEAKING",
+        },
+        SEEL = {
+          dex = 86,
+          evolutions = {
+            {
+              level = 34,
+              method = "LEVEL",
+              species = "DEWGONG",
+            },
+          },
+          id = "SEEL",
+          name = "SEEL",
+        },
+        SHELLDER = {
+          dex = 90,
+          evolutions = {
+            {
+              item = "WATER_STONE",
+              method = "ITEM",
+              species = "CLOYSTER",
+            },
+          },
+          id = "SHELLDER",
+          name = "SHELLDER",
+        },
+        SLOWBRO = {
+          dex = 80,
+          evolutions = {},
+          id = "SLOWBRO",
+          name = "SLOWBRO",
+        },
+        SLOWPOKE = {
+          dex = 79,
+          evolutions = {
+            {
+              level = 37,
+              method = "LEVEL",
+              species = "SLOWBRO",
+            },
+          },
+          id = "SLOWPOKE",
+          name = "SLOWPOKE",
+        },
+        SNORLAX = {
+          dex = 143,
+          evolutions = {},
+          id = "SNORLAX",
+          name = "SNORLAX",
+        },
+        SPEAROW = {
+          dex = 21,
+          evolutions = {
+            {
+              level = 20,
+              method = "LEVEL",
+              species = "FEAROW",
+            },
+          },
+          id = "SPEAROW",
+          name = "SPEAROW",
+        },
+        SQUIRTLE = {
+          dex = 7,
+          evolutions = {
+            {
+              level = 16,
+              method = "LEVEL",
+              species = "WARTORTLE",
+            },
+          },
+          id = "SQUIRTLE",
+          name = "SQUIRTLE",
+        },
+        STARMIE = {
+          dex = 121,
+          evolutions = {},
+          id = "STARMIE",
+          name = "STARMIE",
+        },
+        STARYU = {
+          dex = 120,
+          evolutions = {
+            {
+              item = "WATER_STONE",
+              method = "ITEM",
+              species = "STARMIE",
+            },
+          },
+          id = "STARYU",
+          name = "STARYU",
+        },
+        TANGELA = {
+          dex = 114,
+          evolutions = {},
+          id = "TANGELA",
+          name = "TANGELA",
+        },
+        TAUROS = {
+          dex = 128,
+          evolutions = {},
+          id = "TAUROS",
+          name = "TAUROS",
+        },
+        TENTACOOL = {
+          dex = 72,
+          evolutions = {
+            {
+              level = 30,
+              method = "LEVEL",
+              species = "TENTACRUEL",
+            },
+          },
+          id = "TENTACOOL",
+          name = "TENTACOOL",
+        },
+        TENTACRUEL = {
+          dex = 73,
+          evolutions = {},
+          id = "TENTACRUEL",
+          name = "TENTACRUEL",
+        },
+        VAPOREON = {
+          dex = 134,
+          evolutions = {},
+          id = "VAPOREON",
+          name = "VAPOREON",
+        },
+        VENOMOTH = {
+          dex = 49,
+          evolutions = {},
+          id = "VENOMOTH",
+          name = "VENOMOTH",
+        },
+        VENONAT = {
+          dex = 48,
+          evolutions = {
+            {
+              level = 31,
+              method = "LEVEL",
+              species = "VENOMOTH",
+            },
+          },
+          id = "VENONAT",
+          name = "VENONAT",
+        },
+        VENUSAUR = {
+          dex = 3,
+          evolutions = {},
+          id = "VENUSAUR",
+          name = "VENUSAUR",
+        },
+        VICTREEBEL = {
+          dex = 71,
+          evolutions = {},
+          id = "VICTREEBEL",
+          name = "VICTREEBEL",
+        },
+        VILEPLUME = {
+          dex = 45,
+          evolutions = {},
+          id = "VILEPLUME",
+          name = "VILEPLUME",
+        },
+        VOLTORB = {
+          dex = 100,
+          evolutions = {
+            {
+              level = 30,
+              method = "LEVEL",
+              species = "ELECTRODE",
+            },
+          },
+          id = "VOLTORB",
+          name = "VOLTORB",
+        },
+        VULPIX = {
+          dex = 37,
+          evolutions = {
+            {
+              item = "FIRE_STONE",
+              method = "ITEM",
+              species = "NINETALES",
+            },
+          },
+          id = "VULPIX",
+          name = "VULPIX",
+        },
+        WARTORTLE = {
+          dex = 8,
+          evolutions = {
+            {
+              level = 36,
+              method = "LEVEL",
+              species = "BLASTOISE",
+            },
+          },
+          id = "WARTORTLE",
+          name = "WARTORTLE",
+        },
+        WEEDLE = {
+          dex = 13,
+          evolutions = {
+            {
+              level = 7,
+              method = "LEVEL",
+              species = "KAKUNA",
+            },
+          },
+          id = "WEEDLE",
+          name = "WEEDLE",
+        },
+        WEEPINBELL = {
+          dex = 70,
+          evolutions = {
+            {
+              item = "LEAF_STONE",
+              method = "ITEM",
+              species = "VICTREEBEL",
+            },
+          },
+          id = "WEEPINBELL",
+          name = "WEEPINBELL",
+        },
+        WEEZING = {
+          dex = 110,
+          evolutions = {},
+          id = "WEEZING",
+          name = "WEEZING",
+        },
+        WIGGLYTUFF = {
+          dex = 40,
+          evolutions = {},
+          id = "WIGGLYTUFF",
+          name = "WIGGLYTUFF",
+        },
+        ZAPDOS = {
+          dex = 145,
+          evolutions = {},
+          id = "ZAPDOS",
+          name = "ZAPDOS",
+        },
+        ZUBAT = {
+          dex = 41,
+          evolutions = {
+            {
+              level = 22,
+              method = "LEVEL",
+              species = "GOLBAT",
+            },
+          },
+          id = "ZUBAT",
+          name = "ZUBAT",
+        },
+      },
       setA = {
         "BULBASAUR",
         "CHARMANDER",
@@ -6572,6 +7906,1340 @@ return {
         "MOLTRES",
         "MEWTWO",
         "MEW",
+      },
+      pokemon = {
+        ABRA = {
+          dex = 63,
+          evolutions = {
+            {
+              level = 16,
+              method = "LEVEL",
+              species = "KADABRA",
+            },
+          },
+          id = "ABRA",
+          name = "ABRA",
+        },
+        AERODACTYL = {
+          dex = 142,
+          evolutions = {},
+          id = "AERODACTYL",
+          name = "AERODACTYL",
+        },
+        ALAKAZAM = {
+          dex = 65,
+          evolutions = {},
+          id = "ALAKAZAM",
+          name = "ALAKAZAM",
+        },
+        ARBOK = {
+          dex = 24,
+          evolutions = {},
+          id = "ARBOK",
+          name = "ARBOK",
+        },
+        ARCANINE = {
+          dex = 59,
+          evolutions = {},
+          id = "ARCANINE",
+          name = "ARCANINE",
+        },
+        ARTICUNO = {
+          dex = 144,
+          evolutions = {},
+          id = "ARTICUNO",
+          name = "ARTICUNO",
+        },
+        BEEDRILL = {
+          dex = 15,
+          evolutions = {},
+          id = "BEEDRILL",
+          name = "BEEDRILL",
+        },
+        BELLSPROUT = {
+          dex = 69,
+          evolutions = {
+            {
+              level = 21,
+              method = "LEVEL",
+              species = "WEEPINBELL",
+            },
+          },
+          id = "BELLSPROUT",
+          name = "BELLSPROUT",
+        },
+        BLASTOISE = {
+          dex = 9,
+          evolutions = {},
+          id = "BLASTOISE",
+          name = "BLASTOISE",
+        },
+        BULBASAUR = {
+          dex = 1,
+          evolutions = {
+            {
+              level = 16,
+              method = "LEVEL",
+              species = "IVYSAUR",
+            },
+          },
+          id = "BULBASAUR",
+          name = "BULBASAUR",
+        },
+        BUTTERFREE = {
+          dex = 12,
+          evolutions = {},
+          id = "BUTTERFREE",
+          name = "BUTTERFREE",
+        },
+        CATERPIE = {
+          dex = 10,
+          evolutions = {
+            {
+              level = 7,
+              method = "LEVEL",
+              species = "METAPOD",
+            },
+          },
+          id = "CATERPIE",
+          name = "CATERPIE",
+        },
+        CHANSEY = {
+          dex = 113,
+          evolutions = {},
+          id = "CHANSEY",
+          name = "CHANSEY",
+        },
+        CHARIZARD = {
+          dex = 6,
+          evolutions = {},
+          id = "CHARIZARD",
+          name = "CHARIZARD",
+        },
+        CHARMANDER = {
+          dex = 4,
+          evolutions = {
+            {
+              level = 16,
+              method = "LEVEL",
+              species = "CHARMELEON",
+            },
+          },
+          id = "CHARMANDER",
+          name = "CHARMANDER",
+        },
+        CHARMELEON = {
+          dex = 5,
+          evolutions = {
+            {
+              level = 36,
+              method = "LEVEL",
+              species = "CHARIZARD",
+            },
+          },
+          id = "CHARMELEON",
+          name = "CHARMELEON",
+        },
+        CLEFABLE = {
+          dex = 36,
+          evolutions = {},
+          id = "CLEFABLE",
+          name = "CLEFABLE",
+        },
+        CLEFAIRY = {
+          dex = 35,
+          evolutions = {
+            {
+              item = "MOON_STONE",
+              method = "ITEM",
+              species = "CLEFABLE",
+            },
+          },
+          id = "CLEFAIRY",
+          name = "CLEFAIRY",
+        },
+        CLOYSTER = {
+          dex = 91,
+          evolutions = {},
+          id = "CLOYSTER",
+          name = "CLOYSTER",
+        },
+        CUBONE = {
+          dex = 104,
+          evolutions = {
+            {
+              level = 28,
+              method = "LEVEL",
+              species = "MAROWAK",
+            },
+          },
+          id = "CUBONE",
+          name = "CUBONE",
+        },
+        DEWGONG = {
+          dex = 87,
+          evolutions = {},
+          id = "DEWGONG",
+          name = "DEWGONG",
+        },
+        DIGLETT = {
+          dex = 50,
+          evolutions = {
+            {
+              level = 26,
+              method = "LEVEL",
+              species = "DUGTRIO",
+            },
+          },
+          id = "DIGLETT",
+          name = "DIGLETT",
+        },
+        DITTO = {
+          dex = 132,
+          evolutions = {},
+          id = "DITTO",
+          name = "DITTO",
+        },
+        DODRIO = {
+          dex = 85,
+          evolutions = {},
+          id = "DODRIO",
+          name = "DODRIO",
+        },
+        DODUO = {
+          dex = 84,
+          evolutions = {
+            {
+              level = 31,
+              method = "LEVEL",
+              species = "DODRIO",
+            },
+          },
+          id = "DODUO",
+          name = "DODUO",
+        },
+        DRAGONAIR = {
+          dex = 148,
+          evolutions = {
+            {
+              level = 55,
+              method = "LEVEL",
+              species = "DRAGONITE",
+            },
+          },
+          id = "DRAGONAIR",
+          name = "DRAGONAIR",
+        },
+        DRAGONITE = {
+          dex = 149,
+          evolutions = {},
+          id = "DRAGONITE",
+          name = "DRAGONITE",
+        },
+        DRATINI = {
+          dex = 147,
+          evolutions = {
+            {
+              level = 30,
+              method = "LEVEL",
+              species = "DRAGONAIR",
+            },
+          },
+          id = "DRATINI",
+          name = "DRATINI",
+        },
+        DROWZEE = {
+          dex = 96,
+          evolutions = {
+            {
+              level = 26,
+              method = "LEVEL",
+              species = "HYPNO",
+            },
+          },
+          id = "DROWZEE",
+          name = "DROWZEE",
+        },
+        DUGTRIO = {
+          dex = 51,
+          evolutions = {},
+          id = "DUGTRIO",
+          name = "DUGTRIO",
+        },
+        EEVEE = {
+          dex = 133,
+          evolutions = {
+            {
+              item = "FIRE_STONE",
+              method = "ITEM",
+              species = "FLAREON",
+            },
+            {
+              item = "THUNDER_STONE",
+              method = "ITEM",
+              species = "JOLTEON",
+            },
+            {
+              item = "WATER_STONE",
+              method = "ITEM",
+              species = "VAPOREON",
+            },
+          },
+          id = "EEVEE",
+          name = "EEVEE",
+        },
+        EKANS = {
+          dex = 23,
+          evolutions = {
+            {
+              level = 22,
+              method = "LEVEL",
+              species = "ARBOK",
+            },
+          },
+          id = "EKANS",
+          name = "EKANS",
+        },
+        ELECTABUZZ = {
+          dex = 125,
+          evolutions = {},
+          id = "ELECTABUZZ",
+          name = "ELECTABUZZ",
+        },
+        ELECTRODE = {
+          dex = 101,
+          evolutions = {},
+          id = "ELECTRODE",
+          name = "ELECTRODE",
+        },
+        EXEGGCUTE = {
+          dex = 102,
+          evolutions = {
+            {
+              item = "LEAF_STONE",
+              method = "ITEM",
+              species = "EXEGGUTOR",
+            },
+          },
+          id = "EXEGGCUTE",
+          name = "EXEGGCUTE",
+        },
+        EXEGGUTOR = {
+          dex = 103,
+          evolutions = {},
+          id = "EXEGGUTOR",
+          name = "EXEGGUTOR",
+        },
+        FARFETCHD = {
+          dex = 83,
+          evolutions = {},
+          id = "FARFETCHD",
+          name = "FARFETCH'D",
+        },
+        FEAROW = {
+          dex = 22,
+          evolutions = {},
+          id = "FEAROW",
+          name = "FEAROW",
+        },
+        FLAREON = {
+          dex = 136,
+          evolutions = {},
+          id = "FLAREON",
+          name = "FLAREON",
+        },
+        GASTLY = {
+          dex = 92,
+          evolutions = {
+            {
+              level = 25,
+              method = "LEVEL",
+              species = "HAUNTER",
+            },
+          },
+          id = "GASTLY",
+          name = "GASTLY",
+        },
+        GENGAR = {
+          dex = 94,
+          evolutions = {},
+          id = "GENGAR",
+          name = "GENGAR",
+        },
+        GEODUDE = {
+          dex = 74,
+          evolutions = {
+            {
+              level = 25,
+              method = "LEVEL",
+              species = "GRAVELER",
+            },
+          },
+          id = "GEODUDE",
+          name = "GEODUDE",
+        },
+        GLOOM = {
+          dex = 44,
+          evolutions = {
+            {
+              item = "LEAF_STONE",
+              method = "ITEM",
+              species = "VILEPLUME",
+            },
+          },
+          id = "GLOOM",
+          name = "GLOOM",
+        },
+        GOLBAT = {
+          dex = 42,
+          evolutions = {},
+          id = "GOLBAT",
+          name = "GOLBAT",
+        },
+        GOLDEEN = {
+          dex = 118,
+          evolutions = {
+            {
+              level = 33,
+              method = "LEVEL",
+              species = "SEAKING",
+            },
+          },
+          id = "GOLDEEN",
+          name = "GOLDEEN",
+        },
+        GOLDUCK = {
+          dex = 55,
+          evolutions = {},
+          id = "GOLDUCK",
+          name = "GOLDUCK",
+        },
+        GOLEM = {
+          dex = 76,
+          evolutions = {},
+          id = "GOLEM",
+          name = "GOLEM",
+        },
+        GRAVELER = {
+          dex = 75,
+          evolutions = {
+            {
+              method = "TRADE",
+              species = "GOLEM",
+            },
+          },
+          id = "GRAVELER",
+          name = "GRAVELER",
+        },
+        GRIMER = {
+          dex = 88,
+          evolutions = {
+            {
+              level = 38,
+              method = "LEVEL",
+              species = "MUK",
+            },
+          },
+          id = "GRIMER",
+          name = "GRIMER",
+        },
+        GROWLITHE = {
+          dex = 58,
+          evolutions = {
+            {
+              item = "FIRE_STONE",
+              method = "ITEM",
+              species = "ARCANINE",
+            },
+          },
+          id = "GROWLITHE",
+          name = "GROWLITHE",
+        },
+        GYARADOS = {
+          dex = 130,
+          evolutions = {},
+          id = "GYARADOS",
+          name = "GYARADOS",
+        },
+        HAUNTER = {
+          dex = 93,
+          evolutions = {
+            {
+              method = "TRADE",
+              species = "GENGAR",
+            },
+          },
+          id = "HAUNTER",
+          name = "HAUNTER",
+        },
+        HITMONCHAN = {
+          dex = 107,
+          evolutions = {},
+          id = "HITMONCHAN",
+          name = "HITMONCHAN",
+        },
+        HITMONLEE = {
+          dex = 106,
+          evolutions = {},
+          id = "HITMONLEE",
+          name = "HITMONLEE",
+        },
+        HORSEA = {
+          dex = 116,
+          evolutions = {
+            {
+              level = 32,
+              method = "LEVEL",
+              species = "SEADRA",
+            },
+          },
+          id = "HORSEA",
+          name = "HORSEA",
+        },
+        HYPNO = {
+          dex = 97,
+          evolutions = {},
+          id = "HYPNO",
+          name = "HYPNO",
+        },
+        IVYSAUR = {
+          dex = 2,
+          evolutions = {
+            {
+              level = 32,
+              method = "LEVEL",
+              species = "VENUSAUR",
+            },
+          },
+          id = "IVYSAUR",
+          name = "IVYSAUR",
+        },
+        JIGGLYPUFF = {
+          dex = 39,
+          evolutions = {
+            {
+              item = "MOON_STONE",
+              method = "ITEM",
+              species = "WIGGLYTUFF",
+            },
+          },
+          id = "JIGGLYPUFF",
+          name = "JIGGLYPUFF",
+        },
+        JOLTEON = {
+          dex = 135,
+          evolutions = {},
+          id = "JOLTEON",
+          name = "JOLTEON",
+        },
+        JYNX = {
+          dex = 124,
+          evolutions = {},
+          id = "JYNX",
+          name = "JYNX",
+        },
+        KABUTO = {
+          dex = 140,
+          evolutions = {
+            {
+              level = 40,
+              method = "LEVEL",
+              species = "KABUTOPS",
+            },
+          },
+          id = "KABUTO",
+          name = "KABUTO",
+        },
+        KABUTOPS = {
+          dex = 141,
+          evolutions = {},
+          id = "KABUTOPS",
+          name = "KABUTOPS",
+        },
+        KADABRA = {
+          dex = 64,
+          evolutions = {
+            {
+              method = "TRADE",
+              species = "ALAKAZAM",
+            },
+          },
+          id = "KADABRA",
+          name = "KADABRA",
+        },
+        KAKUNA = {
+          dex = 14,
+          evolutions = {
+            {
+              level = 10,
+              method = "LEVEL",
+              species = "BEEDRILL",
+            },
+          },
+          id = "KAKUNA",
+          name = "KAKUNA",
+        },
+        KANGASKHAN = {
+          dex = 115,
+          evolutions = {},
+          id = "KANGASKHAN",
+          name = "KANGASKHAN",
+        },
+        KINGLER = {
+          dex = 99,
+          evolutions = {},
+          id = "KINGLER",
+          name = "KINGLER",
+        },
+        KOFFING = {
+          dex = 109,
+          evolutions = {
+            {
+              level = 35,
+              method = "LEVEL",
+              species = "WEEZING",
+            },
+          },
+          id = "KOFFING",
+          name = "KOFFING",
+        },
+        KRABBY = {
+          dex = 98,
+          evolutions = {
+            {
+              level = 28,
+              method = "LEVEL",
+              species = "KINGLER",
+            },
+          },
+          id = "KRABBY",
+          name = "KRABBY",
+        },
+        LAPRAS = {
+          dex = 131,
+          evolutions = {},
+          id = "LAPRAS",
+          name = "LAPRAS",
+        },
+        LICKITUNG = {
+          dex = 108,
+          evolutions = {},
+          id = "LICKITUNG",
+          name = "LICKITUNG",
+        },
+        MACHAMP = {
+          dex = 68,
+          evolutions = {},
+          id = "MACHAMP",
+          name = "MACHAMP",
+        },
+        MACHOKE = {
+          dex = 67,
+          evolutions = {
+            {
+              method = "TRADE",
+              species = "MACHAMP",
+            },
+          },
+          id = "MACHOKE",
+          name = "MACHOKE",
+        },
+        MACHOP = {
+          dex = 66,
+          evolutions = {
+            {
+              level = 28,
+              method = "LEVEL",
+              species = "MACHOKE",
+            },
+          },
+          id = "MACHOP",
+          name = "MACHOP",
+        },
+        MAGIKARP = {
+          dex = 129,
+          evolutions = {
+            {
+              level = 20,
+              method = "LEVEL",
+              species = "GYARADOS",
+            },
+          },
+          id = "MAGIKARP",
+          name = "MAGIKARP",
+        },
+        MAGMAR = {
+          dex = 126,
+          evolutions = {},
+          id = "MAGMAR",
+          name = "MAGMAR",
+        },
+        MAGNEMITE = {
+          dex = 81,
+          evolutions = {
+            {
+              level = 30,
+              method = "LEVEL",
+              species = "MAGNETON",
+            },
+          },
+          id = "MAGNEMITE",
+          name = "MAGNEMITE",
+        },
+        MAGNETON = {
+          dex = 82,
+          evolutions = {},
+          id = "MAGNETON",
+          name = "MAGNETON",
+        },
+        MANKEY = {
+          dex = 56,
+          evolutions = {
+            {
+              level = 28,
+              method = "LEVEL",
+              species = "PRIMEAPE",
+            },
+          },
+          id = "MANKEY",
+          name = "MANKEY",
+        },
+        MAROWAK = {
+          dex = 105,
+          evolutions = {},
+          id = "MAROWAK",
+          name = "MAROWAK",
+        },
+        MEOWTH = {
+          dex = 52,
+          evolutions = {
+            {
+              level = 28,
+              method = "LEVEL",
+              species = "PERSIAN",
+            },
+          },
+          id = "MEOWTH",
+          name = "MEOWTH",
+        },
+        METAPOD = {
+          dex = 11,
+          evolutions = {
+            {
+              level = 10,
+              method = "LEVEL",
+              species = "BUTTERFREE",
+            },
+          },
+          id = "METAPOD",
+          name = "METAPOD",
+        },
+        MEW = {
+          dex = 151,
+          evolutions = {},
+          id = "MEW",
+          name = "MEW",
+        },
+        MEWTWO = {
+          dex = 150,
+          evolutions = {},
+          id = "MEWTWO",
+          name = "MEWTWO",
+        },
+        MOLTRES = {
+          dex = 146,
+          evolutions = {},
+          id = "MOLTRES",
+          name = "MOLTRES",
+        },
+        MR_MIME = {
+          dex = 122,
+          evolutions = {},
+          id = "MR_MIME",
+          name = "MR.MIME",
+        },
+        MUK = {
+          dex = 89,
+          evolutions = {},
+          id = "MUK",
+          name = "MUK",
+        },
+        NIDOKING = {
+          dex = 34,
+          evolutions = {},
+          id = "NIDOKING",
+          name = "NIDOKING",
+        },
+        NIDOQUEEN = {
+          dex = 31,
+          evolutions = {},
+          id = "NIDOQUEEN",
+          name = "NIDOQUEEN",
+        },
+        NIDORAN_F = {
+          dex = 29,
+          evolutions = {
+            {
+              level = 16,
+              method = "LEVEL",
+              species = "NIDORINA",
+            },
+          },
+          id = "NIDORAN_F",
+          name = "NIDORAN♀",
+        },
+        NIDORAN_M = {
+          dex = 32,
+          evolutions = {
+            {
+              level = 16,
+              method = "LEVEL",
+              species = "NIDORINO",
+            },
+          },
+          id = "NIDORAN_M",
+          name = "NIDORAN♂",
+        },
+        NIDORINA = {
+          dex = 30,
+          evolutions = {
+            {
+              item = "MOON_STONE",
+              method = "ITEM",
+              species = "NIDOQUEEN",
+            },
+          },
+          id = "NIDORINA",
+          name = "NIDORINA",
+        },
+        NIDORINO = {
+          dex = 33,
+          evolutions = {
+            {
+              item = "MOON_STONE",
+              method = "ITEM",
+              species = "NIDOKING",
+            },
+          },
+          id = "NIDORINO",
+          name = "NIDORINO",
+        },
+        NINETALES = {
+          dex = 38,
+          evolutions = {},
+          id = "NINETALES",
+          name = "NINETALES",
+        },
+        ODDISH = {
+          dex = 43,
+          evolutions = {
+            {
+              level = 21,
+              method = "LEVEL",
+              species = "GLOOM",
+            },
+          },
+          id = "ODDISH",
+          name = "ODDISH",
+        },
+        OMANYTE = {
+          dex = 138,
+          evolutions = {
+            {
+              level = 40,
+              method = "LEVEL",
+              species = "OMASTAR",
+            },
+          },
+          id = "OMANYTE",
+          name = "OMANYTE",
+        },
+        OMASTAR = {
+          dex = 139,
+          evolutions = {},
+          id = "OMASTAR",
+          name = "OMASTAR",
+        },
+        ONIX = {
+          dex = 95,
+          evolutions = {},
+          id = "ONIX",
+          name = "ONIX",
+        },
+        PARAS = {
+          dex = 46,
+          evolutions = {
+            {
+              level = 24,
+              method = "LEVEL",
+              species = "PARASECT",
+            },
+          },
+          id = "PARAS",
+          name = "PARAS",
+        },
+        PARASECT = {
+          dex = 47,
+          evolutions = {},
+          id = "PARASECT",
+          name = "PARASECT",
+        },
+        PERSIAN = {
+          dex = 53,
+          evolutions = {},
+          id = "PERSIAN",
+          name = "PERSIAN",
+        },
+        PIDGEOT = {
+          dex = 18,
+          evolutions = {},
+          id = "PIDGEOT",
+          name = "PIDGEOT",
+        },
+        PIDGEOTTO = {
+          dex = 17,
+          evolutions = {
+            {
+              level = 36,
+              method = "LEVEL",
+              species = "PIDGEOT",
+            },
+          },
+          id = "PIDGEOTTO",
+          name = "PIDGEOTTO",
+        },
+        PIDGEY = {
+          dex = 16,
+          evolutions = {
+            {
+              level = 18,
+              method = "LEVEL",
+              species = "PIDGEOTTO",
+            },
+          },
+          id = "PIDGEY",
+          name = "PIDGEY",
+        },
+        PIKACHU = {
+          dex = 25,
+          evolutions = {
+            {
+              item = "THUNDER_STONE",
+              method = "ITEM",
+              species = "RAICHU",
+            },
+          },
+          id = "PIKACHU",
+          name = "PIKACHU",
+        },
+        PINSIR = {
+          dex = 127,
+          evolutions = {},
+          id = "PINSIR",
+          name = "PINSIR",
+        },
+        POLIWAG = {
+          dex = 60,
+          evolutions = {
+            {
+              level = 25,
+              method = "LEVEL",
+              species = "POLIWHIRL",
+            },
+          },
+          id = "POLIWAG",
+          name = "POLIWAG",
+        },
+        POLIWHIRL = {
+          dex = 61,
+          evolutions = {
+            {
+              item = "WATER_STONE",
+              method = "ITEM",
+              species = "POLIWRATH",
+            },
+          },
+          id = "POLIWHIRL",
+          name = "POLIWHIRL",
+        },
+        POLIWRATH = {
+          dex = 62,
+          evolutions = {},
+          id = "POLIWRATH",
+          name = "POLIWRATH",
+        },
+        PONYTA = {
+          dex = 77,
+          evolutions = {
+            {
+              level = 40,
+              method = "LEVEL",
+              species = "RAPIDASH",
+            },
+          },
+          id = "PONYTA",
+          name = "PONYTA",
+        },
+        PORYGON = {
+          dex = 137,
+          evolutions = {},
+          id = "PORYGON",
+          name = "PORYGON",
+        },
+        PRIMEAPE = {
+          dex = 57,
+          evolutions = {},
+          id = "PRIMEAPE",
+          name = "PRIMEAPE",
+        },
+        PSYDUCK = {
+          dex = 54,
+          evolutions = {
+            {
+              level = 33,
+              method = "LEVEL",
+              species = "GOLDUCK",
+            },
+          },
+          id = "PSYDUCK",
+          name = "PSYDUCK",
+        },
+        RAICHU = {
+          dex = 26,
+          evolutions = {},
+          id = "RAICHU",
+          name = "RAICHU",
+        },
+        RAPIDASH = {
+          dex = 78,
+          evolutions = {},
+          id = "RAPIDASH",
+          name = "RAPIDASH",
+        },
+        RATICATE = {
+          dex = 20,
+          evolutions = {},
+          id = "RATICATE",
+          name = "RATICATE",
+        },
+        RATTATA = {
+          dex = 19,
+          evolutions = {
+            {
+              level = 20,
+              method = "LEVEL",
+              species = "RATICATE",
+            },
+          },
+          id = "RATTATA",
+          name = "RATTATA",
+        },
+        RHYDON = {
+          dex = 112,
+          evolutions = {},
+          id = "RHYDON",
+          name = "RHYDON",
+        },
+        RHYHORN = {
+          dex = 111,
+          evolutions = {
+            {
+              level = 42,
+              method = "LEVEL",
+              species = "RHYDON",
+            },
+          },
+          id = "RHYHORN",
+          name = "RHYHORN",
+        },
+        SANDSHREW = {
+          dex = 27,
+          evolutions = {
+            {
+              level = 22,
+              method = "LEVEL",
+              species = "SANDSLASH",
+            },
+          },
+          id = "SANDSHREW",
+          name = "SANDSHREW",
+        },
+        SANDSLASH = {
+          dex = 28,
+          evolutions = {},
+          id = "SANDSLASH",
+          name = "SANDSLASH",
+        },
+        SCYTHER = {
+          dex = 123,
+          evolutions = {},
+          id = "SCYTHER",
+          name = "SCYTHER",
+        },
+        SEADRA = {
+          dex = 117,
+          evolutions = {},
+          id = "SEADRA",
+          name = "SEADRA",
+        },
+        SEAKING = {
+          dex = 119,
+          evolutions = {},
+          id = "SEAKING",
+          name = "SEAKING",
+        },
+        SEEL = {
+          dex = 86,
+          evolutions = {
+            {
+              level = 34,
+              method = "LEVEL",
+              species = "DEWGONG",
+            },
+          },
+          id = "SEEL",
+          name = "SEEL",
+        },
+        SHELLDER = {
+          dex = 90,
+          evolutions = {
+            {
+              item = "WATER_STONE",
+              method = "ITEM",
+              species = "CLOYSTER",
+            },
+          },
+          id = "SHELLDER",
+          name = "SHELLDER",
+        },
+        SLOWBRO = {
+          dex = 80,
+          evolutions = {},
+          id = "SLOWBRO",
+          name = "SLOWBRO",
+        },
+        SLOWPOKE = {
+          dex = 79,
+          evolutions = {
+            {
+              level = 37,
+              method = "LEVEL",
+              species = "SLOWBRO",
+            },
+          },
+          id = "SLOWPOKE",
+          name = "SLOWPOKE",
+        },
+        SNORLAX = {
+          dex = 143,
+          evolutions = {},
+          id = "SNORLAX",
+          name = "SNORLAX",
+        },
+        SPEAROW = {
+          dex = 21,
+          evolutions = {
+            {
+              level = 20,
+              method = "LEVEL",
+              species = "FEAROW",
+            },
+          },
+          id = "SPEAROW",
+          name = "SPEAROW",
+        },
+        SQUIRTLE = {
+          dex = 7,
+          evolutions = {
+            {
+              level = 16,
+              method = "LEVEL",
+              species = "WARTORTLE",
+            },
+          },
+          id = "SQUIRTLE",
+          name = "SQUIRTLE",
+        },
+        STARMIE = {
+          dex = 121,
+          evolutions = {},
+          id = "STARMIE",
+          name = "STARMIE",
+        },
+        STARYU = {
+          dex = 120,
+          evolutions = {
+            {
+              item = "WATER_STONE",
+              method = "ITEM",
+              species = "STARMIE",
+            },
+          },
+          id = "STARYU",
+          name = "STARYU",
+        },
+        TANGELA = {
+          dex = 114,
+          evolutions = {},
+          id = "TANGELA",
+          name = "TANGELA",
+        },
+        TAUROS = {
+          dex = 128,
+          evolutions = {},
+          id = "TAUROS",
+          name = "TAUROS",
+        },
+        TENTACOOL = {
+          dex = 72,
+          evolutions = {
+            {
+              level = 30,
+              method = "LEVEL",
+              species = "TENTACRUEL",
+            },
+          },
+          id = "TENTACOOL",
+          name = "TENTACOOL",
+        },
+        TENTACRUEL = {
+          dex = 73,
+          evolutions = {},
+          id = "TENTACRUEL",
+          name = "TENTACRUEL",
+        },
+        VAPOREON = {
+          dex = 134,
+          evolutions = {},
+          id = "VAPOREON",
+          name = "VAPOREON",
+        },
+        VENOMOTH = {
+          dex = 49,
+          evolutions = {},
+          id = "VENOMOTH",
+          name = "VENOMOTH",
+        },
+        VENONAT = {
+          dex = 48,
+          evolutions = {
+            {
+              level = 31,
+              method = "LEVEL",
+              species = "VENOMOTH",
+            },
+          },
+          id = "VENONAT",
+          name = "VENONAT",
+        },
+        VENUSAUR = {
+          dex = 3,
+          evolutions = {},
+          id = "VENUSAUR",
+          name = "VENUSAUR",
+        },
+        VICTREEBEL = {
+          dex = 71,
+          evolutions = {},
+          id = "VICTREEBEL",
+          name = "VICTREEBEL",
+        },
+        VILEPLUME = {
+          dex = 45,
+          evolutions = {},
+          id = "VILEPLUME",
+          name = "VILEPLUME",
+        },
+        VOLTORB = {
+          dex = 100,
+          evolutions = {
+            {
+              level = 30,
+              method = "LEVEL",
+              species = "ELECTRODE",
+            },
+          },
+          id = "VOLTORB",
+          name = "VOLTORB",
+        },
+        VULPIX = {
+          dex = 37,
+          evolutions = {
+            {
+              item = "FIRE_STONE",
+              method = "ITEM",
+              species = "NINETALES",
+            },
+          },
+          id = "VULPIX",
+          name = "VULPIX",
+        },
+        WARTORTLE = {
+          dex = 8,
+          evolutions = {
+            {
+              level = 36,
+              method = "LEVEL",
+              species = "BLASTOISE",
+            },
+          },
+          id = "WARTORTLE",
+          name = "WARTORTLE",
+        },
+        WEEDLE = {
+          dex = 13,
+          evolutions = {
+            {
+              level = 7,
+              method = "LEVEL",
+              species = "KAKUNA",
+            },
+          },
+          id = "WEEDLE",
+          name = "WEEDLE",
+        },
+        WEEPINBELL = {
+          dex = 70,
+          evolutions = {
+            {
+              item = "LEAF_STONE",
+              method = "ITEM",
+              species = "VICTREEBEL",
+            },
+          },
+          id = "WEEPINBELL",
+          name = "WEEPINBELL",
+        },
+        WEEZING = {
+          dex = 110,
+          evolutions = {},
+          id = "WEEZING",
+          name = "WEEZING",
+        },
+        WIGGLYTUFF = {
+          dex = 40,
+          evolutions = {},
+          id = "WIGGLYTUFF",
+          name = "WIGGLYTUFF",
+        },
+        ZAPDOS = {
+          dex = 145,
+          evolutions = {},
+          id = "ZAPDOS",
+          name = "ZAPDOS",
+        },
+        ZUBAT = {
+          dex = 41,
+          evolutions = {
+            {
+              level = 22,
+              method = "LEVEL",
+              species = "GOLBAT",
+            },
+          },
+          id = "ZUBAT",
+          name = "ZUBAT",
+        },
       },
       setA = {
         "BULBASAUR",
@@ -10252,6 +12920,1340 @@ return {
         "MOLTRES",
         "MEWTWO",
         "MEW",
+      },
+      pokemon = {
+        ABRA = {
+          dex = 63,
+          evolutions = {
+            {
+              level = 16,
+              method = "LEVEL",
+              species = "KADABRA",
+            },
+          },
+          id = "ABRA",
+          name = "ABRA",
+        },
+        AERODACTYL = {
+          dex = 142,
+          evolutions = {},
+          id = "AERODACTYL",
+          name = "AERODACTYL",
+        },
+        ALAKAZAM = {
+          dex = 65,
+          evolutions = {},
+          id = "ALAKAZAM",
+          name = "ALAKAZAM",
+        },
+        ARBOK = {
+          dex = 24,
+          evolutions = {},
+          id = "ARBOK",
+          name = "ARBOK",
+        },
+        ARCANINE = {
+          dex = 59,
+          evolutions = {},
+          id = "ARCANINE",
+          name = "ARCANINE",
+        },
+        ARTICUNO = {
+          dex = 144,
+          evolutions = {},
+          id = "ARTICUNO",
+          name = "ARTICUNO",
+        },
+        BEEDRILL = {
+          dex = 15,
+          evolutions = {},
+          id = "BEEDRILL",
+          name = "BEEDRILL",
+        },
+        BELLSPROUT = {
+          dex = 69,
+          evolutions = {
+            {
+              level = 21,
+              method = "LEVEL",
+              species = "WEEPINBELL",
+            },
+          },
+          id = "BELLSPROUT",
+          name = "BELLSPROUT",
+        },
+        BLASTOISE = {
+          dex = 9,
+          evolutions = {},
+          id = "BLASTOISE",
+          name = "BLASTOISE",
+        },
+        BULBASAUR = {
+          dex = 1,
+          evolutions = {
+            {
+              level = 16,
+              method = "LEVEL",
+              species = "IVYSAUR",
+            },
+          },
+          id = "BULBASAUR",
+          name = "BULBASAUR",
+        },
+        BUTTERFREE = {
+          dex = 12,
+          evolutions = {},
+          id = "BUTTERFREE",
+          name = "BUTTERFREE",
+        },
+        CATERPIE = {
+          dex = 10,
+          evolutions = {
+            {
+              level = 7,
+              method = "LEVEL",
+              species = "METAPOD",
+            },
+          },
+          id = "CATERPIE",
+          name = "CATERPIE",
+        },
+        CHANSEY = {
+          dex = 113,
+          evolutions = {},
+          id = "CHANSEY",
+          name = "CHANSEY",
+        },
+        CHARIZARD = {
+          dex = 6,
+          evolutions = {},
+          id = "CHARIZARD",
+          name = "CHARIZARD",
+        },
+        CHARMANDER = {
+          dex = 4,
+          evolutions = {
+            {
+              level = 16,
+              method = "LEVEL",
+              species = "CHARMELEON",
+            },
+          },
+          id = "CHARMANDER",
+          name = "CHARMANDER",
+        },
+        CHARMELEON = {
+          dex = 5,
+          evolutions = {
+            {
+              level = 36,
+              method = "LEVEL",
+              species = "CHARIZARD",
+            },
+          },
+          id = "CHARMELEON",
+          name = "CHARMELEON",
+        },
+        CLEFABLE = {
+          dex = 36,
+          evolutions = {},
+          id = "CLEFABLE",
+          name = "CLEFABLE",
+        },
+        CLEFAIRY = {
+          dex = 35,
+          evolutions = {
+            {
+              item = "MOON_STONE",
+              method = "ITEM",
+              species = "CLEFABLE",
+            },
+          },
+          id = "CLEFAIRY",
+          name = "CLEFAIRY",
+        },
+        CLOYSTER = {
+          dex = 91,
+          evolutions = {},
+          id = "CLOYSTER",
+          name = "CLOYSTER",
+        },
+        CUBONE = {
+          dex = 104,
+          evolutions = {
+            {
+              level = 28,
+              method = "LEVEL",
+              species = "MAROWAK",
+            },
+          },
+          id = "CUBONE",
+          name = "CUBONE",
+        },
+        DEWGONG = {
+          dex = 87,
+          evolutions = {},
+          id = "DEWGONG",
+          name = "DEWGONG",
+        },
+        DIGLETT = {
+          dex = 50,
+          evolutions = {
+            {
+              level = 26,
+              method = "LEVEL",
+              species = "DUGTRIO",
+            },
+          },
+          id = "DIGLETT",
+          name = "DIGLETT",
+        },
+        DITTO = {
+          dex = 132,
+          evolutions = {},
+          id = "DITTO",
+          name = "DITTO",
+        },
+        DODRIO = {
+          dex = 85,
+          evolutions = {},
+          id = "DODRIO",
+          name = "DODRIO",
+        },
+        DODUO = {
+          dex = 84,
+          evolutions = {
+            {
+              level = 31,
+              method = "LEVEL",
+              species = "DODRIO",
+            },
+          },
+          id = "DODUO",
+          name = "DODUO",
+        },
+        DRAGONAIR = {
+          dex = 148,
+          evolutions = {
+            {
+              level = 55,
+              method = "LEVEL",
+              species = "DRAGONITE",
+            },
+          },
+          id = "DRAGONAIR",
+          name = "DRAGONAIR",
+        },
+        DRAGONITE = {
+          dex = 149,
+          evolutions = {},
+          id = "DRAGONITE",
+          name = "DRAGONITE",
+        },
+        DRATINI = {
+          dex = 147,
+          evolutions = {
+            {
+              level = 30,
+              method = "LEVEL",
+              species = "DRAGONAIR",
+            },
+          },
+          id = "DRATINI",
+          name = "DRATINI",
+        },
+        DROWZEE = {
+          dex = 96,
+          evolutions = {
+            {
+              level = 26,
+              method = "LEVEL",
+              species = "HYPNO",
+            },
+          },
+          id = "DROWZEE",
+          name = "DROWZEE",
+        },
+        DUGTRIO = {
+          dex = 51,
+          evolutions = {},
+          id = "DUGTRIO",
+          name = "DUGTRIO",
+        },
+        EEVEE = {
+          dex = 133,
+          evolutions = {
+            {
+              item = "FIRE_STONE",
+              method = "ITEM",
+              species = "FLAREON",
+            },
+            {
+              item = "THUNDER_STONE",
+              method = "ITEM",
+              species = "JOLTEON",
+            },
+            {
+              item = "WATER_STONE",
+              method = "ITEM",
+              species = "VAPOREON",
+            },
+          },
+          id = "EEVEE",
+          name = "EEVEE",
+        },
+        EKANS = {
+          dex = 23,
+          evolutions = {
+            {
+              level = 22,
+              method = "LEVEL",
+              species = "ARBOK",
+            },
+          },
+          id = "EKANS",
+          name = "EKANS",
+        },
+        ELECTABUZZ = {
+          dex = 125,
+          evolutions = {},
+          id = "ELECTABUZZ",
+          name = "ELECTABUZZ",
+        },
+        ELECTRODE = {
+          dex = 101,
+          evolutions = {},
+          id = "ELECTRODE",
+          name = "ELECTRODE",
+        },
+        EXEGGCUTE = {
+          dex = 102,
+          evolutions = {
+            {
+              item = "LEAF_STONE",
+              method = "ITEM",
+              species = "EXEGGUTOR",
+            },
+          },
+          id = "EXEGGCUTE",
+          name = "EXEGGCUTE",
+        },
+        EXEGGUTOR = {
+          dex = 103,
+          evolutions = {},
+          id = "EXEGGUTOR",
+          name = "EXEGGUTOR",
+        },
+        FARFETCHD = {
+          dex = 83,
+          evolutions = {},
+          id = "FARFETCHD",
+          name = "FARFETCH'D",
+        },
+        FEAROW = {
+          dex = 22,
+          evolutions = {},
+          id = "FEAROW",
+          name = "FEAROW",
+        },
+        FLAREON = {
+          dex = 136,
+          evolutions = {},
+          id = "FLAREON",
+          name = "FLAREON",
+        },
+        GASTLY = {
+          dex = 92,
+          evolutions = {
+            {
+              level = 25,
+              method = "LEVEL",
+              species = "HAUNTER",
+            },
+          },
+          id = "GASTLY",
+          name = "GASTLY",
+        },
+        GENGAR = {
+          dex = 94,
+          evolutions = {},
+          id = "GENGAR",
+          name = "GENGAR",
+        },
+        GEODUDE = {
+          dex = 74,
+          evolutions = {
+            {
+              level = 25,
+              method = "LEVEL",
+              species = "GRAVELER",
+            },
+          },
+          id = "GEODUDE",
+          name = "GEODUDE",
+        },
+        GLOOM = {
+          dex = 44,
+          evolutions = {
+            {
+              item = "LEAF_STONE",
+              method = "ITEM",
+              species = "VILEPLUME",
+            },
+          },
+          id = "GLOOM",
+          name = "GLOOM",
+        },
+        GOLBAT = {
+          dex = 42,
+          evolutions = {},
+          id = "GOLBAT",
+          name = "GOLBAT",
+        },
+        GOLDEEN = {
+          dex = 118,
+          evolutions = {
+            {
+              level = 33,
+              method = "LEVEL",
+              species = "SEAKING",
+            },
+          },
+          id = "GOLDEEN",
+          name = "GOLDEEN",
+        },
+        GOLDUCK = {
+          dex = 55,
+          evolutions = {},
+          id = "GOLDUCK",
+          name = "GOLDUCK",
+        },
+        GOLEM = {
+          dex = 76,
+          evolutions = {},
+          id = "GOLEM",
+          name = "GOLEM",
+        },
+        GRAVELER = {
+          dex = 75,
+          evolutions = {
+            {
+              method = "TRADE",
+              species = "GOLEM",
+            },
+          },
+          id = "GRAVELER",
+          name = "GRAVELER",
+        },
+        GRIMER = {
+          dex = 88,
+          evolutions = {
+            {
+              level = 38,
+              method = "LEVEL",
+              species = "MUK",
+            },
+          },
+          id = "GRIMER",
+          name = "GRIMER",
+        },
+        GROWLITHE = {
+          dex = 58,
+          evolutions = {
+            {
+              item = "FIRE_STONE",
+              method = "ITEM",
+              species = "ARCANINE",
+            },
+          },
+          id = "GROWLITHE",
+          name = "GROWLITHE",
+        },
+        GYARADOS = {
+          dex = 130,
+          evolutions = {},
+          id = "GYARADOS",
+          name = "GYARADOS",
+        },
+        HAUNTER = {
+          dex = 93,
+          evolutions = {
+            {
+              method = "TRADE",
+              species = "GENGAR",
+            },
+          },
+          id = "HAUNTER",
+          name = "HAUNTER",
+        },
+        HITMONCHAN = {
+          dex = 107,
+          evolutions = {},
+          id = "HITMONCHAN",
+          name = "HITMONCHAN",
+        },
+        HITMONLEE = {
+          dex = 106,
+          evolutions = {},
+          id = "HITMONLEE",
+          name = "HITMONLEE",
+        },
+        HORSEA = {
+          dex = 116,
+          evolutions = {
+            {
+              level = 32,
+              method = "LEVEL",
+              species = "SEADRA",
+            },
+          },
+          id = "HORSEA",
+          name = "HORSEA",
+        },
+        HYPNO = {
+          dex = 97,
+          evolutions = {},
+          id = "HYPNO",
+          name = "HYPNO",
+        },
+        IVYSAUR = {
+          dex = 2,
+          evolutions = {
+            {
+              level = 32,
+              method = "LEVEL",
+              species = "VENUSAUR",
+            },
+          },
+          id = "IVYSAUR",
+          name = "IVYSAUR",
+        },
+        JIGGLYPUFF = {
+          dex = 39,
+          evolutions = {
+            {
+              item = "MOON_STONE",
+              method = "ITEM",
+              species = "WIGGLYTUFF",
+            },
+          },
+          id = "JIGGLYPUFF",
+          name = "JIGGLYPUFF",
+        },
+        JOLTEON = {
+          dex = 135,
+          evolutions = {},
+          id = "JOLTEON",
+          name = "JOLTEON",
+        },
+        JYNX = {
+          dex = 124,
+          evolutions = {},
+          id = "JYNX",
+          name = "JYNX",
+        },
+        KABUTO = {
+          dex = 140,
+          evolutions = {
+            {
+              level = 40,
+              method = "LEVEL",
+              species = "KABUTOPS",
+            },
+          },
+          id = "KABUTO",
+          name = "KABUTO",
+        },
+        KABUTOPS = {
+          dex = 141,
+          evolutions = {},
+          id = "KABUTOPS",
+          name = "KABUTOPS",
+        },
+        KADABRA = {
+          dex = 64,
+          evolutions = {
+            {
+              method = "TRADE",
+              species = "ALAKAZAM",
+            },
+          },
+          id = "KADABRA",
+          name = "KADABRA",
+        },
+        KAKUNA = {
+          dex = 14,
+          evolutions = {
+            {
+              level = 10,
+              method = "LEVEL",
+              species = "BEEDRILL",
+            },
+          },
+          id = "KAKUNA",
+          name = "KAKUNA",
+        },
+        KANGASKHAN = {
+          dex = 115,
+          evolutions = {},
+          id = "KANGASKHAN",
+          name = "KANGASKHAN",
+        },
+        KINGLER = {
+          dex = 99,
+          evolutions = {},
+          id = "KINGLER",
+          name = "KINGLER",
+        },
+        KOFFING = {
+          dex = 109,
+          evolutions = {
+            {
+              level = 35,
+              method = "LEVEL",
+              species = "WEEZING",
+            },
+          },
+          id = "KOFFING",
+          name = "KOFFING",
+        },
+        KRABBY = {
+          dex = 98,
+          evolutions = {
+            {
+              level = 28,
+              method = "LEVEL",
+              species = "KINGLER",
+            },
+          },
+          id = "KRABBY",
+          name = "KRABBY",
+        },
+        LAPRAS = {
+          dex = 131,
+          evolutions = {},
+          id = "LAPRAS",
+          name = "LAPRAS",
+        },
+        LICKITUNG = {
+          dex = 108,
+          evolutions = {},
+          id = "LICKITUNG",
+          name = "LICKITUNG",
+        },
+        MACHAMP = {
+          dex = 68,
+          evolutions = {},
+          id = "MACHAMP",
+          name = "MACHAMP",
+        },
+        MACHOKE = {
+          dex = 67,
+          evolutions = {
+            {
+              method = "TRADE",
+              species = "MACHAMP",
+            },
+          },
+          id = "MACHOKE",
+          name = "MACHOKE",
+        },
+        MACHOP = {
+          dex = 66,
+          evolutions = {
+            {
+              level = 28,
+              method = "LEVEL",
+              species = "MACHOKE",
+            },
+          },
+          id = "MACHOP",
+          name = "MACHOP",
+        },
+        MAGIKARP = {
+          dex = 129,
+          evolutions = {
+            {
+              level = 20,
+              method = "LEVEL",
+              species = "GYARADOS",
+            },
+          },
+          id = "MAGIKARP",
+          name = "MAGIKARP",
+        },
+        MAGMAR = {
+          dex = 126,
+          evolutions = {},
+          id = "MAGMAR",
+          name = "MAGMAR",
+        },
+        MAGNEMITE = {
+          dex = 81,
+          evolutions = {
+            {
+              level = 30,
+              method = "LEVEL",
+              species = "MAGNETON",
+            },
+          },
+          id = "MAGNEMITE",
+          name = "MAGNEMITE",
+        },
+        MAGNETON = {
+          dex = 82,
+          evolutions = {},
+          id = "MAGNETON",
+          name = "MAGNETON",
+        },
+        MANKEY = {
+          dex = 56,
+          evolutions = {
+            {
+              level = 28,
+              method = "LEVEL",
+              species = "PRIMEAPE",
+            },
+          },
+          id = "MANKEY",
+          name = "MANKEY",
+        },
+        MAROWAK = {
+          dex = 105,
+          evolutions = {},
+          id = "MAROWAK",
+          name = "MAROWAK",
+        },
+        MEOWTH = {
+          dex = 52,
+          evolutions = {
+            {
+              level = 28,
+              method = "LEVEL",
+              species = "PERSIAN",
+            },
+          },
+          id = "MEOWTH",
+          name = "MEOWTH",
+        },
+        METAPOD = {
+          dex = 11,
+          evolutions = {
+            {
+              level = 10,
+              method = "LEVEL",
+              species = "BUTTERFREE",
+            },
+          },
+          id = "METAPOD",
+          name = "METAPOD",
+        },
+        MEW = {
+          dex = 151,
+          evolutions = {},
+          id = "MEW",
+          name = "MEW",
+        },
+        MEWTWO = {
+          dex = 150,
+          evolutions = {},
+          id = "MEWTWO",
+          name = "MEWTWO",
+        },
+        MOLTRES = {
+          dex = 146,
+          evolutions = {},
+          id = "MOLTRES",
+          name = "MOLTRES",
+        },
+        MR_MIME = {
+          dex = 122,
+          evolutions = {},
+          id = "MR_MIME",
+          name = "MR.MIME",
+        },
+        MUK = {
+          dex = 89,
+          evolutions = {},
+          id = "MUK",
+          name = "MUK",
+        },
+        NIDOKING = {
+          dex = 34,
+          evolutions = {},
+          id = "NIDOKING",
+          name = "NIDOKING",
+        },
+        NIDOQUEEN = {
+          dex = 31,
+          evolutions = {},
+          id = "NIDOQUEEN",
+          name = "NIDOQUEEN",
+        },
+        NIDORAN_F = {
+          dex = 29,
+          evolutions = {
+            {
+              level = 16,
+              method = "LEVEL",
+              species = "NIDORINA",
+            },
+          },
+          id = "NIDORAN_F",
+          name = "NIDORAN♀",
+        },
+        NIDORAN_M = {
+          dex = 32,
+          evolutions = {
+            {
+              level = 16,
+              method = "LEVEL",
+              species = "NIDORINO",
+            },
+          },
+          id = "NIDORAN_M",
+          name = "NIDORAN♂",
+        },
+        NIDORINA = {
+          dex = 30,
+          evolutions = {
+            {
+              item = "MOON_STONE",
+              method = "ITEM",
+              species = "NIDOQUEEN",
+            },
+          },
+          id = "NIDORINA",
+          name = "NIDORINA",
+        },
+        NIDORINO = {
+          dex = 33,
+          evolutions = {
+            {
+              item = "MOON_STONE",
+              method = "ITEM",
+              species = "NIDOKING",
+            },
+          },
+          id = "NIDORINO",
+          name = "NIDORINO",
+        },
+        NINETALES = {
+          dex = 38,
+          evolutions = {},
+          id = "NINETALES",
+          name = "NINETALES",
+        },
+        ODDISH = {
+          dex = 43,
+          evolutions = {
+            {
+              level = 21,
+              method = "LEVEL",
+              species = "GLOOM",
+            },
+          },
+          id = "ODDISH",
+          name = "ODDISH",
+        },
+        OMANYTE = {
+          dex = 138,
+          evolutions = {
+            {
+              level = 40,
+              method = "LEVEL",
+              species = "OMASTAR",
+            },
+          },
+          id = "OMANYTE",
+          name = "OMANYTE",
+        },
+        OMASTAR = {
+          dex = 139,
+          evolutions = {},
+          id = "OMASTAR",
+          name = "OMASTAR",
+        },
+        ONIX = {
+          dex = 95,
+          evolutions = {},
+          id = "ONIX",
+          name = "ONIX",
+        },
+        PARAS = {
+          dex = 46,
+          evolutions = {
+            {
+              level = 24,
+              method = "LEVEL",
+              species = "PARASECT",
+            },
+          },
+          id = "PARAS",
+          name = "PARAS",
+        },
+        PARASECT = {
+          dex = 47,
+          evolutions = {},
+          id = "PARASECT",
+          name = "PARASECT",
+        },
+        PERSIAN = {
+          dex = 53,
+          evolutions = {},
+          id = "PERSIAN",
+          name = "PERSIAN",
+        },
+        PIDGEOT = {
+          dex = 18,
+          evolutions = {},
+          id = "PIDGEOT",
+          name = "PIDGEOT",
+        },
+        PIDGEOTTO = {
+          dex = 17,
+          evolutions = {
+            {
+              level = 36,
+              method = "LEVEL",
+              species = "PIDGEOT",
+            },
+          },
+          id = "PIDGEOTTO",
+          name = "PIDGEOTTO",
+        },
+        PIDGEY = {
+          dex = 16,
+          evolutions = {
+            {
+              level = 18,
+              method = "LEVEL",
+              species = "PIDGEOTTO",
+            },
+          },
+          id = "PIDGEY",
+          name = "PIDGEY",
+        },
+        PIKACHU = {
+          dex = 25,
+          evolutions = {
+            {
+              item = "THUNDER_STONE",
+              method = "ITEM",
+              species = "RAICHU",
+            },
+          },
+          id = "PIKACHU",
+          name = "PIKACHU",
+        },
+        PINSIR = {
+          dex = 127,
+          evolutions = {},
+          id = "PINSIR",
+          name = "PINSIR",
+        },
+        POLIWAG = {
+          dex = 60,
+          evolutions = {
+            {
+              level = 25,
+              method = "LEVEL",
+              species = "POLIWHIRL",
+            },
+          },
+          id = "POLIWAG",
+          name = "POLIWAG",
+        },
+        POLIWHIRL = {
+          dex = 61,
+          evolutions = {
+            {
+              item = "WATER_STONE",
+              method = "ITEM",
+              species = "POLIWRATH",
+            },
+          },
+          id = "POLIWHIRL",
+          name = "POLIWHIRL",
+        },
+        POLIWRATH = {
+          dex = 62,
+          evolutions = {},
+          id = "POLIWRATH",
+          name = "POLIWRATH",
+        },
+        PONYTA = {
+          dex = 77,
+          evolutions = {
+            {
+              level = 40,
+              method = "LEVEL",
+              species = "RAPIDASH",
+            },
+          },
+          id = "PONYTA",
+          name = "PONYTA",
+        },
+        PORYGON = {
+          dex = 137,
+          evolutions = {},
+          id = "PORYGON",
+          name = "PORYGON",
+        },
+        PRIMEAPE = {
+          dex = 57,
+          evolutions = {},
+          id = "PRIMEAPE",
+          name = "PRIMEAPE",
+        },
+        PSYDUCK = {
+          dex = 54,
+          evolutions = {
+            {
+              level = 33,
+              method = "LEVEL",
+              species = "GOLDUCK",
+            },
+          },
+          id = "PSYDUCK",
+          name = "PSYDUCK",
+        },
+        RAICHU = {
+          dex = 26,
+          evolutions = {},
+          id = "RAICHU",
+          name = "RAICHU",
+        },
+        RAPIDASH = {
+          dex = 78,
+          evolutions = {},
+          id = "RAPIDASH",
+          name = "RAPIDASH",
+        },
+        RATICATE = {
+          dex = 20,
+          evolutions = {},
+          id = "RATICATE",
+          name = "RATICATE",
+        },
+        RATTATA = {
+          dex = 19,
+          evolutions = {
+            {
+              level = 20,
+              method = "LEVEL",
+              species = "RATICATE",
+            },
+          },
+          id = "RATTATA",
+          name = "RATTATA",
+        },
+        RHYDON = {
+          dex = 112,
+          evolutions = {},
+          id = "RHYDON",
+          name = "RHYDON",
+        },
+        RHYHORN = {
+          dex = 111,
+          evolutions = {
+            {
+              level = 42,
+              method = "LEVEL",
+              species = "RHYDON",
+            },
+          },
+          id = "RHYHORN",
+          name = "RHYHORN",
+        },
+        SANDSHREW = {
+          dex = 27,
+          evolutions = {
+            {
+              level = 22,
+              method = "LEVEL",
+              species = "SANDSLASH",
+            },
+          },
+          id = "SANDSHREW",
+          name = "SANDSHREW",
+        },
+        SANDSLASH = {
+          dex = 28,
+          evolutions = {},
+          id = "SANDSLASH",
+          name = "SANDSLASH",
+        },
+        SCYTHER = {
+          dex = 123,
+          evolutions = {},
+          id = "SCYTHER",
+          name = "SCYTHER",
+        },
+        SEADRA = {
+          dex = 117,
+          evolutions = {},
+          id = "SEADRA",
+          name = "SEADRA",
+        },
+        SEAKING = {
+          dex = 119,
+          evolutions = {},
+          id = "SEAKING",
+          name = "SEAKING",
+        },
+        SEEL = {
+          dex = 86,
+          evolutions = {
+            {
+              level = 34,
+              method = "LEVEL",
+              species = "DEWGONG",
+            },
+          },
+          id = "SEEL",
+          name = "SEEL",
+        },
+        SHELLDER = {
+          dex = 90,
+          evolutions = {
+            {
+              item = "WATER_STONE",
+              method = "ITEM",
+              species = "CLOYSTER",
+            },
+          },
+          id = "SHELLDER",
+          name = "SHELLDER",
+        },
+        SLOWBRO = {
+          dex = 80,
+          evolutions = {},
+          id = "SLOWBRO",
+          name = "SLOWBRO",
+        },
+        SLOWPOKE = {
+          dex = 79,
+          evolutions = {
+            {
+              level = 37,
+              method = "LEVEL",
+              species = "SLOWBRO",
+            },
+          },
+          id = "SLOWPOKE",
+          name = "SLOWPOKE",
+        },
+        SNORLAX = {
+          dex = 143,
+          evolutions = {},
+          id = "SNORLAX",
+          name = "SNORLAX",
+        },
+        SPEAROW = {
+          dex = 21,
+          evolutions = {
+            {
+              level = 20,
+              method = "LEVEL",
+              species = "FEAROW",
+            },
+          },
+          id = "SPEAROW",
+          name = "SPEAROW",
+        },
+        SQUIRTLE = {
+          dex = 7,
+          evolutions = {
+            {
+              level = 16,
+              method = "LEVEL",
+              species = "WARTORTLE",
+            },
+          },
+          id = "SQUIRTLE",
+          name = "SQUIRTLE",
+        },
+        STARMIE = {
+          dex = 121,
+          evolutions = {},
+          id = "STARMIE",
+          name = "STARMIE",
+        },
+        STARYU = {
+          dex = 120,
+          evolutions = {
+            {
+              item = "WATER_STONE",
+              method = "ITEM",
+              species = "STARMIE",
+            },
+          },
+          id = "STARYU",
+          name = "STARYU",
+        },
+        TANGELA = {
+          dex = 114,
+          evolutions = {},
+          id = "TANGELA",
+          name = "TANGELA",
+        },
+        TAUROS = {
+          dex = 128,
+          evolutions = {},
+          id = "TAUROS",
+          name = "TAUROS",
+        },
+        TENTACOOL = {
+          dex = 72,
+          evolutions = {
+            {
+              level = 30,
+              method = "LEVEL",
+              species = "TENTACRUEL",
+            },
+          },
+          id = "TENTACOOL",
+          name = "TENTACOOL",
+        },
+        TENTACRUEL = {
+          dex = 73,
+          evolutions = {},
+          id = "TENTACRUEL",
+          name = "TENTACRUEL",
+        },
+        VAPOREON = {
+          dex = 134,
+          evolutions = {},
+          id = "VAPOREON",
+          name = "VAPOREON",
+        },
+        VENOMOTH = {
+          dex = 49,
+          evolutions = {},
+          id = "VENOMOTH",
+          name = "VENOMOTH",
+        },
+        VENONAT = {
+          dex = 48,
+          evolutions = {
+            {
+              level = 31,
+              method = "LEVEL",
+              species = "VENOMOTH",
+            },
+          },
+          id = "VENONAT",
+          name = "VENONAT",
+        },
+        VENUSAUR = {
+          dex = 3,
+          evolutions = {},
+          id = "VENUSAUR",
+          name = "VENUSAUR",
+        },
+        VICTREEBEL = {
+          dex = 71,
+          evolutions = {},
+          id = "VICTREEBEL",
+          name = "VICTREEBEL",
+        },
+        VILEPLUME = {
+          dex = 45,
+          evolutions = {},
+          id = "VILEPLUME",
+          name = "VILEPLUME",
+        },
+        VOLTORB = {
+          dex = 100,
+          evolutions = {
+            {
+              level = 30,
+              method = "LEVEL",
+              species = "ELECTRODE",
+            },
+          },
+          id = "VOLTORB",
+          name = "VOLTORB",
+        },
+        VULPIX = {
+          dex = 37,
+          evolutions = {
+            {
+              item = "FIRE_STONE",
+              method = "ITEM",
+              species = "NINETALES",
+            },
+          },
+          id = "VULPIX",
+          name = "VULPIX",
+        },
+        WARTORTLE = {
+          dex = 8,
+          evolutions = {
+            {
+              level = 36,
+              method = "LEVEL",
+              species = "BLASTOISE",
+            },
+          },
+          id = "WARTORTLE",
+          name = "WARTORTLE",
+        },
+        WEEDLE = {
+          dex = 13,
+          evolutions = {
+            {
+              level = 7,
+              method = "LEVEL",
+              species = "KAKUNA",
+            },
+          },
+          id = "WEEDLE",
+          name = "WEEDLE",
+        },
+        WEEPINBELL = {
+          dex = 70,
+          evolutions = {
+            {
+              item = "LEAF_STONE",
+              method = "ITEM",
+              species = "VICTREEBEL",
+            },
+          },
+          id = "WEEPINBELL",
+          name = "WEEPINBELL",
+        },
+        WEEZING = {
+          dex = 110,
+          evolutions = {},
+          id = "WEEZING",
+          name = "WEEZING",
+        },
+        WIGGLYTUFF = {
+          dex = 40,
+          evolutions = {},
+          id = "WIGGLYTUFF",
+          name = "WIGGLYTUFF",
+        },
+        ZAPDOS = {
+          dex = 145,
+          evolutions = {},
+          id = "ZAPDOS",
+          name = "ZAPDOS",
+        },
+        ZUBAT = {
+          dex = 41,
+          evolutions = {
+            {
+              level = 22,
+              method = "LEVEL",
+              species = "GOLBAT",
+            },
+          },
+          id = "ZUBAT",
+          name = "ZUBAT",
+        },
       },
       setA = {
         "BULBASAUR",
