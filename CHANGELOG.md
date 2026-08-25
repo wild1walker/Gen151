@@ -3,6 +3,40 @@
 All notable changes to Gen151 are recorded here, in
 [keep a changelog](https://keepachangelog.com/en/1.1.0/) order.
 
+## [1.1.1] - 2026-08-25
+
+### Changed
+
+- **The AREA hint now covers all 151**, not just the species this mod placed.
+  A vanilla Pokemon's line is read straight out of the live encounter tables
+  -- the map where it has the biggest share, that map's own level band, and a
+  rarity worked out from Gen 1's ten slot buckets -- and one that is in no
+  table at all falls back to the evolution table (`EVOLVE ODDISH / AT LV21`,
+  `LINK CABLE / ON KADABRA`). None of it depends on having caught the thing.
+- **A press takes the hint away.** The strip covers the bottom two tile rows
+  of Kanto and one of them has nests in it. The first A dismisses the hint,
+  the second closes the screen the way A always did; B still leaves at once.
+  The engine's own more-below arrow marks the waiting press.
+
+### Fixed
+
+- AREA would not open on an undiscovered entry next to a dex mod that replaces
+  the list's rows. The species was being recovered from a row's POSITION, by
+  rebuilding the vanilla dex order and indexing it -- which holds only while
+  the list is the vanilla list. It now reads the species off the row itself,
+  which every dex list carries, so sorting, filtering or replacing the rows
+  cannot strand it.
+- The screen wraps stacked on every reload. A second load of the mod -- a hot
+  reload, a profile switch -- painted a second hint strip over the first.
+
+### Added
+
+- A **DEX WRAP** row on the bench, which names every link that has to hold for
+  a press on an undiscovered entry to open AREA: who owns the dex, whether it
+  calls the builtin, whether it kept the A handler, and whether its rows name
+  their species. Written because the report that sent me here could not be
+  reproduced from the outside, and the possible causes need opposite fixes.
+
 ## [1.1.0] - 2026-08-25
 
 Six things a human found by playing it, which is the only way any of them

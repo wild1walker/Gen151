@@ -253,10 +253,11 @@ return function(mod)
     end
   end
 
+  local dexProbe
   if opt("hints") == true then
     local dexarea = submodule(mod, "dexarea.lua")
     if dexarea then
-      dexarea.install(mod, {
+      dexProbe = dexarea.install(mod, {
         hints = Hints,
         rows = resolved.rows,
         fishing = resolved.fishing,
@@ -275,6 +276,7 @@ return function(mod)
         rows = resolved.rows,
         fishing = resolved.fishing,
         syncGated = mewGate and mewGate.sync or function() end,
+        dexProbe = dexProbe,
       })
     end
   end

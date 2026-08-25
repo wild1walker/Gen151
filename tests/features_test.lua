@@ -423,7 +423,8 @@ do
   check(data.screens == nil or data.screens.Gen151FieldNotes == nil,
     "area: and no screen of its own is registered")
 
-  -- ---- the caption is derived from the SAME resolved rows as the spawn
+  -- ---- a PLACED species is captioned from the same resolved rows as its
+  -- spawn, so a hint cannot drift from the thing it describes
   local Hints = run.loader.exports.gen151.hints
   check(Hints ~= nil, "area: the hint vocabulary is published")
   local placed
@@ -440,21 +441,99 @@ do
       "area: every caption line fits under the map, but %q is %d wide",
       line, #line)
   end
-  eq(Hints.caption({}, 19), nil,
-    "area: a species this mod never placed gets no caption, so its AREA "
-      .. "screen is exactly the one the cartridge shipped")
 
-  -- ---- and MEW's caption stays sealed until its gate opens, because a
-  -- caption would spoil the basement more precisely than a nest ever could
+  -- ---- and so is a VANILLA one, which is the whole of the second ask: the
+  -- hint is for all 151, not just the ones this mod moved.  Nothing about
+  -- this depends on having caught it -- the caption is read out of the
+  -- encounter tables, which do not know or care what the player owns.
+  local TownMap = require("src.ui.TownMap")
+  local captured = {}
+  local realDraw = love.graphics.rectangle
+  local function captionOf(species)
+    local seen = {}
+    local screen = TownMap.new(game, { nestSpecies = species })
+    if type(screen) ~= "table" then return nil end
+    -- the strip is drawn by an instance-level draw the wrap installed; a
+    -- screen with no caption never installs one
+    return screen, screen.draw ~= TownMap.draw
+  end
+
+  local vanillaSpecies
+  for mapId, record in pairs(data.encounters or {}) do
+    for _, slot in ipairs((record.grass or {}).slots or {}) do
+      local ours = false
+      for _, row in ipairs(run.loader.exports.gen151.rows or {}) do
+        if row.species == slot.species then ours = true end
+      end
+      if not ours then vanillaSpecies = vanillaSpecies or slot.species end
+    end
+  end
+  check(vanillaSpecies ~= nil,
+    "area: the fixture has a vanilla species this mod never touched")
+
+  local _, hasCaption = captionOf(vanillaSpecies)
+  check(hasCaption,
+    "area: which is captioned anyway, caught or not -- " ..
+      tostring(vanillaSpecies))
+
+  for _, owned in ipairs({ true, false }) do
+    game.save.pokedex.owned[vanillaSpecies] = owned or nil
+    game.save.pokedex.seen[vanillaSpecies] = owned or nil
+    local _, still = captionOf(vanillaSpecies)
+    check(still, "area: and stays captioned with owned=" .. tostring(owned))
+  end
+  game.save.pokedex.owned[vanillaSpecies] = nil
+  game.save.pokedex.seen[vanillaSpecies] = nil
+
+  -- ---- a press takes the strip away, because it covers two tile rows of
+  -- Kanto and one of them has nests in it
+  local screen = TownMap.new(game, { nestSpecies = vanillaSpecies })
+  local popped = false
+  game.stack = newStack()
+  game.stack.pop = function(self) popped = true return table.remove(self.pushed) end
+  local pressed = "a"
+  game.input = { wasPressed = function(_, btn) return btn == pressed end,
+                 isDown = function() return false end }
+  screen.game = game
+
+  local painted = 0
+  local realRect = love.graphics.rectangle
+  love.graphics.rectangle = function(mode, x, y, w, h)
+    if x == 0 and y == 128 and w == 160 and h == 16 then
+      painted = painted + 1
+    end
+    return realRect(mode, x, y, w, h)
+  end
+  screen:draw()
+  eq(painted, 1, "area: the strip is on screen to begin with")
+
+  screen:update(0)
+  check(not popped,
+    "area: the first A takes the hint down rather than closing the map")
+  painted = 0
+  screen:draw()
+  eq(painted, 0, "area: and the strip really is gone")
+
+  screen:update(0)
+  check(popped, "area: the second A closes it, the way A always did")
+  love.graphics.rectangle = realRect
+
+  -- ---- MEW's caption stays sealed until its gate opens, because a caption
+  -- would spoil the basement more precisely than a nest ever could
   local mewRow
   for _, row in ipairs(run.loader.exports.gen151.rows or {}) do
     if row.species == "MEW" then mewRow = row end
   end
   check(mewRow ~= nil and mewRow.gated == "mew",
     "area: MEW's row is the gated one")
+  local _, mewCaptioned = captionOf("MEW")
+  check(not mewCaptioned,
+    "area: and MEW has no caption while its gate is shut")
+
+  eq(Hints.caption({}, 19), nil,
+    "area: a species with no rows produces no placement caption")
 
   local PokedexMenu = require("src.ui.PokedexMenu")
-  local TownMap = require("src.ui.TownMap")
   check(PokedexMenu.new ~= nil and TownMap.new ~= nil,
     "area: both engine screens are still callable after the wrap")
 

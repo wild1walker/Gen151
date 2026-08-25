@@ -130,9 +130,10 @@ for a mod whose job is helping you find the ones you have never met. Gen151
 opens it, with AREA and QUIT on it — and nothing that would hand over the dex
 paragraph you have not earned.
 
-**And the map gets a line under it** saying how to get there. The blinking
-nests say *where*; they cannot say *in the grass, around level ten, and rare*,
-which is the half you actually need:
+**And the map gets a line under it** saying how to get there — for **all 151**,
+not only the ones this mod placed. The blinking nests say *where*; they cannot
+say *in the grass, around level ten, and rare*, which is the half you actually
+need:
 
 ```
 +------------------------+
@@ -146,10 +147,27 @@ which is the half you actually need:
 +------------------------+
 ```
 
-Both lines are composed from the same placement rows the roll layer is using,
-so a hint cannot drift from the spawn it describes. The caption also covers the
-two Super Rod placements, which have no slot for AREA to find and so blink no
-nest at all.
+A Pokémon this mod placed is described from the same rows the roll layer is
+using, so its hint cannot drift from its spawn. Everything else is read
+straight out of the live encounter tables — the map where it has the biggest
+share of the encounters, that map's own level band, and a rarity worked out
+from Gen 1's ten slot buckets — so a vanilla Pokémon's line is right by
+construction and costs no placement data at all. None of it depends on having
+caught the thing.
+
+A Pokémon that is in no encounter table anywhere falls back to the evolution
+table: `EVOLVE ODDISH / AT LV21`, `LINK CABLE / ON KADABRA`, `MOON STONE /
+ON NIDORINO`. Nothing there is invented — it is the same table the game
+evolves from. If even that has no answer, there is no line, and AREA is
+exactly the screen the cartridge shipped.
+
+The caption also covers the two Super Rod placements, which have no slot for
+AREA to find and so blink no nest at all.
+
+**A press takes it away.** The strip covers the bottom two tile rows of Kanto
+and one of them has nests in it, so the first A dismisses the hint and the
+second closes the screen — which is what A always did. B still leaves
+immediately.
 
 Mew is the exception, on purpose: while its gate is shut it is not in the
 encounter table, so there is no nest — and there is no caption either. A

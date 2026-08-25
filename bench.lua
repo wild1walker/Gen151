@@ -57,6 +57,7 @@ local CHECKLIST = {
   "6 DEX FILL, then\nAREA again.\fNest on the right\nmap?",
   "7 MEW: flip it\nOFF.\fAREA shows no\nnest.\fFlip ON. It does.",
   "8 CELADON MART 4F.\fIs LINK CABLE on\nthe shelf at 2100?",
+  "9 DEX WRAP,\nif AREA will not\fopen on an entry\nyou have not met.",
 }
 
 
@@ -311,6 +312,19 @@ function M.install(mod, ctx)
       .. "\fAREA works on any\nentry now.")
   end
 
+  -- Every link that has to hold for a press on an undiscovered dex entry to
+  -- open AREA, named.  This exists because the last report of that not
+  -- working could not be reproduced from the outside, and the difference
+  -- between "a dex mod replaced the rows" and "a dex mod replaced the
+  -- handler" decides which fix is the right one.
+  local function actDexWrap(game)
+    if type(ctx.dexProbe) ~= "function" then
+      say(game, "AREA HINTS is off\nin this mod's\foptions.\fNothing is wrapped.")
+      return
+    end
+    say(game, ctx.dexProbe(game))
+  end
+
   local function actChecklist(game)
     say(game, table.concat(CHECKLIST, "\f"))
   end
@@ -339,6 +353,7 @@ function M.install(mod, ctx)
           end },
         { label = mewOn() and "MEW: FOUND" or "MEW: HIDDEN", act = actMew },
         { label = "DEX FILL", act = function(_, _) actDexFill(game) end },
+        { label = "DEX WRAP", act = function(_, _) actDexWrap(game) end },
       }
       return mod.ui.ListMenu.new(game, "GEN151 BENCH", items, {
         footer = ("%d rows on %d maps"):format(

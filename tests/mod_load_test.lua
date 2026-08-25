@@ -453,21 +453,140 @@ if GEN1DEX then
   check(pushed, "Gen1Dex: its dex list constructs: " .. tostring(err))
   if pushed then
     local list = stack:top()
+    -- This is the case that shipped broken.  Gen1Dex calls the vanilla
+    -- constructor -- so the wrap runs and installs its onChoose -- and then
+    -- REPLACES list.items wholesale with rows of its own.  Any lookup that
+    -- turned a row POSITION into a species was stranded by that, and a
+    -- stranded lookup returned quietly, which is why pressing A on an
+    -- undiscovered entry did nothing at all.  Its rows carry `species` on
+    -- every entry, so that is what gets read now.
     local unknown
     for _, item in ipairs((list or {}).items or {}) do
       if not item.value then unknown = item break end
     end
     check(unknown ~= nil, "Gen1Dex: its list has an undiscovered row")
+    check(unknown == nil or type(unknown.species) == "string",
+      "Gen1Dex: whose row names its species even unseen")
     if unknown and type(list.onChoose) == "function" then
+      local before = #stack.pushed
       list.onChoose(unknown, list)
+      check(#stack.pushed > before,
+        "Gen1Dex: choosing it opens something rather than returning quietly")
       eq(labelsOf(stack:top()), "AREA/QUIT",
         "Gen1Dex: AREA still opens on an undiscovered entry inside its list")
+
+      -- and it opens on the RIGHT one: a position-based lookup could still
+      -- have produced a menu, just for somebody else's Pokemon
+      local area
+      for _, entry in ipairs((stack:top() or {}).items or {}) do
+        if entry.label == "AREA" then area = entry end
+      end
+      local opened
+      local TownMap = require("src.ui.TownMap")
+      local realNew = TownMap.new
+      TownMap.new = function(g, o)
+        opened = o and o.nestSpecies
+        return { draw = function() end, update = function() end }
+      end
+      if area then area.onSelect() end
+      TownMap.new = realNew
+      eq(opened, unknown.species,
+        "Gen1Dex: on the species the row is actually for")
     end
   end
   run.release()
 else
   io.write("note: GEN1DEX is unset, so the dex-mod case was not run\n")
 end
+
+-- ---- the species must come from the ROW, not from its position
+--
+-- The regression this is here for: the lookup used to turn a row's index into
+-- a species by rebuilding the vanilla dex order and indexing it.  That holds
+-- only while the list IS the vanilla list.  A dex mod is free to sort its
+-- rows, filter them, or replace them outright, and the moment it does,
+-- position N stops meaning species N -- silently, because a wrong index
+-- either opens somebody else's AREA or falls off the end and opens nothing at
+-- all.  A shuffled list is the cheapest way to say that in a test.
+
+do
+  local data = datasetFor("red")
+  local run = loadGen151(data)
+  local game, stack = dexGame(data, {})
+  local PokedexMenu = require("src.ui.PokedexMenu")
+  local ok, list = pcall(PokedexMenu.new, game, {})
+  check(ok, "dex order: the list builds: " .. tostring(list))
+  if ok then
+    -- reverse the rows, the way an A-Z mode or a filtered view would
+    local reversed = {}
+    for i = #list.items, 1, -1 do
+      reversed[#reversed + 1] = list.items[i]
+    end
+    local wanted = reversed[1] and reversed[1].species
+    check(type(wanted) == "string",
+      "dex order: the rows name their own species")
+    list.items = reversed
+
+    local opened
+    local TownMap = require("src.ui.TownMap")
+    local realNew = TownMap.new
+    TownMap.new = function(_, o)
+      opened = o and o.nestSpecies
+      return { draw = function() end, update = function() end }
+    end
+    list.onChoose(reversed[1], list)
+    local area
+    for _, entry in ipairs((stack:top() or {}).items or {}) do
+      if entry.label == "AREA" then area = entry end
+    end
+    check(area ~= nil, "dex order: the reordered row still opens the menu")
+    if area then area.onSelect() end
+    TownMap.new = realNew
+    eq(opened, wanted,
+      "dex order: on the species the ROW names, not the one its position "
+        .. "would have named")
+  end
+  run.release()
+end
+
+-- ---- and the bench can say all of that out loud, in one press
+--
+-- The last report of AREA not opening could not be reproduced from the
+-- outside, and "a dex mod replaced the rows" and "a dex mod replaced the
+-- handler" need opposite fixes.  This is the row that tells them apart.
+
+do
+  local data = datasetFor("red")
+  local run = loadPaths({ GEN151 }, data, {
+    ["options.lua"] = 'return { modOptions = { gen151 = '
+      .. '{ bench = true } } }',
+  })
+  local game = dexGame(data, {})
+  run.loader.game = game
+  local factory = data.screens and data.screens.Gen151DebugBench
+  check(factory ~= nil, "probe: the bench screen is registered")
+  local built, list = pcall(factory.new, game)
+  check(built, "probe: it constructs: " .. tostring(list))
+  local wrapRow
+  for _, item in ipairs((list or {}).items or {}) do
+    if item.label == "DEX WRAP" then wrapRow = item end
+  end
+  check(wrapRow ~= nil, "probe: with a DEX WRAP row on it")
+  if wrapRow then
+    list.onChoose(wrapRow, list)
+    local text = {}
+    for _, page in ipairs((game.stack:top() or {}).pages or {}) do
+      for _, line in ipairs(page) do text[#text + 1] = line end
+    end
+    local joined = table.concat(text, " ")
+    check(joined:find("VANILLA", 1, true) ~= nil,
+      "probe: naming who owns the dex, got " .. joined)
+    check(joined:lower():find("named", 1, true) ~= nil,
+      "probe: and that the rows are readable, got " .. joined)
+  end
+  run.release()
+end
+
 
 -- ---- and with the hints switched off, the dex is left completely alone
 --
