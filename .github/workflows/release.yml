@@ -105,7 +105,7 @@ jobs:
           git archive HEAD | tar -x -C "$work"
 
           # the companions come out whole, before the base mod is stripped
-          for companion in gen151_hints gen151_debug; do
+          for companion in gen151_hints; do
             if [ -d "$work/$companion" ]; then
               mv "$work/$companion" "$RUNNER_TEMP/$companion"
             fi
@@ -137,7 +137,7 @@ jobs:
           }
 
           pack "$work"
-          for companion in gen151_hints gen151_debug; do
+          for companion in gen151_hints; do
             [ -d "$RUNNER_TEMP/$companion" ] && pack "$RUNNER_TEMP/$companion"
           done
 
@@ -160,7 +160,6 @@ jobs:
           notes+=$'| Archive | What it is |\n|---|---|\n'
           notes+=$'| `gen151` | The mod. All 151 renewably obtainable in one save, on one version, without trading. Start here. |\n'
           notes+=$'| `gen151_hints` | Optional. Adds a HINT row to the Pokédex side menu, next to AREA. |\n'
-          notes+=$'| `gen151_debug` | A development bench, not for normal play: it forces spawns and hands over items so the mod can be checked quickly. |\n'
           if [ -n "$changes" ]; then
             notes+=$'\n## Changes\n\n'"$changes"
           fi

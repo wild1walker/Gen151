@@ -22,7 +22,7 @@ RECOMP="${1:?usage: package.sh <gen1recomp>}"
 HERE="$(cd "$(dirname "$0")/.." && pwd)"
 DIST="$HERE/dist"
 TMP="$(mktemp -d)"
-trap 'rm -rf "$TMP" "$RECOMP/mods/gen151_hints" "$RECOMP/mods/gen151_debug"' EXIT
+trap 'rm -rf "$TMP" "$RECOMP/mods/gen151_hints"' EXIT
 mkdir -p "$DIST"
 
 version() {
@@ -38,10 +38,6 @@ cp -r "$HERE/gen151_hints" "$RECOMP/mods/gen151_hints"
 python3 "$RECOMP/tools/modkit.py" pack "$RECOMP/mods/gen151_hints" \
   -o "$TMP/gen151_hints-$(version "$HERE/gen151_hints/manifest.json").modpkg"
 
-cp -r "$HERE/gen151_debug" "$RECOMP/mods/gen151_debug"
-python3 "$RECOMP/tools/modkit.py" pack "$RECOMP/mods/gen151_debug" \
-  -o "$TMP/gen151_debug-$(version "$HERE/gen151_debug/manifest.json").modpkg"
-rm -rf "$RECOMP/mods/gen151_debug"
 
 mv "$TMP"/*.modpkg "$DIST/"
 echo "archives in $DIST"

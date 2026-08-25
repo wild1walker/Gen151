@@ -31,13 +31,6 @@ tools/regen.sh
 
 SPOILERS.md
 
-gen151_debug/manifest.json
-gen151_debug/main.lua
-gen151_debug/mod.card
-gen151_debug/README.md
-gen151_debug/CHANGELOG.md
-gen151_debug/thumbnail.png
-
 gen151_hints/manifest.json
 gen151_hints/main.lua
 gen151_hints/mod.card

@@ -112,6 +112,15 @@ return function(mod)
       min = 0, max = 500, step = 25,
       visible_if = { key = "enabled", equals = true } },
 
+    -- The test bench.  Off is the shipping state and off is what a player
+    -- gets; on, the START menu grows a BENCH row that forces this mod's
+    -- spawns, hands over the kit and plays the cable sounds on demand.  It
+    -- lives here rather than in a companion mod because a bench you have to
+    -- download and import separately is a bench that is not there when you
+    -- want it.
+    { key = "bench", type = "toggle", label = "TEST BENCH", default = false,
+      visible_if = { key = "enabled", equals = true } },
+
     { key = "hints", type = "choice", label = "HINTS", default = "dex",
       choices = { { "AREA + DEX ROW", "dex" },
                   { "AREA + NOTES", "notes" },
@@ -253,6 +262,20 @@ return function(mod)
         fishing = resolved.fishing,
         romText = romText,
         kit = kit,
+      })
+    end
+  end
+
+  -- Last, so the bench's high-priority wrap on encounter.roll goes on above a
+  -- chain that is already complete, and so a fault in it cannot cost a player
+  -- the spawn layer.
+  if opt("bench") == true then
+    local bench = submodule(mod, "bench.lua")
+    if bench then
+      bench.install(mod, {
+        rows = resolved.rows,
+        fishing = resolved.fishing,
+        syncGated = mewGate and mewGate.sync or function() end,
       })
     end
   end

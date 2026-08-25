@@ -179,6 +179,7 @@ version exclusives but not a wild Mew should not have to fork it.
 | TRADE EVOS | LINK CABLE | LINK CABLE, or off entirely |
 | CABLE SOUND | on | the snap; charming once, possibly grating on the fourth use |
 | MEW EVENT | on | the Mansion journals and what they unlock |
+| TEST BENCH | off | the built-in bench, below — not part of normal play |
 | RARITY % | 100 | scales every tier at once; 0 disables every substitution |
 | HINTS | AREA + DEX ROW | AREA only, + FIELD NOTES, or + the dex row |
 
@@ -273,12 +274,18 @@ shipped its own bucket list — which is the failure mode above.
 The headless suites cover everything that can be checked without a screen. For
 the rest — whether `ZzZzap` renders, whether the cable snap sounds right,
 whether AREA blinks the nest, whether a very-rare tier is a hunt or a chore —
-there is a companion **`gen151_debug`**, reachable from START → BENCH or from
-OPTIONS → GEN151 BENCH.
+there is a test bench built in. Nothing to install:
+
+1. **MODS → Gen151 → TEST BENCH: ON**
+2. **START → BENCH** (or OPTIONS → GEN151 BENCH, directly under the MODS row)
+
 It forces the spawns, hands over the kit, plays the sounds on demand and flips
-the Mew gate, so a pass that would take an evening takes a few minutes. It asks
-for no permissions, and it is a separate mod so that deleting it before release
-is all it takes.
+the Mew gate, so a pass that would take an evening takes a few minutes.
+
+The option defaults **off**, and off means nothing registers — no START row, no
+screen, no wrap on the encounter chain. It shipped as a separate mod for the
+first two releases; that was the wrong shape, because a bench you have to
+download and import separately is a bench that is not there when you want it.
 
 ## Testing
 

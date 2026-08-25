@@ -1,27 +1,28 @@
--- Gen151 Debug -- a test bench for the parts of Gen151 that only exist once a
--- game is running.
+-- The test bench (not part of normal play).
 --
--- Everything Gen151 does to the encounter tables is covered by headless tests.
--- What those cannot reach is anything that has to be seen or heard: whether
--- "ZzZzap" renders, whether the cable snap sounds like an electrical fault or
--- like a mistake, whether the FIELD NOTES list fits its box, whether AREA
--- really blinks a nest on the maps Gen151 added to -- and whether a very-rare
--- tier is a satisfying hunt or just a long one.
+-- Everything Gen151 does to the encounter tables is covered by headless
+-- tests.  What those cannot reach is anything that has to be seen or heard:
+-- whether "ZzZzap" renders, whether the cable snap sounds like an electrical
+-- fault or like a mistake, whether the FIELD NOTES list fits its box, whether
+-- AREA really blinks a nest on the maps Gen151 added to -- and whether a
+-- very-rare tier is a satisfying hunt or just a long one.
 --
 -- Reaching those in normal play means buying a cable, finding a Kadabra,
 -- surfing to Cinnabar and walking through grass a few thousand times.  This
 -- collapses that into a menu.
 --
--- This is a development tool, not part of normal play.  It is a separate mod
--- so that not installing it -- or deleting it -- is all it takes, and so
--- Gen151 itself carries no debug rows in its options.
+-- This lived in a companion mod, gen151_debug, for one release and a half.
+-- That was the wrong shape: a bench you have to find, download and import
+-- separately is a bench that is not there when you want it, and twice it was
+-- not.  It is a file in the mod now, behind an option that defaults off, so
+-- reaching it is two presses from a screen the player is already on.
 --
--- It asks for no permissions and changes nothing about Gen151: it reads the
--- resolved placement rows out of `mod.find("gen151").exports` and drives the
--- same public seams any mod has -- mod.world, mod.ui, and one high-priority
--- wrap on `encounter.roll` that sits ABOVE Gen151's own.
+-- Off, nothing here runs and nothing here registers.  On, it drives only the
+-- public seams any mod has -- mod.world, mod.ui, and one high-priority wrap
+-- on `encounter.roll` that sits ABOVE Gen151's own.
 
-local FORCE_PRIORITY = 100
+local M = {}
+
 
 -- What the kit hands over, and why each one is in it.
 local KIT_ITEMS = {
@@ -58,19 +59,10 @@ local CHECKLIST = {
   "8 CELADON MART 4F.\nIs LINK CABLE on the\nshelf at 2100?",
 }
 
-return function(mod)
-  mod.options:define{
-    { key = "enabled", type = "toggle", label = "DEBUG BENCH", default = true },
-  }
-  if mod.options:get("enabled") ~= true then return end
 
-  local gen151 = mod.find("gen151")
-  if not gen151 or not gen151.exports or gen151.exports.enabled ~= true then
-    mod.log:warn("Gen151 is not loaded, so there is nothing to bench -- "
-      .. "install it alongside this mod, or disable this one")
-    return
-  end
-  local E = gen151.exports
+-- ctx carries what the bench reads out of the resolver: the applied slot rows,
+-- the Super Rod rows, and the gated-row reconciler MEW needs.
+function M.install(mod, ctx)
 
   -- ------------------------------------------------------ the placement index
 
@@ -88,10 +80,10 @@ return function(mod)
       mapOrder[#mapOrder + 1] = row.map
     end
   end
-  for _, row in ipairs(E.rows or {}) do
+  for _, row in ipairs(ctx.rows or {}) do
     index(row, row.method == "water" and "water" or "grass")
   end
-  for _, row in ipairs(E.fishing or {}) do index(row, "rod") end
+  for _, row in ipairs(ctx.fishing or {}) do index(row, "rod") end
   table.sort(mapOrder)
 
   -- ------------------------------------------------------------- small tools
@@ -278,7 +270,7 @@ return function(mod)
     mod.world:setFlag(MEW_FOUND, turnOn or nil)
     -- ask Gen151 to reconcile the encounter table with the flag, which is
     -- what the dex AREA screen reads
-    if type(E.syncGated) == "function" then E.syncGated() end
+    if type(ctx.syncGated) == "function" then ctx.syncGated() end
     item.label = turnOn and "MEW: FOUND" or "MEW: HIDDEN"
   end
 
@@ -330,7 +322,7 @@ return function(mod)
       }
       return mod.ui.ListMenu.new(game, "GEN151 BENCH", items, {
         footer = ("%d rows on %d maps"):format(
-          #(E.rows or {}) + #(E.fishing or {}), #mapOrder),
+          #(ctx.rows or {}) + #(ctx.fishing or {}), #mapOrder),
         onChoose = function(item, list)
           if item.act then item.act(game, list, item) end
         end,
@@ -340,24 +332,26 @@ return function(mod)
 
   -- ------------------------------------------------------------- two doors
   --
-  -- The bench had one way in, appended to OPTIONS, and that turned out to be
-  -- no way in at all: OPTIONS shows FOUR rows at a time (OptionRows.VISIBLE)
-  -- over a list about thirty long on a desktop build, so an appended row sits
-  -- seven screenfuls down, under a moreArrow, at the very bottom.  A tester
-  -- who opens OPTIONS and looks is right to conclude it is not there.
+  -- The bench first had one way in, appended to OPTIONS, and that turned out
+  -- to be no way in at all: OPTIONS shows FOUR rows at a time
+  -- (OptionRows.VISIBLE) over a list about thirty long on a desktop build, so
+  -- an appended row sat seven screenfuls down, under a moreArrow, at the very
+  -- bottom.  Opening OPTIONS and concluding it is not there is the correct
+  -- reading of what that screen shows.
   --
-  -- So: two doors, both above the fold.
+  -- So: two doors, both above the fold, and neither of them an install.
 
-  -- One, in OPTIONS, spliced next to MODS instead of appended.  MODS is where
-  -- a player already goes to reach Gen151's own switches, so the bench is in
-  -- the screenful they are looking at anyway.  next() first, and append if
-  -- some other mod removed the MODS row, so nothing here can orphan the entry
-  -- or eat another mod's rows.
+  -- One, in OPTIONS, spliced next to MODS rather than appended.  MODS is
+  -- where the player just was -- the bench is switched on from Gen151's own
+  -- options, one screen inside it -- so this lands in the screenful they are
+  -- looking at on the way back out.  next() first, and append if some other
+  -- mod removed the MODS row, so nothing here can orphan the entry or eat
+  -- another mod's rows.
   mod.hooks:wrap("ui.options.rows", function(nextLink, game, rows)
     local out = nextLink(game, rows)
     if type(out) ~= "table" then return out end
     local row = {
-      id = "gen151_debug",
+      id = "gen151_bench",
       label = "GEN151 BENCH",
       value = function() return force.on and "FORCED" or "OPEN" end,
       activate = function(g) mod.ui.push(g, SCREEN) end,
@@ -374,10 +368,10 @@ return function(mod)
   end)
 
   -- Two, at the top of the START menu, which is the door that cannot be
-  -- missed: it is four items tall before it scrolls, the bench belongs at
-  -- hand while walking through grass, and a mod that replaces the OPTIONS
-  -- screen wholesale cannot take this one away as well.  Displacing POKeDEX
-  -- by one row is a cost a debug mod gets to pay.
+  -- missed: it is a short list, the bench belongs at hand while walking
+  -- through grass, and a mod that replaces the OPTIONS screen wholesale
+  -- cannot take this one away as well.  It displaces POKeDEX by one row,
+  -- which is why the option that gets here defaults off.
   --
   -- Menu:select pops the menu BEFORE it calls onSelect (src/ui/Menu.lua), so
   -- a plain push here lands on a clean stack -- the same shape POKeDEX uses.
@@ -393,5 +387,7 @@ return function(mod)
 
   mod.log:info("bench installed: %d rows on %d maps; START -> BENCH, or "
     .. "OPTIONS -> GEN151 BENCH (beside MODS)",
-    #(E.rows or {}) + #(E.fishing or {}), #mapOrder)
+    #(ctx.rows or {}) + #(ctx.fishing or {}), #mapOrder)
 end
+
+return M

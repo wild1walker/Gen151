@@ -3,6 +3,24 @@
 All notable changes to Gen151 are recorded here, in
 [keep a changelog](https://keepachangelog.com/en/1.1.0/) order.
 
+## [1.0.3] - 2026-08-25
+
+### Added
+
+- **TEST BENCH**, an option in Gen151's own settings, default off. On, the
+  START menu grows a **BENCH** row (and OPTIONS grows one under MODS) that
+  forces this mod's spawns, hands over the kit, plays the LINK CABLE sounds on
+  demand, pushes the break box, flips the Mew gate, warps to every map it
+  places on, and marks the dex SEEN. Off, nothing registers: no row, no
+  screen, no wrap on the encounter chain.
+
+### Removed
+
+- The `gen151_debug` companion mod, whose entire contents this is. A bench in
+  a second archive is a bench nobody has installed at the moment they want it,
+  which is exactly how it went. One implementation, in the mod you already
+  have. The v1.0.2 archive still exists for anyone who wants the old shape.
+
 ## [1.0.2] - 2026-08-25
 
 ### Changed

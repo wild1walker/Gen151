@@ -474,16 +474,33 @@ end
 
 do
   local data = datasetFor("red")
-  local paths = { GEN151, GEN151 .. "/gen151_debug" }
+  local paths = { GEN151 }
   local run = T.sdk.loadMods(paths, { data = data, fs = aliasFs(paths, {
-    ["options.lua"] = 'return { modOptions = { gen151 = { mew = true } } }',
+    ["options.lua"] =
+      'return { modOptions = { gen151 = { bench = true } } }',
   }) })
   local game = stubGame(data)
   run.loader.game = game
 
-  eq(#run.errors, 0, "bench: it loads clean beside Gen151 ("
+  eq(#run.errors, 0, "bench: it loads clean ("
     .. table.concat(run.errors, "; ") .. ")")
-  check(run.loader.mods.gen151_debug ~= nil, "bench: it was discovered")
+
+  -- ---- and it is OFF unless the option says otherwise, because a player
+  -- who never asked for a bench must never be handed one
+  do
+    local quietData = datasetFor("red")
+    local quiet = T.sdk.loadMods({ GEN151 }, { data = quietData,
+      fs = aliasFs({ GEN151 }, {}) })
+    quiet.loader.game = stubGame(quietData)
+    local items = quiet.loader.hooks:call("ui.start_menu.items",
+      function(_, given) return given end, quiet.loader.game,
+      { { label = "POKeDEX" } })
+    eq(#items, 1, "bench: default off adds no START row")
+    check(quietData.screens == nil
+            or quietData.screens.Gen151DebugBench == nil,
+      "bench: and registers no screen")
+    quiet.release()
+  end
 
   -- ---- it puts itself on the OPTIONS menu and leaves the rest alone
   --
@@ -496,7 +513,7 @@ do
     { { id = "SOMEONE_ELSE" }, { id = "mods" }, { id = "controls" } })
   local at
   for i, row in ipairs(rows) do
-    if row.id == "gen151_debug" then at = i end
+    if row.id == "gen151_bench" then at = i end
   end
   check(at ~= nil, "bench: it adds an OPTIONS row")
   eq(at, 3, "bench: directly under MODS, inside the first screenful")
@@ -510,7 +527,7 @@ do
   local noAnchor = run.loader.hooks:call("ui.options.rows",
     function(_, given) return given end, game, { { id = "SOMEONE_ELSE" } })
   eq(#noAnchor, 2, "bench: with no MODS row it still lands")
-  eq(noAnchor[2] and noAnchor[2].id, "gen151_debug",
+  eq(noAnchor[2] and noAnchor[2].id, "gen151_bench",
     "bench: appended, which keeps it reachable either way")
 
   -- ---- and on the START menu, which is the door that cannot scroll away
