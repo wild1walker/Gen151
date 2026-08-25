@@ -31,6 +31,10 @@ on:
       # since the tag is already out the run does not no-op -- it fails on
       # "tag already exists", which is a red X for changing a picture.
       - 'docs/**'
+      # sharing metadata for the manager's detail pane; the loader never
+      # reads it, so editing a credit is not a code change and must not
+      # start a release run
+      - 'mod.card'
   workflow_dispatch:
     inputs:
       version:
