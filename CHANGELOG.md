@@ -3,6 +3,33 @@
 All notable changes to Gen151 are recorded here, in
 [keep a changelog](https://keepachangelog.com/en/1.1.0/) order.
 
+## [1.3.1] - 2026-08-25
+
+### Fixed
+
+- **Two tiers gave identical odds on quiet maps.** One ceiling shared by every
+  tier flattened the top of the ladder: on a 10/256 map the rate solve wants
+  10.4% for an UNCOMMON and 6.2% for a RARE, and a single 4.30% cap clamped
+  both to 4.30% -- so MAGMAR (uncommon) and HITMONCHAN (rare) came out at 1 in
+  23 with the same 412-step hunt. Below about 15/256 the two tiers had stopped
+  being distinguishable at all.
+
+  Each tier has its own ceiling now -- 4.30% / 3.28% / 2.24%, the geometric
+  mean of the absolute cap and the tier's own flat share. The commonest tier is
+  still pinned to vanilla's ninth slot so the absolute bound has not moved,
+  every ceiling is still above its tier's flat share so a quiet map can still
+  lift it, and the ordering is strict at every one of the 256 possible map
+  rates. `placements_test` walks all 256 rather than the handful Kanto uses,
+  since the next dataset through it will have rates of its own.
+
+  Found by breaking the rates down into hours and odds rather than by any test,
+  which is the argument for doing that regularly.
+
+- `placements_test`'s own `check` re-formatted messages that were already
+  formatted, so a failure whose text contained a literal `%` -- which a message
+  about percentages always does -- crashed instead of printing the number that
+  was wrong. It swallowed the very failure above on first run.
+
 ## [1.3.0] - 2026-08-25
 
 The encounter rates were not fair, and the numbers say so.

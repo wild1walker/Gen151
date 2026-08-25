@@ -150,6 +150,34 @@ end
 Rarity.ROW_CEILING = 430    -- 11/256, vanilla's ninth slot
 Rarity.MAP_CEILING = 2500   -- a quarter of a map's encounters
 
+-- One ceiling shared by every tier flattened the ladder, though, and the
+-- breakdown is what caught it.  On a 10/256 map the solve wants 10.4% for an
+-- UNCOMMON and 6.2% for a RARE; a single 4.30% cap clamped both to the same
+-- number, so MAGMAR and HITMONCHAN came out at 1 in 23 with the same 412-step
+-- hunt.  Two different words on the tin, one thing behind it.  Below about
+-- 15/256 the two tiers had stopped being distinguishable at all.
+--
+-- So the ceiling is a ladder too: each tier's is the geometric mean of the
+-- absolute ceiling and that tier's own flat share -- halfway between them in
+-- ratio terms.  That keeps three properties at once:
+--
+--   * UNCOMMON's ceiling is still exactly vanilla's ninth slot, so the
+--     absolute bound on any placement has not moved;
+--   * every tier's ceiling is strictly below the one above it, so the
+--     ordering holds on EVERY map rate rather than only on busy ones;
+--   * every tier's ceiling is still well above its own flat share, so a quiet
+--     map can still lift the share and shorten the walk, which was the whole
+--     point of solving per rate.
+--
+--   UNCOMMON  sqrt(430 x 430) = 430   (4.30%)
+--   RARE      sqrt(430 x 250) = 328   (3.28%)
+--   VERY_RARE sqrt(430 x 117) = 224   (2.24%)
+function Rarity.ceilingFor(tier)
+  local flat = Rarity.TIERS[tier]
+  if not flat then return nil end
+  return math.floor(math.sqrt(Rarity.ROW_CEILING * flat) + 0.5)
+end
+
 -- The same, re-solved for a destination map's own encounter rate, so a tier
 -- costs the same hunt wherever it lands.  Falls back to the flat share when
 -- the rate is unknown -- a Super Rod row has no map rate to speak of, since
@@ -169,7 +197,7 @@ function Rarity.weightForRate(tier, multiplierPercent, rate)
   -- the ceiling never fights the player's own multiplier: a tier already
   -- scaled past it by RARITY % keeps what the player asked for, and only the
   -- rate solve is held back
-  local ceiling = math.max(Rarity.ROW_CEILING, flat)
+  local ceiling = math.max(Rarity.ceilingFor(tier) or Rarity.ROW_CEILING, flat)
   local capped = scaled > ceiling
   if capped then scaled = ceiling end
   if scaled < 1 then scaled = 1 end

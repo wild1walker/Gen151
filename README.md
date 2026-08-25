@@ -58,13 +58,37 @@ nearly twice as much on an 8/256 route as on a 15/256 one — same word on the
 tin, twice the walk — so the share is re-solved from each map's own encounter
 rate and the *walk* is what stays constant. Where a ceiling bites, the hunt runs
 longer than the target rather than let this mod rewrite what lives on a quiet
-map.
+map. On a busy map the share dips the other way, below 1.17%, for the same
+reason in reverse: the map is handing you more encounters, so a smaller slice of
+them is the same walk.
+
+Each tier has its **own** ceiling — 4.30% / 3.28% / 2.24%, the geometric mean of
+the absolute cap and the tier's own share. One shared ceiling flattened the
+ladder: on a 10/256 map the solve wanted 10.4% for an uncommon and 6.2% for a
+rare, a single 4.30% cap clamped both to the same number, and an uncommon and a
+rare came out with identical odds and identical hunts. Now the ordering holds at
+every one of the 256 possible map rates, which the suite checks exhaustively.
+
+### What that costs in real time
+
+At a 25/256 route, medians; a step is 16 frames and a fled battle about 11
+seconds, so battles are roughly three-quarters of it:
+
+| tier | odds per encounter | encounters | steps | **median** | unlucky (1 in 10) |
+|---|---|---|---|---|---|
+| uncommon | 1 in 23 | 16 | 165 | **4 min** | 12 min |
+| rare | 1 in 40 | 27 | 284 | **6 min** | 21 min |
+| very rare | 1 in 85 | 59 | 606 | **13 min** | 45 min |
+
+Seeing all 23 additions on Red, one after another: **2.6 hours** median, 8.6
+hours if every one of them runs long. The worst single hunt is Snorlax at 11
+minutes.
 
 This is a retune. The first cut set very rare at 0.4%, three and a half times
 rarer than anything in Kanto: ~250 encounters a species, and 5,534 median steps
 for a Bulbasaur in Viridian Forest — for a **starter**, the thing a new player
-most wants. Seeing all 23 additions once on Red cost about 43,000 steps. It now
-costs about 9,700.
+most wants. Seeing all 23 additions once on Red cost about 43,000 steps and
+**9.6 hours**.
 
 ---
 

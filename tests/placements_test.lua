@@ -20,11 +20,19 @@ local vanilla = dofile("tests/fixtures/vanilla.lua")
 
 local failures, checks = 0, 0
 
+-- fmt is a format string ONLY when arguments follow it.  A caller that has
+-- already built its message hands over a finished string, and re-formatting
+-- that blows up the moment it contains a literal % -- which a message about
+-- percentages always does.  That is not hypothetical: it swallowed the
+-- ordering failure this suite was written to catch, and reported a crash
+-- instead of the number that was wrong.
 local function check(cond, fmt, ...)
   checks = checks + 1
   if cond then return true end
   failures = failures + 1
-  io.write("FAIL: " .. string.format(fmt, ...) .. "\n")
+  local message = select("#", ...) > 0 and string.format(fmt, ...)
+    or tostring(fmt)
+  io.write("FAIL: " .. message .. "\n")
   return false
 end
 
@@ -241,10 +249,10 @@ for _, version in ipairs({ "red", "blue", "yellow" }) do
   for _, row in ipairs(resolved.rows) do
     local key = row.map .. "|" .. row.method
     perMap[key] = (perMap[key] or 0) + row.weight
-    check(row.weight <= Rarity.ROW_CEILING,
-      "%s: %s is %.2f%% of %s, more than vanilla's ninth slot at %.2f%%",
-      version, row.species, row.weight / 100, row.map,
-      Rarity.ROW_CEILING / 100)
+    check(row.weight <= Rarity.ceilingFor(row.tier),
+      ("%s: %s is %.2f%% of %s, past what a %s may be (%.2f%%)"):format(
+        version, row.species, row.weight / 100, row.map, row.tier,
+        Rarity.ceilingFor(row.tier) / 100))
   end
   for key, total in pairs(perMap) do
     check(total <= Rarity.MAP_CEILING,
@@ -252,6 +260,52 @@ for _, version in ipairs({ "red", "blue", "yellow" }) do
         .. "allowed to stop being itself for", version, key, total / 100,
       Rarity.MAP_CEILING / 100)
   end
+end
+
+-- ------------------------------------------- the ladder holds at every rate
+--
+-- The regression this is here for, and a breakdown in hours is what found it
+-- rather than any test: one ceiling shared by every tier flattened the top
+-- two rungs together.  On a 10/256 map the solve wanted 10.4% for an UNCOMMON
+-- and 6.2% for a RARE, a single 4.30% cap clamped both to 4.30%, and MAGMAR
+-- (uncommon) and HITMONCHAN (rare) came out at 1 in 23 with the same 412-step
+-- hunt.  Two words on the tin, one thing behind it.
+--
+-- Every rate rather than the ones Kanto happens to use, because the next
+-- dataset through here is a total conversion with rates of its own.
+for rate = 1, 255 do
+  local previous, previousTier
+  for _, tier in ipairs(Rarity.ORDER) do
+    local weight = Rarity.weightForRate(tier, 100, rate)
+    check(weight ~= nil, "no weight for %s at rate %d", tier, rate)
+    if previous then
+      check(weight < previous,
+        ("at rate %d/256 a %s is %.2f%% and a %s is %.2f%% -- the rarer tier "
+          .. "is not rarer"):format(rate, previousTier, previous / 100, tier,
+          weight / 100))
+    end
+    previous, previousTier = weight, tier
+  end
+end
+
+-- and the ceilings themselves are a ladder, with the commonest tier still
+-- pinned to vanilla's ninth slot so the absolute bound has not moved
+do
+  local previous
+  for _, tier in ipairs(Rarity.ORDER) do
+    local ceiling = Rarity.ceilingFor(tier)
+    check(ceiling >= Rarity.TIERS[tier],
+      ("%s's ceiling (%.2f%%) is below its own flat share (%.2f%%), so a "
+        .. "quiet map can never lift it"):format(tier, ceiling / 100,
+        Rarity.TIERS[tier] / 100))
+    if previous then
+      check(ceiling < previous,
+        ("%s's ceiling is not below the tier above it"):format(tier))
+    end
+    previous = ceiling
+  end
+  check(Rarity.ceilingFor(Rarity.ORDER[1]) == Rarity.ROW_CEILING,
+    "the commonest tier's ceiling is no longer vanilla's ninth slot")
 end
 
 io.write(("\nplacements_test: %d checks, %d failures\n"):format(checks, failures))
