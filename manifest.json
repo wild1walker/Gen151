@@ -6,11 +6,15 @@
   "entry": "main.lua",
   "profile": "content",
   "category": "CONTENT",
-  "games": ["gen1"],
+  "games": [
+    "gen1"
+  ],
   "game_version": ">=0.0.0-0 <2.0.0",
   "priority": 900,
   "dependencies": [],
-  "optional_dependencies": ["gen1dex"],
+  "optional_dependencies": [
+    "Gen1Dex"
+  ],
   "conflicts": [],
   "permissions": [],
   "description": "Every one of the 151 obtainable renewably in one save, on one version, without trading -- while every vanilla encounter keeps its exact vanilla behaviour.",

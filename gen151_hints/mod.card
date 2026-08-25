@@ -1,0 +1,25 @@
+return {
+  summary = "A HINT row in the Pokedex side menu, next to AREA, driven by Gen151's placements.",
+  author = "Wild",
+  tags = { "ui", "quality-of-life", "companion" },
+  differences = {
+    changed = {
+      "The Pokedex DATA / CRY / AREA / QUIT side menu gains a HINT row",
+    },
+    added = {
+      "Nothing else: the hint text comes from Gen151's own placement table",
+    },
+    known = {
+      "This is the one Gen151 feature that needs the engine_internals "
+        .. "permission, which is why it is a separate mod rather than a "
+        .. "switch inside Gen151",
+      "Tested against vanilla and against Gen1Dex only; another dex mod "
+        .. "that replaces the side menu rather than delegating it to the "
+        .. "vanilla constructor will not show the row",
+    },
+  },
+  credits = {
+    { who = "Wild", for_ = "Gen151, whose placement table this reads" },
+  },
+  compat = { engine = ">=1.0.0 <2.0.0", modApi = 2 },
+}

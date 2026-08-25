@@ -1,9 +1,38 @@
 # Kept out of the distributed package.
 #
+# modkit matches these as EXACT relative paths, not as directory prefixes, so
+# every file is listed.  tools/regen.sh --check keeps this list honest: it
+# fails if a shippable-looking file under tests/ or tools/ is missing from
+# here, which is the mistake that would otherwise ship the derivation
+# pipeline to players.
+#
 # tests/ requires engine modules, which is a private-require finding against a
-# shipped archive, and pack treats warnings as fatal.  tools/ is the
-# derivation pipeline: it parses the pret disassembly to regenerate
-# placements.lua, hints.lua and the fixtures, and it is of no use to a player.
-tests/
-tools/
+# shipped archive, and `pack` treats warnings as fatal.  tools/ parses the pret
+# disassembly to regenerate placements.lua, hints.lua, SPOILERS.md and the
+# fixtures; it is of no use to a player.  gen151_hints/ is a mod in its own
+# right and is packaged separately.
+
+tests/roll_test.lua
+tests/placements_test.lua
+tests/mod_load_test.lua
+tests/fixtures/vanilla.lua
+tests/fixtures/gapset.json
+
+tools/gapset.py
+tools/gen_placements.py
+tools/build_placements.py
+tools/build_hints.py
+tools/make_thumbnail.py
+tools/package.sh
+tools/check.sh
+tools/dump_placements.lua
+tools/regen.sh
+
 SPOILERS.md
+
+gen151_hints/manifest.json
+gen151_hints/main.lua
+gen151_hints/mod.card
+gen151_hints/README.md
+gen151_hints/CHANGELOG.md
+gen151_hints/thumbnail.png

@@ -117,6 +117,36 @@ local function levelsOfGroup(group)
   return out
 end
 
+-- Explicit levels are the DONOR cartridge's, and the donor did not
+-- necessarily agree with this one about how strong that route is: Yellow's
+-- Route 9 runs 16-20 where Red's runs 11-17, so Red's level-11 Ekans would
+-- arrive on Yellow a full evolution behind its neighbours.  SPEC 5 is
+-- explicit that the DESTINATION map's band wins, so a donor level outside it
+-- clamps to the nearest end.  The spread the donor chose survives wherever it
+-- fits, which is most of the time; where it does not, the row still reads as
+-- a resident of the route it is on.
+local function clampToBand(levels, group)
+  local band = levelsOfGroup(group)
+  if #band == 0 or not levels then return levels end
+  local lo, hi = band[1], band[1]
+  for _, level in ipairs(band) do
+    if level < lo then lo = level end
+    if level > hi then hi = level end
+  end
+  local out, seen = {}, {}
+  for _, level in ipairs(levels) do
+    local clamped = level
+    if clamped < lo then clamped = lo end
+    if clamped > hi then clamped = hi end
+    if not seen[clamped] then
+      seen[clamped] = true
+      out[#out + 1] = clamped
+    end
+  end
+  table.sort(out)
+  return out
+end
+
 -- ---------------------------------------------------------------- resolving
 
 local function groupFor(source, mapId, method)
@@ -168,7 +198,9 @@ function Build.resolve(placements, source, opts)
   end
 
   local function levelsFor(row, group)
-    if row.levels and #row.levels > 0 then return row.levels end
+    if row.levels and #row.levels > 0 then
+      return clampToBand(row.levels, group)
+    end
     return Build.bandLevels(levelsOfGroup(group), row.band)
   end
 
@@ -205,7 +237,7 @@ function Build.resolve(placements, source, opts)
           species = row.species, map = row.map, method = row.method,
           levels = levels, weight = weight, tier = row.tier,
           feature = row.feature, gated = row.gated, why = row.why,
-          gate = placements.MAP_GATES[row.map],
+          gate = row.gate or placements.MAP_GATES[row.map],
           vanillaCount = #(group.slots or {}),
         }
       end
@@ -224,7 +256,7 @@ function Build.resolve(placements, source, opts)
           species = row.species, map = row.map, method = row.method,
           levels = levelsFor(row, group), weight = weight, tier = row.tier,
           feature = row.feature, why = row.why,
-          gate = placements.MAP_GATES[row.map],
+          gate = row.gate or placements.MAP_GATES[row.map],
           vanillaCount = #(group.slots or {}),
         }
       end
@@ -241,9 +273,10 @@ function Build.resolve(placements, source, opts)
       else
         out.fishing[#out.fishing + 1] = {
           species = row.species, map = row.map, rod = row.rod,
-          levels = row.levels or Build.bandLevels(levelsOfGroup(pool), row.band),
+          levels = row.levels and clampToBand(row.levels, pool)
+            or Build.bandLevels(levelsOfGroup(pool), row.band),
           weight = weight, tier = row.tier, feature = row.feature,
-          why = row.why, gate = placements.MAP_GATES[row.map],
+          why = row.why, gate = row.gate or placements.MAP_GATES[row.map],
         }
       end
     end

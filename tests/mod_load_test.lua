@@ -26,6 +26,12 @@ local check, eq = T.check, T.eq
 
 local vanilla = assert(loadfile(GEN151 .. "/tests/fixtures/vanilla.lua"))()
 
+-- The companion mod wraps a module-level function and never unwraps it, which
+-- is right in a game (one load per process) and inconvenient in a suite that
+-- loads several times.  Held from before anything loads, so the option-state
+-- case below starts from a clean dex.
+local PRISTINE_DEX_NEW = require("src.ui.PokedexMenu").new
+
 local function deepCopy(value)
   if type(value) ~= "table" then return value end
   local copy = {}
@@ -41,6 +47,11 @@ local function datasetFor(version)
   local data = T.fixtures.fresh()
   local source = vanilla.versions[version]
   data.encounters = deepCopy(source.encounters)
+  -- The fixture's own three mons carry dex numbers 1-3, which collide with
+  -- Bulbasaur, Ivysaur and Venusaur; PokedexMenu keys by dex number, so
+  -- whichever pairs() reached last would own the row.  Kanto owns the
+  -- numbering here.
+  for _, def in pairs(data.pokemon) do def.dex = nil end
   for id, def in pairs(source.pokemon) do
     data.pokemon[id] = deepCopy(def)
   end
@@ -48,14 +59,82 @@ local function datasetFor(version)
   return data
 end
 
--- Loader:_discover hard-codes the "mods" root, and the SDK aliases a real
--- directory onto it; basename(GEN151) is the alias it uses.  The SDK's
--- filesystem joins its root onto every path, so an absolute mod directory
--- needs an empty root rather than the default ".".
+-- Loader:_discover hard-codes the "mods" root, so the SDK aliases a real
+-- directory onto it.  Two adjustments here:
+--
+--   * the SDK's filesystem joins its root onto every path, so an absolute mod
+--     directory needs an empty root rather than the default "."
+--   * `write` is dropped.  The loader persists mod enable state and the option
+--     schema snapshot through the same filesystem, and with an absolute root
+--     those land at / -- the loader already treats a write-less fs as
+--     "in-memory only", which is what a test wants anyway.
 local ROOT = GEN151:sub(1, 1) == "/" and "" or "."
 
+-- `overrides` serves synthetic files ahead of the real ones, which is how the
+-- option-state cases below hand the loader a pre-set options.lua without
+-- writing one to disk.
+local function readOnlyAlias(paths, overrides)
+  local inner = T.fs.new(ROOT)
+  overrides = overrides or {}
+  -- An empty options file by default: without one the loader's recovery path
+  -- prints a "missing; recovered from tmp copy" line per load, which is noise
+  -- here and would drown a real warning.
+  if overrides["options.lua"] == nil then
+    overrides["options.lua"] = "return {}"
+  end
+  local alias = {}
+  for _, path in ipairs(paths) do
+    alias[(path:gsub("/+$", ""):match("[^/]+$"))] = path
+  end
+  local function map(path)
+    if path == nil then return path end
+    for name, real in pairs(alias) do
+      local prefix = "mods/" .. name
+      if path == prefix then return real end
+      if path:sub(1, #prefix + 1) == prefix .. "/" then
+        return real .. path:sub(#prefix + 1)
+      end
+    end
+    return path
+  end
+  local loadstr = loadstring or load
+  return {
+    root = inner.root,
+    read = function(path)
+      if overrides[path] then return overrides[path] end
+      return inner.read(map(path))
+    end,
+    load = function(path)
+      if overrides[path] then return loadstr(overrides[path], path) end
+      return inner.load(map(path))
+    end,
+    getInfo = function(path)
+      if overrides[path] then return { type = "file" } end
+      if path == "mods" then return { type = "directory" } end
+      return inner.getInfo(map(path))
+    end,
+    getDirectoryItems = function(path)
+      if path == "mods" then
+        local names = {}
+        for name in pairs(alias) do names[#names + 1] = name end
+        table.sort(names)
+        return names
+      end
+      return inner.getDirectoryItems(map(path))
+    end,
+  }
+end
+
+local function loadPaths(paths, data, overrides)
+  return T.sdk.loadMods(paths, { data = data,
+                                 fs = readOnlyAlias(paths, overrides) })
+end
+
 local function loadGen151(data)
-  return T.sdk.loadMod(GEN151, { data = data, root = ROOT })
+  local run = T.sdk.loadMods({ GEN151 }, { data = data,
+                                           fs = readOnlyAlias({ GEN151 }) })
+  run.mod = select(2, next(run.mods))
+  return run
 end
 
 for _, version in ipairs({ "red", "blue", "yellow" }) do
@@ -255,6 +334,181 @@ do
     if row.feature == "fossils" then sawFossil = true end
   end
   check(sawFossil, "fossils are on by default")
+  run.release()
+end
+
+-- ---- the companion mod loads beside it, and finds it
+--
+-- gen151_hints is a separate mod because the dex HINT row is the one feature
+-- that needs `engine_internals`, and a mod that requests that permission wears
+-- a "PATCHES ENGINE CODE" badge in the manager.  It reads Gen151's resolved
+-- rows through mod.find, so this checks the handoff as well as the load.
+
+do
+  local data = datasetFor("red")
+  local run = loadPaths({ GEN151, GEN151 .. "/gen151_hints" }, data)
+  eq(#run.errors, 0, "companion: both mods load clean ("
+    .. table.concat(run.errors, "; ") .. ")")
+  local hints = run.loader.mods.gen151_hints
+  check(hints ~= nil, "companion: gen151_hints was discovered")
+  check(hints == nil or hints.failed ~= true,
+    "companion: gen151_hints did not fail: " .. tostring(hints and hints.skipReason))
+  check(run.loader.exports.gen151 ~= nil,
+    "companion: Gen151's exports are reachable through mod.find")
+
+  -- ---- and the row is really in the side menu
+  --
+  -- The dex list constructs headlessly under the love stub, and its onChoose
+  -- pushes the side menu onto the stack, so the splice can be driven for real
+  -- rather than inferred from the fact that the wrap installed.
+  local stack = {
+    pushed = {},
+    push = function(self, state) self.pushed[#self.pushed + 1] = state end,
+    top = function(self) return self.pushed[#self.pushed] end,
+    pop = function(self) table.remove(self.pushed) end,
+  }
+  local species = "BULBASAUR"
+  -- the fixture's dex is three entries long; Kanto's is 151, and
+  -- PokedexMenu walks 1..constants.dexSize
+  data.constants = data.constants or {}
+  data.constants.dexSize = 151
+  local game = {
+    data = data,
+    save = { pokedex = { seen = { [species] = true },
+                         owned = {} } },
+    stack = stack,
+  }
+  local PokedexMenu = require("src.ui.PokedexMenu")
+  local built, list = pcall(PokedexMenu.new, game, {})
+  check(built, "companion: the dex list still constructs: " .. tostring(list))
+  if built then
+    local row
+    for _, item in ipairs(list.items) do
+      if item.value == species then row = item end
+    end
+    check(row ~= nil, "companion: the dex list has a row for " .. species)
+    if row then
+      list.onChoose(row, list)
+      local menu = stack:top()
+      local labels = {}
+      for _, entry in ipairs((menu or {}).items or {}) do
+        labels[#labels + 1] = tostring(entry.label)
+      end
+      local joined = table.concat(labels, "/")
+      check(joined:find("AREA/HINT", 1, true) ~= nil,
+        "companion: HINT sits right after AREA, got " .. joined)
+
+      -- and pressing it says something about where Gen151 put it
+      local hint
+      for _, entry in ipairs(menu.items) do
+        if entry.label == "HINT" then hint = entry end
+      end
+      if hint then
+        local before = #stack.pushed
+        hint.onSelect()
+        check(#stack.pushed > before,
+          "companion: HINT pushes a box")
+        local box = stack:top()
+        local text = box and table.concat(box.pages and box.pages[1] or {}, " ")
+        check(type(text) == "string" and text ~= "",
+          "companion: the HINT box has text")
+      end
+    end
+  end
+
+  -- nothing stays patched between calls: the interception is scoped to one
+  -- onChoose, so a second dex list built afterwards gets the real Menu.new
+  local Menu = require("src.ui.Menu")
+  local menuNew = Menu.new
+  local again = select(2, pcall(PokedexMenu.new, game, {}))
+  check(Menu.new == menuNew,
+    "companion: Menu.new is not left patched between calls")
+
+  run.release()
+end
+
+-- ---- and next to the dex mod it was designed around
+--
+-- SPEC 9: "Test with the dex mod installed and enabled."  Gen1Dex registers
+-- over the PokedexMenu screen id, so the list the player actually sees is
+-- Gen1Dex's -- but it builds that list by calling the VANILLA constructor and
+-- re-dressing the result, which is the whole reason the HINT row is safe.
+-- This drives the id through the screens registry, so what is exercised is
+-- Gen1Dex's factory calling the constructor this mod wrapped.
+--
+-- Set GEN1DEX to a Gen1Dex checkout to run it; skipped, loudly, when absent.
+
+local GEN1DEX = os.getenv("GEN1DEX")
+if GEN1DEX then
+  local data = datasetFor("red")
+  data.constants = data.constants or {}
+  data.constants.dexSize = 151
+  for _, def in pairs(data.pokemon) do
+    if def.dex == nil then def.dex = nil end
+  end
+  local run = loadPaths({ GEN151, GEN151 .. "/gen151_hints", GEN1DEX }, data)
+  eq(#run.errors, 0, "Gen1Dex: all three mods load clean ("
+    .. table.concat(run.errors, "; ") .. ")")
+  check(data.screens ~= nil and data.screens.PokedexMenu ~= nil,
+    "Gen1Dex: it still owns the PokedexMenu screen id")
+
+  local species = "BULBASAUR"
+  local stack = {
+    pushed = {},
+    push = function(self, state) self.pushed[#self.pushed + 1] = state end,
+    top = function(self) return self.pushed[#self.pushed] end,
+    pop = function(self) table.remove(self.pushed) end,
+  }
+  local game = {
+    data = data,
+    save = { pokedex = { seen = { [species] = true }, owned = {} } },
+    stack = stack,
+  }
+  local Screens = require("src.ui.Screens")
+  local pushed, err = pcall(Screens.push, game, "PokedexMenu")
+  check(pushed, "Gen1Dex: its dex list constructs: " .. tostring(err))
+  if pushed then
+    local list = stack:top()
+    local row
+    for _, item in ipairs((list or {}).items or {}) do
+      if item.value == species then row = item end
+    end
+    check(row ~= nil, "Gen1Dex: its list has a row for " .. species)
+    if row and type(list.onChoose) == "function" then
+      list.onChoose(row, list)
+      local labels = {}
+      for _, entry in ipairs((stack:top() or {}).items or {}) do
+        labels[#labels + 1] = tostring(entry.label)
+      end
+      check(table.concat(labels, "/"):find("AREA/HINT", 1, true) ~= nil,
+        "Gen1Dex: HINT still sits after AREA inside its list, got "
+          .. table.concat(labels, "/"))
+    end
+  end
+  run.release()
+else
+  io.write("note: GEN1DEX is unset, so the dex-mod case was not run\n")
+end
+
+-- ---- and with the hint surface turned down, the row is not installed
+--
+-- SPEC 9: "both option states".  Gen151's HINTS option is the switch the
+-- companion reads; set to AREA ONLY it must leave the dex completely alone.
+
+do
+  require("src.ui.PokedexMenu").new = PRISTINE_DEX_NEW
+  local data = datasetFor("red")
+  local run = loadPaths({ GEN151, GEN151 .. "/gen151_hints" }, data, {
+    ["options.lua"] = 'return { modOptions = { gen151 = '
+      .. '{ hints = "area" } } }',
+  })
+  eq(#run.errors, 0, "hints=area: both mods still load clean ("
+    .. table.concat(run.errors, "; ") .. ")")
+  local exports = run.loader.exports.gen151
+  eq(exports and exports.hintSurface, "area",
+    "hints=area: the option really took")
+  check(require("src.ui.PokedexMenu").new == PRISTINE_DEX_NEW,
+    "hints=area: the dex constructor is left completely alone")
   run.release()
 end
 

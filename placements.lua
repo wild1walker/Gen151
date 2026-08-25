@@ -76,6 +76,86 @@ P.MAP_GATES = {
 
 }
 
+-- ------------------------------------------------------- difficulty gating
+--
+-- SPEC 5: "A species' placement must sit behind progression at least as
+-- demanding as its vanilla acquisition."  Two tables make that testable
+-- instead of assertable: how far into the game each map is, and how far into
+-- the game the vanilla cartridge made you go for each species.
+-- tests/placements_test.lua checks every Set A row against the pair.
+--
+-- The rungs are ordered by when a normal playthrough opens them, not by which
+-- HM they need -- what is being gated here is effort, and a route you can
+-- only reach after Rock Tunnel is late whether or not anything in your bag
+-- says so.
+P.LADDER = {
+  "open Kanto",          -- 1
+  "Cerulean and south",  -- 2
+  "past Rock Tunnel",    -- 3
+  "past Celadon",        -- 4
+  "the POKe FLUTE",      -- 5
+  "the SAFARI ZONE",     -- 6
+  "SURF",                -- 7
+  "CINNABAR",            -- 8
+  "STRENGTH",            -- 9
+  "VICTORY ROAD",        -- 10
+  "CERULEAN CAVE",       -- 11
+}
+
+P.MAP_RUNG = {
+  ROUTE_1 = 1, ROUTE_2 = 1, ROUTE_3 = 1, ROUTE_4 = 1, ROUTE_22 = 1,
+  VIRIDIAN_FOREST = 1, MT_MOON_1F = 1, MT_MOON_B1F = 1, MT_MOON_B2F = 1,
+  ROUTE_5 = 2, ROUTE_6 = 2, ROUTE_9 = 2, ROUTE_10 = 2, ROUTE_11 = 2,
+  ROUTE_24 = 2, ROUTE_25 = 2, DIGLETTS_CAVE = 2,
+  ROCK_TUNNEL_1F = 3, ROCK_TUNNEL_B1F = 3,
+  -- Celadon is reached through the Route 7-8 Underground Path, which is on
+  -- the far side of Rock Tunnel, so Routes 7 and 8 are later than their
+  -- numbers suggest.
+  ROUTE_7 = 3, ROUTE_8 = 3,
+  POKEMON_TOWER_3F = 4, POKEMON_TOWER_7F = 4,
+  ROUTE_12 = 5, ROUTE_13 = 5, ROUTE_14 = 5, ROUTE_15 = 5,
+  ROUTE_16 = 5, ROUTE_17 = 5, ROUTE_18 = 5,
+  SAFARI_ZONE_CENTER = 6, SAFARI_ZONE_EAST = 6, SAFARI_ZONE_NORTH = 6,
+  SAFARI_ZONE_WEST = 6,
+  ROUTE_19 = 7, ROUTE_20 = 7, ROUTE_21 = 7, POWER_PLANT = 7,
+  POKEMON_MANSION_1F = 8, POKEMON_MANSION_2F = 8, POKEMON_MANSION_3F = 8,
+  POKEMON_MANSION_B1F = 8,
+  SEAFOAM_ISLANDS_1F = 8, SEAFOAM_ISLANDS_B1F = 8, SEAFOAM_ISLANDS_B2F = 8,
+  SEAFOAM_ISLANDS_B3F = 8,
+  -- IsSurfingAllowed bars the B4F stairs until both plug boulders are down
+  SEAFOAM_ISLANDS_B4F = 9,
+  ROUTE_23 = 10, VICTORY_ROAD_1F = 10, VICTORY_ROAD_2F = 10,
+  VICTORY_ROAD_3F = 10,
+  CERULEAN_CAVE_1F = 11, CERULEAN_CAVE_2F = 11, CERULEAN_CAVE_B1F = 11,
+}
+
+-- What the vanilla cartridge charged, per Set A species.  Set B rows are
+-- exempt by construction: they land on the maps a sibling cartridge already
+-- chose, at the levels it chose, so the price is the one the game itself set.
+P.MIN_RUNG = {
+  -- Oak hands these over in the first five minutes.
+  BULBASAUR = 1, CHARMANDER = 1, SQUIRTLE = 1,
+  -- The Route 2 gate trade wants an ABRA, which lives on Routes 24 and 25.
+  MR_MIME = 2,
+  -- The Celadon Mansion roof, reached through the Route 7-8 tunnel.
+  EEVEE = 3,
+  -- Both prizes sit in the Saffron Dojo, and Saffron opens on a drink bought
+  -- in Celadon.
+  HITMONLEE = 4, HITMONCHAN = 4,
+  -- The Celadon Game Corner, and a great many coins.
+  PORYGON = 4,
+  -- The Cerulean trade wants a POLIWHIRL, i.e. a rod and some levels.
+  JYNX = 5,
+  -- Both statics sleep behind the POKe FLUTE.
+  SNORLAX = 5,
+  -- Silph Co., which opens once the Rocket Hideout is cleared.
+  LAPRAS = 6,
+  -- All three revive in the Cinnabar Lab, which is across the water.
+  OMANYTE = 8, KABUTO = 8, AERODACTYL = 8,
+  -- The journals are in the Mansion, on the same island.
+  MEW = 8,
+}
+
 -- Which mod option each row answers to, so a player who wants the version
 -- exclusives but not a wild Charmander gets exactly that (SPEC 7).
 P.FEATURES = {
@@ -210,6 +290,9 @@ P.common = {
   -- data.encounters at all, so the AREA screen cannot spoil it.
   { species = "MEW", map = "POKEMON_MANSION_B1F", method = "grass",
     band = "high", tier = "VERY_RARE", feature = "mew", gated = "mew",
+    -- the only row that overrides its map's gate: reaching the Mansion is
+    -- not what unlocks this one, reading all four of its journals is
+    gate = "4 JOURNALS",
     why = "the basement the journals describe: MEW was here before MEWTWO "
       .. "was, and reading all four diaries is what brings it back" },
 }

@@ -1,0 +1,25 @@
+{
+  "id": "gen151_hints",
+  "name": "Gen151 Hints",
+  "version": "1.0.0",
+  "api": 2,
+  "entry": "main.lua",
+  "profile": "content",
+  "category": "UI",
+  "games": [
+    "gen1"
+  ],
+  "game_version": ">=0.0.0-0 <2.0.0",
+  "priority": 1000,
+  "dependencies": [],
+  "optional_dependencies": [
+    "gen151@^1.0.0#wild1walker/Gen151",
+    "Gen1Dex"
+  ],
+  "conflicts": [],
+  "permissions": [
+    "engine_internals"
+  ],
+  "description": "Adds a HINT row to the Pokedex side menu, next to AREA, showing where Gen151 put the species you are looking at.",
+  "github": "wild1walker/Gen151"
+}
