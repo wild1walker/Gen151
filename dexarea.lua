@@ -31,20 +31,22 @@
 
 local M = {}
 
--- The hint goes in the game's OWN dialogue box, at the geometry every other
--- box in the game uses -- src/render/TextBox.lua's BOX_TX/TY/TW/TH, its
--- textX, its line1Y and line2Y, its blinking prompt arrow, and Font.drawBox
--- for the frame tiles themselves.  The first version painted a bare white
--- strip with two lines in it, which read as a debug overlay rather than as
--- the game talking to the player, and looked it.
+-- The hint goes in a box built from the game's own frame tiles -- Font.drawBox
+-- draws the same borders, and every position below is the same arithmetic on
+-- the box's own corners that src/render/TextBox.lua does on its.  A bare white
+-- strip with two lines painted into it, which is what this was first, read as
+-- a debug overlay rather than as the game talking to the player.
 --
--- Nothing here is a copy of those numbers by eye: they are the same
--- arithmetic on the same constants, so a box drawn here lands on the same
--- pixels as a box drawn by the engine.
-local BOX_TX, BOX_TY, BOX_TW, BOX_TH = 0, 12, 20, 6
+-- FOUR rows, not the dialogue box's six.  The dialogue box double-spaces its
+-- two lines because it is typing a story out at you, and it can afford the
+-- bottom third of the screen because there is nothing behind it.  Here there
+-- is a map behind it, with nests on it, and this is a two-line label rather
+-- than a conversation: the pair reads as one block, and the sixteen pixels
+-- that buys back are two whole tile rows of Kanto.
+local BOX_TX, BOX_TY, BOX_TW, BOX_TH = 0, 14, 20, 4
 local TEXT_X = (BOX_TX + 1) * 8
-local LINE1_Y = (BOX_TY + 2) * 8
-local LINE2_Y = (BOX_TY + 4) * 8
+local LINE1_Y = (BOX_TY + 1) * 8
+local LINE2_Y = (BOX_TY + 2) * 8
 local ARROW_X = (BOX_TX + BOX_TW - 2) * 8
 local ARROW_Y = (BOX_TY + BOX_TH - 1) * 8 - 4
 
@@ -275,14 +277,36 @@ function M.install(mod, ctx)
       end
     end
 
+    -- The engine plays Press_AB on every A this screen answers
+    -- (TownMap:update).  Reached through TextBox.soundOpts rather than by
+    -- requiring the sound module, because that is the arming the mod surface
+    -- offers and it is the same call underneath.
+    local function pressSound()
+      local opts = mod.ui.TextBox.soundOpts(game, "Press_AB")
+      local play = opts and opts.auto and opts.auto.sound
+      if play then play() end
+    end
+
     screen.update = function(self, dt)
+      local input = self.game.input
       -- A on the AREA screen closes it (TownMap:update).  While the hint is
-      -- up, A means "I have read it" instead -- so the strip comes off the
-      -- two tile rows of Kanto it was covering, nests included, and the NEXT
-      -- A closes the screen the way it always did.  B is untouched: it still
-      -- leaves immediately, for anyone who does not want the hint at all.
-      if showing and self.game.input:wasPressed("a") then
-        showing = false
+      -- up, A means "I have read it" instead -- so the box comes off the
+      -- bottom of Kanto, nests included, and the NEXT A closes the screen the
+      -- way it always did.  B is untouched: it still leaves immediately, for
+      -- anyone who does not want the hint at all.
+      if showing then
+        if input:wasPressed("a") then
+          showing = false
+          pressSound()
+          return
+        end
+      elseif input:wasPressed("start") then
+        -- and START brings it back, because dismissing a hint you have not
+        -- finished reading should not mean leaving the screen and coming in
+        -- again.  START does nothing at all on this screen in vanilla, so
+        -- nothing is taken away to pay for it.
+        showing = true
+        pressSound()
         return
       end
       return baseUpdate(self, dt)

@@ -139,13 +139,12 @@ geometry, the same blinking prompt as every other box in the game:
 ```
 +--------------------+
 |                    |
-|   (Kanto, with     |
-|  nests blinking)   |
+|      (Kanto, with  |
+|    nests blinking) |
+|                    |
 |                    |
 .--------------------.
-|                    |
 | GRASS  Lv31-33     |
-|                    |
 | NEEDS STRENGTH   . |
 '--------------------'
 ```
@@ -167,10 +166,17 @@ exactly the screen the cartridge shipped.
 The caption also covers the two Super Rod placements, which have no slot for
 AREA to find and so blink no nest at all.
 
-**A press takes it away.** The strip covers the bottom two tile rows of Kanto
-and one of them has nests in it, so the first A dismisses the hint and the
-second closes the screen — which is what A always did. B still leaves
-immediately.
+**A press takes it away, START brings it back.** The box covers the bottom of
+Kanto and there are nests down there, so the first A dismisses the hint and the
+second closes the screen — which is what A always did. START reopens it, since
+dismissing a hint you were still reading shouldn't mean leaving the screen and
+coming back in; START does nothing else on this screen, so nothing is taken
+away to pay for it. B still leaves immediately.
+
+It is four rows rather than the dialogue box's six. The dialogue box
+double-spaces its lines because it's typing a story at you and has nothing
+behind it; this is a two-line label over a map, and the sixteen pixels that
+buys back are two whole tile rows of Kanto.
 
 Mew is the exception, on purpose: while its gate is shut it is not in the
 encounter table, so there is no nest — and there is no caption either. A

@@ -498,21 +498,20 @@ do
                  isDown = function() return false end }
   screen.game = game
 
-  -- The box is the game's OWN dialogue box, so it is looked for at the
-  -- geometry src/render/TextBox.lua uses for every other box: 0,12 x 20,6 in
-  -- tiles, which Font.drawBox fills as 0,96 x 160,48 in pixels.  A bare strip
-  -- somewhere else would fail this, which is the point -- the first version
-  -- painted one and it read as a debug overlay.
+  -- Four rows at the bottom, not the dialogue box's six: 0,14 x 20,4 in
+  -- tiles, which Font.drawBox fills as 0,112 x 160,32 in pixels.  The height
+  -- is the assertion -- a six-row box passes every other check here and still
+  -- eats two more tile rows of Kanto than it needs to.
   local painted = 0
   local realRect = love.graphics.rectangle
   love.graphics.rectangle = function(mode, x, y, w, h)
-    if x == 0 and y == 96 and w == 160 and h == 48 then
+    if x == 0 and y == 112 and w == 160 and h == 32 then
       painted = painted + 1
     end
     return realRect(mode, x, y, w, h)
   end
   screen:draw()
-  eq(painted, 1, "area: the game's own dialogue box is on screen to begin with")
+  eq(painted, 1, "area: the box is on screen to begin with, four rows tall")
 
   screen:update(0)
   check(not popped,
@@ -521,8 +520,25 @@ do
   screen:draw()
   eq(painted, 0, "area: and the box really is gone")
 
+  -- ---- START brings it back, because dismissing a hint you were still
+  -- reading should not mean leaving the screen and coming in again
+  pressed = "start"
   screen:update(0)
-  check(popped, "area: the second A closes it, the way A always did")
+  check(not popped, "area: START does not close the map")
+  painted = 0
+  screen:draw()
+  eq(painted, 1, "area: it brings the hint back")
+
+  -- and A still dismisses the reopened one rather than closing the screen
+  pressed = "a"
+  screen:update(0)
+  check(not popped, "area: A dismisses the reopened hint")
+  painted = 0
+  screen:draw()
+  eq(painted, 0, "area: which goes away again")
+
+  screen:update(0)
+  check(popped, "area: and only THEN does A close it, the way A always did")
   love.graphics.rectangle = realRect
 
   -- ---- and the header is made to fit, because vanilla writes into an

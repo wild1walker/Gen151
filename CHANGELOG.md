@@ -3,6 +3,23 @@
 All notable changes to Gen151 are recorded here, in
 [keep a changelog](https://keepachangelog.com/en/1.1.0/) order.
 
+## [1.1.4] - 2026-08-25
+
+### Changed
+
+- The AREA hint box is **four rows rather than six**. The dialogue box
+  double-spaces its two lines because it is typing a story at you and has
+  nothing behind it; this is a two-line label over a map, and the sixteen
+  pixels that buys back are two whole tile rows of Kanto.
+
+### Added
+
+- **START reopens the hint** once it has been dismissed. Dismissing one you
+  were still reading should not mean leaving the AREA screen and coming back
+  in. START does nothing at all on that screen in vanilla, so nothing is taken
+  away to pay for it, and both presses play the same Press_AB the screen plays
+  for every other button.
+
 ## [1.1.3] - 2026-08-25
 
 ### Changed
