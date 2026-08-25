@@ -133,7 +133,71 @@ return function(mod)
       visible_if = { key = "enabled", equals = true } },
   }
 
-  local function opt(key) return mod.options:get(key) end
+  -- The loader hands a STORED option back verbatim; it does not check it
+  -- against the schema the mod defines today (src/mods/Loader.lua, the
+  -- options.get arm: stored value first, row.default only when there is no
+  -- stored value at all).  So an options.lua written against an older
+  -- version of this mod answers today's rows with yesterday's values.
+  --
+  -- That is not hypothetical, it is what shipped: HINTS was a three-way
+  -- choice through 1.0.x and a toggle from 1.1.0, so an upgraded install
+  -- answered `opt("hints") == true` with the string "dex".  False.  The whole
+  -- dex surface silently did not install -- no AREA on an undiscovered entry,
+  -- no line under the map -- while the row itself still read ON, because a
+  -- non-false value renders as on.  Three separate-looking faults, one stale
+  -- string.
+  --
+  -- So every row is checked against its own schema rather than the one that
+  -- caught fire: a stored value that is not valid for the row it belongs to
+  -- is not a setting, it is a leftover.
+  local LEGACY = {
+    -- HINTS: AREA ONLY meant "leave the dex alone", which is what OFF means
+    -- now; the other two both wanted hints, so they are ON.  Falling back to
+    -- the default instead would have handed hints back to somebody who had
+    -- turned them off on purpose.
+    hints = { area = false, dex = true, notes = true },
+  }
+
+  local schema = {}
+  for _, row in ipairs(options or {}) do schema[row.key] = row end
+
+  local repaired = {}
+  local function opt(key)
+    local value = mod.options:get(key)
+    local row = schema[key]
+    if not row then return value end
+
+    local fixed = value
+    local legacy = LEGACY[key]
+    if legacy and type(value) == "string" and legacy[value] ~= nil then
+      fixed = legacy[value]
+    elseif row.type == "toggle" then
+      if type(value) ~= "boolean" then fixed = row.default end
+    elseif row.type == "number" then
+      if type(value) ~= "number" then
+        fixed = row.default
+      elseif row.min and value < row.min then
+        fixed = row.min
+      elseif row.max and value > row.max then
+        fixed = row.max
+      end
+    elseif row.type == "choice" then
+      local known = false
+      for _, choice in ipairs(row.choices or {}) do
+        if choice[2] == value then known = true end
+      end
+      if not known then fixed = row.default end
+    end
+
+    if fixed ~= value and not repaired[key] then
+      repaired[key] = true
+      mod.log:warn("the saved value for %s is %s, which this version's %s "
+        .. "row cannot mean -- reading it as %s.  Open this mod's options "
+        .. "and set the row to write the new value down.",
+        key, tostring(value), tostring(row.type), tostring(fixed))
+    end
+    return fixed
+  end
 
   -- Published for anyone who wants the placement table.  Filled in below;
   -- declared here so an early return still leaves a well-formed handle

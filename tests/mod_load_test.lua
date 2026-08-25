@@ -588,6 +588,100 @@ do
 end
 
 
+-- ---- an options.lua written by an OLDER version of this mod
+--
+-- The bug this is here for, and it is the worst kind: three separate-looking
+-- faults from one stale string.  HINTS was a three-way choice through 1.0.x
+-- and a toggle from 1.1.0.  The loader hands a stored option back verbatim --
+-- it checks nothing against the schema the mod defines today -- so an
+-- upgraded install answered `opt("hints") == true` with "dex", which is not
+-- true, and the entire dex surface silently failed to install while its own
+-- row still rendered ON.
+--
+-- Every row is coerced against its own schema now, so this checks the whole
+-- class rather than the one value: a stale string on a toggle, a stale number
+-- out of range, a stale choice that is no longer offered.
+
+do
+  -- from a pristine dex, because the wraps in the blocks above persist in
+  -- this process -- without this reset the "is it installed" check below
+  -- would pass on somebody else's wrap and prove nothing
+  require("src.ui.PokedexMenu").new = PRISTINE_DEX_NEW
+  local data = datasetFor("red")
+  local run = loadPaths({ GEN151 }, data, {
+    ["options.lua"] = 'return { modOptions = { gen151 = { '
+      .. 'hints = "dex", rarity = 9999, trade_evolutions = "gone", '
+      .. 'mew = "yes" } } }',
+  })
+  eq(#run.errors, 0, "upgrade: it loads clean off an old options file ("
+    .. table.concat(run.errors, "; ") .. ")")
+
+  local exports = run.loader.exports.gen151
+  check(exports ~= nil and exports.enabled == true,
+    "upgrade: and the spawn layer still ran")
+  eq(exports and exports.hintSurface, true,
+    'upgrade: hints = "dex" reads as ON, which is what that choice meant')
+
+  -- the dex wrap is the thing that was silently missing
+  local game, stack = dexGame(data, {})
+  local PokedexMenu = require("src.ui.PokedexMenu")
+  local ok, list = pcall(PokedexMenu.new, game, {})
+  check(ok, "upgrade: the dex list builds: " .. tostring(list))
+  check(ok and list.__gen151Wrapped == true,
+    "upgrade: and the dex wrap really is installed")
+  if ok then
+    local unknown
+    for _, item in ipairs(list.items or {}) do
+      if not item.value then unknown = item break end
+    end
+    if unknown then
+      list.onChoose(unknown, list)
+      eq(labelsOf(stack:top()), "AREA/QUIT",
+        "upgrade: so AREA opens on an undiscovered entry")
+    end
+  end
+
+  -- ---- and the rest of the stale values were repaired rather than obeyed
+  local seenTier = {}
+  for _, row in ipairs(exports.rows or {}) do seenTier[row.tier] = true end
+  check(next(seenTier) ~= nil,
+    "upgrade: rarity = 9999 did not stop the placements resolving")
+  check(data.items and data.items.LINK_CABLE ~= nil,
+    'upgrade: trade_evolutions = "gone" fell back to the default, so the '
+      .. "LINK CABLE is still registered")
+
+  local mewPlaced = false
+  for _, row in ipairs(exports.rows or {}) do
+    if row.species == "MEW" then mewPlaced = true end
+  end
+  check(mewPlaced,
+    'upgrade: mew = "yes" is not a boolean, so the toggle used its default')
+
+  run.release()
+end
+
+-- ---- and AREA ONLY, which really did mean off, stays off
+--
+-- Falling back to the default for every unrecognised value would have handed
+-- hints back to somebody who had switched them off on purpose.
+
+do
+  require("src.ui.PokedexMenu").new = PRISTINE_DEX_NEW
+  local data = datasetFor("red")
+  local run = loadPaths({ GEN151 }, data, {
+    ["options.lua"] = 'return { modOptions = { gen151 = '
+      .. '{ hints = "area" } } }',
+  })
+  eq(#run.errors, 0, "upgrade: AREA ONLY loads clean ("
+    .. table.concat(run.errors, "; ") .. ")")
+  eq(run.loader.exports.gen151.hintSurface, false,
+    'upgrade: hints = "area" reads as OFF, because that is what it meant')
+  check(require("src.ui.PokedexMenu").new == PRISTINE_DEX_NEW,
+    "upgrade: and the dex is left completely alone")
+  run.release()
+end
+
+
 -- ---- and with the hints switched off, the dex is left completely alone
 --
 -- SPEC 9: "both option states".

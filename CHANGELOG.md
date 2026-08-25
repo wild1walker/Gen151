@@ -3,6 +3,27 @@
 All notable changes to Gen151 are recorded here, in
 [keep a changelog](https://keepachangelog.com/en/1.1.0/) order.
 
+## [1.1.2] - 2026-08-25
+
+### Fixed
+
+- **An upgraded install had the whole dex surface switched off, while its own
+  option row read ON.** HINTS was a three-way choice through 1.0.x and became
+  a toggle in 1.1.0. The loader hands a stored option straight back -- it
+  checks nothing against the schema the mod defines today -- so an options
+  file written by 1.0.x answered `hints == true` with the string `"dex"`.
+  Not true. `dexarea.lua` never installed: no AREA on an undiscovered entry,
+  no line under the map, and the bench reporting AREA HINTS as off. Three
+  separate-looking faults, one stale string.
+
+  Every option row is now checked against its own schema before it is read, so
+  this is fixed for the whole class rather than for the row that caught fire:
+  a stale value on a toggle, a number out of range, or a choice that is no
+  longer offered all fall back to the row's default, with a line in the log
+  saying so. `"area"` -- which really did mean "leave the dex alone" -- is
+  carried across to OFF rather than reset, so nobody who switched hints off on
+  purpose gets them back.
+
 ## [1.1.1] - 2026-08-25
 
 ### Changed
