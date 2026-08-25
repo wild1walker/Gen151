@@ -31,10 +31,33 @@
 
 local M = {}
 
--- The bar under the map is 20 columns wide.  19 leaves the same one-column
--- margin the nest header above it uses, and room for the arrow.
-local CAPTION_COLS = 19
-local CAPTION_Y = 128
+-- The hint goes in the game's OWN dialogue box, at the geometry every other
+-- box in the game uses -- src/render/TextBox.lua's BOX_TX/TY/TW/TH, its
+-- textX, its line1Y and line2Y, its blinking prompt arrow, and Font.drawBox
+-- for the frame tiles themselves.  The first version painted a bare white
+-- strip with two lines in it, which read as a debug overlay rather than as
+-- the game talking to the player, and looked it.
+--
+-- Nothing here is a copy of those numbers by eye: they are the same
+-- arithmetic on the same constants, so a box drawn here lands on the same
+-- pixels as a box drawn by the engine.
+local BOX_TX, BOX_TY, BOX_TW, BOX_TH = 0, 12, 20, 6
+local TEXT_X = (BOX_TX + 1) * 8
+local LINE1_Y = (BOX_TY + 2) * 8
+local LINE2_Y = (BOX_TY + 4) * 8
+local ARROW_X = (BOX_TX + BOX_TW - 2) * 8
+local ARROW_Y = (BOX_TY + BOX_TH - 1) * 8 - 4
+
+-- The interior of that box is 18 columns, the same budget TextBox.paginate
+-- wraps to.
+local CAPTION_COLS = 18
+
+-- The header strip the engine paints across the top of the AREA screen is
+-- 160px wide with its text inset 8px, so 19 columns of room -- and vanilla
+-- writes into it without measuring.  "CHARIZARD AREA UNKNOWN" is 22, so it
+-- ran off the right edge of the screen mid-word.
+local HEADER_COLS = 19
+local HEADER_Y = 0
 
 -- Gen 1's ten cumulative slot thresholds out of 256 (wild_encounters.asm).
 -- The dataset carries its own under constants.encounterBuckets; this is the
@@ -156,26 +179,72 @@ function M.install(mod, ctx)
     return nil
   end
 
+  -- One clamp for every source, at the box's own budget, measured in drawn
+  -- pixels.  Each builder could mind its own width, and then a new builder
+  -- would forget to -- the box knows how wide it is, so the box decides.
+  local function clamp(lines)
+    if not lines then return nil end
+    for index, line in ipairs(lines) do
+      local spans = Font.split(line)
+      local room = Font.spansFitting(spans, CAPTION_COLS * 8)
+      if room < #spans then
+        lines[index] = line:sub(1, spans[math.max(room, 1)].to)
+      end
+    end
+    return lines
+  end
+
   local function captionFor(game, species)
     local ours = placedRows(species)
-    if #ours > 0 then return Hints.caption(ours, CAPTION_COLS) end
+    if #ours > 0 then return clamp(Hints.caption(ours, CAPTION_COLS)) end
     local wild = fromEncounters(game, species)
-    if wild then return wild end
-    return fromEvolution(game, species)
+    if wild then return clamp(wild) end
+    return clamp(fromEvolution(game, species))
   end
 
   -- ------------------------------------------------------ the caption strip
 
-  local function drawCaption(lines, arrow)
-    love.graphics.setColor(1, 1, 1, 1)
-    love.graphics.rectangle("fill", 0, CAPTION_Y, 160, 16)
+  -- Whether a string fits a column budget, measured the way the text box
+  -- measures it: in the pixels the glyphs actually draw, not in bytes.  A
+  -- variable-advance font (a TTF skin) makes those two different numbers, and
+  -- the header that overflowed was counted in bytes.
+  local function fits(text, cols)
+    local spans = Font.split(text)
+    return Font.spansFitting(spans, cols * 8) >= #spans
+  end
+
+  local function drawBox(lines, arrow)
+    Font.drawBox(BOX_TX, BOX_TY, BOX_TW, BOX_TH)
     love.graphics.setColor(0, 0, 0, 1)
-    Font.draw(lines[1] or "", 8, CAPTION_Y)
-    if lines[2] then Font.draw(lines[2], 8, CAPTION_Y + 8) end
-    -- the engine's own more-below marker, in the corner OptionRows puts it
-    -- in, so "there is a press waiting here" is said the way the rest of the
-    -- game says it
-    if arrow then Font.drawCode(Theme.moreArrow or 0xEE, 144, CAPTION_Y + 8) end
+    Font.draw(lines[1] or "", TEXT_X, LINE1_Y)
+    if lines[2] then Font.draw(lines[2], TEXT_X, LINE2_Y) end
+    -- the same blinking prompt the engine prints at the end of a page, in
+    -- the same corner of the same box: "there is a press waiting here" said
+    -- the way the rest of the game says it
+    if arrow then Font.drawCode(Theme.moreArrow or 0xEE, ARROW_X, ARROW_Y) end
+    love.graphics.setColor(1, 1, 1, 1)
+  end
+
+  -- The header, repainted ONLY when the engine's own would not have fitted.
+  -- A name short enough to leave vanilla's line alone leaves it alone.
+  local function headerFor(screen, species)
+    local def = screen.game.data.pokemon[species]
+    local name = (def and def.name) or species
+    local full = #screen.nests > 0 and (name .. "'s NEST")
+      or (name .. " AREA UNKNOWN")
+    if fits(full, HEADER_COLS) then return nil end
+    -- shortest thing that still says both halves, then the name alone
+    for _, try in ipairs({ name .. " UNKNOWN", name }) do
+      if fits(try, HEADER_COLS) then return try end
+    end
+    return name
+  end
+
+  local function drawHeader(text)
+    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.rectangle("fill", 0, HEADER_Y, 160, 8)
+    love.graphics.setColor(0, 0, 0, 1)
+    Font.draw(text, 8, HEADER_Y)
     love.graphics.setColor(1, 1, 1, 1)
   end
 
@@ -194,10 +263,15 @@ function M.install(mod, ctx)
     local baseDraw = screen.draw or TownMap.draw
     local baseUpdate = screen.update or TownMap.update
 
+    local header = headerFor(screen, species)
+
     screen.draw = function(self)
       baseDraw(self)
+      if header then drawHeader(header) end
       if showing then
-        drawCaption(lines, (self.blink or 0) < 25)
+        -- blinking in time with the map's own nests rather than to a clock
+        -- of its own: one screen, one pulse
+        drawBox(lines, (self.blink or 0) < 25)
       end
     end
 

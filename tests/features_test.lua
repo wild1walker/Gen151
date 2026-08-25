@@ -433,12 +433,14 @@ do
   end
   check(placed ~= nil, "area: there is a placed species to caption")
 
-  local caption = Hints.caption({ placed }, 19)
+  -- 18 columns, because the hint sits in the game's own dialogue box now and
+  -- that is the interior width TextBox.paginate wraps to
+  local caption = Hints.caption({ placed }, 18)
   check(type(caption) == "table" and caption[1] ~= nil,
     "area: which produces a caption")
   for _, line in ipairs(caption or {}) do
-    check(#line <= 19,
-      "area: every caption line fits under the map, but %q is %d wide",
+    check(#line <= 18,
+      "area: every caption line fits the box, but %q is %d wide",
       line, #line)
   end
 
@@ -496,27 +498,60 @@ do
                  isDown = function() return false end }
   screen.game = game
 
+  -- The box is the game's OWN dialogue box, so it is looked for at the
+  -- geometry src/render/TextBox.lua uses for every other box: 0,12 x 20,6 in
+  -- tiles, which Font.drawBox fills as 0,96 x 160,48 in pixels.  A bare strip
+  -- somewhere else would fail this, which is the point -- the first version
+  -- painted one and it read as a debug overlay.
   local painted = 0
   local realRect = love.graphics.rectangle
   love.graphics.rectangle = function(mode, x, y, w, h)
-    if x == 0 and y == 128 and w == 160 and h == 16 then
+    if x == 0 and y == 96 and w == 160 and h == 48 then
       painted = painted + 1
     end
     return realRect(mode, x, y, w, h)
   end
   screen:draw()
-  eq(painted, 1, "area: the strip is on screen to begin with")
+  eq(painted, 1, "area: the game's own dialogue box is on screen to begin with")
 
   screen:update(0)
   check(not popped,
     "area: the first A takes the hint down rather than closing the map")
   painted = 0
   screen:draw()
-  eq(painted, 0, "area: and the strip really is gone")
+  eq(painted, 0, "area: and the box really is gone")
 
   screen:update(0)
   check(popped, "area: the second A closes it, the way A always did")
   love.graphics.rectangle = realRect
+
+  -- ---- and the header is made to fit, because vanilla writes into an
+  -- 19-column strip without measuring: "CHARIZARD AREA UNKNOWN" is 22 and ran
+  -- off the right edge of the screen mid-word
+  local Font = require("src.render.Font")
+  local drawn = {}
+  local realDrawText = Font.draw
+  Font.draw = function(text, x, y)
+    if y == 0 then drawn[#drawn + 1] = tostring(text) end
+    return realDrawText(text, x, y)
+  end
+  local longName = "CHARIZARD"
+  check(game.data.pokemon[longName] ~= nil,
+    "area: the fixture has " .. longName .. ", which is the name that "
+      .. "overflowed")
+  local long = TownMap.new(game, { nestSpecies = longName })
+  long.game = game
+  long:draw()
+  Font.draw = realDrawText
+  local header = drawn[#drawn]
+  check(header ~= nil, "area: a header was drawn")
+  if header then
+    local spans = Font.split(header)
+    check(Font.spansFitting(spans, 19 * 8) >= #spans,
+      "area: and it fits the strip, unlike %q", header)
+    check(header:find(longName, 1, true) ~= nil,
+      "area: while still naming the Pokemon, got " .. header)
+  end
 
   -- ---- MEW's caption stays sealed until its gate opens, because a caption
   -- would spoil the basement more precisely than a nest ever could
@@ -530,7 +565,7 @@ do
   check(not mewCaptioned,
     "area: and MEW has no caption while its gate is shut")
 
-  eq(Hints.caption({}, 19), nil,
+  eq(Hints.caption({}, 18), nil,
     "area: a species with no rows produces no placement caption")
 
   local PokedexMenu = require("src.ui.PokedexMenu")

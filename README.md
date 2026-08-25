@@ -133,18 +133,21 @@ paragraph you have not earned.
 **And the map gets a line under it** saying how to get there — for **all 151**,
 not only the ones this mod placed. The blinking nests say *where*; they cannot
 say *in the grass, around level ten, and rare*, which is the half you actually
-need:
+need. It comes up in the game's own dialogue box — the same frame, the same
+geometry, the same blinking prompt as every other box in the game:
 
 ```
-+------------------------+
-|                        |
-|      (Kanto, with      |
-|    nests blinking)     |
-|                        |
-+------------------------+
-| GRASS  Lv31-33         |
-| NEEDS STRENGTH         |
-+------------------------+
++--------------------+
+|                    |
+|   (Kanto, with     |
+|  nests blinking)   |
+|                    |
+.--------------------.
+|                    |
+| GRASS  Lv31-33     |
+|                    |
+| NEEDS STRENGTH   . |
+'--------------------'
 ```
 
 A Pokémon this mod placed is described from the same rows the roll layer is

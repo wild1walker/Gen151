@@ -3,6 +3,29 @@
 All notable changes to Gen151 are recorded here, in
 [keep a changelog](https://keepachangelog.com/en/1.1.0/) order.
 
+## [1.1.3] - 2026-08-25
+
+### Changed
+
+- **The AREA hint is the game's own dialogue box now.** It was a bare white
+  strip with two lines painted into it, which read as a debug overlay rather
+  than as the game talking to you. It uses `Font.drawBox` and the same
+  arithmetic on the same constants `src/render/TextBox.lua` uses for every
+  other box -- the frame tiles, the box geometry, the text baselines, the
+  blinking prompt in the corner -- so it lands on the same pixels rather than
+  on pixels that look about right.
+
+### Fixed
+
+- The AREA header ran off the right edge of the screen. Vanilla writes into a
+  19-column strip without measuring it, and `CHARIZARD AREA UNKNOWN` is 22, so
+  it was cut mid-word. It is now measured in the pixels the glyphs draw -- not
+  in bytes, which a variable-advance font skin would get wrong -- and shortened
+  to `CHARIZARD UNKNOWN` only when the full line would not have fitted. A name
+  short enough to leave vanilla's line alone leaves it alone.
+- Every caption line is clamped to the box's own width in one place, so a
+  source that forgets its budget cannot overflow.
+
 ## [1.1.2] - 2026-08-25
 
 ### Fixed
