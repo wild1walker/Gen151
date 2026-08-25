@@ -49,6 +49,13 @@ return {
       for_ = "the disassembly every placement in this mod is derived from" },
     { who = "Pokemon Gen 1 Recompilation Project",
       for_ = "the encounter, merge and hook seams this mod is built on" },
+    { who = "Gen1Dex",
+      for_ = "the AREA screen this mod's captions are written onto, and the "
+        .. "provider hook they register through" },
+    { who = "Nintendo / Creatures / GAME FREAK",
+      for_ = "Pokemon Red, Blue, Yellow and Let's Go, whose own Kanto "
+        .. "placements are used wherever they answered the question first.  "
+        .. "Unofficial fan mod, no affiliation, no endorsement" },
   },
   compat = { engine = ">=1.0.0 <2.0.0", modApi = 2 },
 }

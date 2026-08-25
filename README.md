@@ -495,4 +495,15 @@ Blue and Yellow, and built on the encounter, merge and hook seams of
 [Pokemon Gen1Recomp](https://github.com/bryanthaboi/gen1recomp).
 
 Tested against a vanilla install and against
-[Gen1Dex](https://github.com/wild1walker/Gen1Dex).
+[Gen1Dex](https://github.com/wild1walker/Gen1Dex), which owns the AREA screen
+this mod writes its captions onto.
+
+Where a later official Kanto game had already answered "where does this live",
+that answer is used rather than invented -- Let's Go's Bulbasaur in Viridian
+Forest, its Charmander on Route 3, its Squirtle on Route 25. Those placements
+are Game Freak's design decisions, not this mod's.
+
+**Pokemon** Red, Blue, Yellow and Let's Go are Nintendo / Creatures /
+GAME FREAK. This is an unofficial fan mod, distributed free, with no
+affiliation with or endorsement by any of them, and it ships no ROM-derived
+content.
