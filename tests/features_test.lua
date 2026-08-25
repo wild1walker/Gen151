@@ -464,4 +464,133 @@ do
   run.release()
 end
 
+-- --------------------------------------------------------- the debug bench
+--
+-- The bench exists to reach what a headless suite cannot, so most of it can
+-- only be judged by a human.  What CAN be checked here is that it does not
+-- lie: that forcing a spawn still respects the encounter rate, that the
+-- species it forces are ones Gen151 actually placed, and that the Mew toggle
+-- moves the encounter table rather than just the flag.
+
+do
+  local data = datasetFor("red")
+  local paths = { GEN151, GEN151 .. "/gen151_debug" }
+  local run = T.sdk.loadMods(paths, { data = data, fs = aliasFs(paths, {
+    ["options.lua"] = 'return { modOptions = { gen151 = { mew = true } } }',
+  }) })
+  local game = stubGame(data)
+  run.loader.game = game
+
+  eq(#run.errors, 0, "bench: it loads clean beside Gen151 ("
+    .. table.concat(run.errors, "; ") .. ")")
+  check(run.loader.mods.gen151_debug ~= nil, "bench: it was discovered")
+
+  -- ---- it puts itself on the OPTIONS menu and leaves the rest alone
+  local rows = run.loader.hooks:call("ui.options.rows",
+    function(_, given) return given end, game, { { id = "SOMEONE_ELSE" } })
+  local bench
+  for _, row in ipairs(rows) do
+    if row.id == "gen151_debug" then bench = row end
+  end
+  check(bench ~= nil, "bench: it adds an OPTIONS row")
+  check(rows[1] and rows[1].id == "SOMEONE_ELSE",
+    "bench: without dropping anyone else's")
+
+  -- ---- the bench screen builds
+  local factory = data.screens and data.screens.Gen151DebugBench
+  check(factory ~= nil, "bench: the screen is registered")
+  local built, list = pcall(factory.new, game)
+  check(built, "bench: it constructs: " .. tostring(list))
+
+  local function rowNamed(prefix)
+    for _, item in ipairs((list or {}).items or {}) do
+      if tostring(item.label):sub(1, #prefix) == prefix then return item end
+    end
+  end
+
+  -- ---- forcing respects the encounter RATE
+  --
+  -- The bench sits above Gen151 in the chain and calls next() before it
+  -- decides anything, so a step that would not have met anything still meets
+  -- nothing.  Forcing WHAT you meet is the whole point; forcing WHETHER
+  -- would make the walk a lie.
+  local toggle = rowNamed("SPAWNS")
+  check(toggle ~= nil, "bench: it has a SPAWNS toggle")
+  eq(toggle and toggle.label, "SPAWNS: OFF", "bench: which starts off")
+  list.onChoose(toggle, list)
+  eq(toggle.label, "SPAWNS: ON", "bench: and turns on")
+
+  local hooks = run.loader.hooks
+  local ctx = { mapId = "ROUTE_4", terrain = "grass",
+                rng = function(_, hi) return hi end }
+  eq(hooks:call("encounter.roll", function() return nil end,
+                data.encounters.ROUTE_4, ctx), nil,
+    "bench: a step with no encounter still has none, forced or not")
+
+  local placed = {}
+  for _, row in ipairs(run.loader.exports.gen151.rows or {}) do
+    if row.map == "ROUTE_4" then placed[row.species] = row end
+  end
+  check(next(placed) ~= nil, "bench: ROUTE_4 has placements to force")
+  local seen = {}
+  for _ = 1, 8 do
+    local enc = hooks:call("encounter.roll",
+      function() return { species = "RATTATA", level = 3 } end,
+      data.encounters.ROUTE_4, ctx)
+    check(placed[enc.species] ~= nil,
+      "bench: every forced encounter is one Gen151 placed, got "
+        .. tostring(enc.species))
+    seen[enc.species] = true
+  end
+  local distinct = 0
+  for _ in pairs(seen) do distinct = distinct + 1 end
+  local total = 0
+  for _ in pairs(placed) do total = total + 1 end
+  eq(distinct, total,
+    "bench: and round-robin reaches every one of the map's placements")
+
+  -- turning it back off hands the encounter straight back
+  list.onChoose(toggle, list)
+  eq(toggle.label, "SPAWNS: OFF", "bench: the toggle goes back")
+  local back = hooks:call("encounter.roll",
+    function() return { species = "RATTATA", level = 3 } end,
+    data.encounters.ROUTE_4, { mapId = "ROUTE_1", terrain = "grass" })
+  eq(back.species, "RATTATA", "bench: and stops forcing")
+
+  -- ---- the Mew toggle moves the TABLE, not just the flag
+  local function mewInTable()
+    for _, record in pairs(data.encounters) do
+      for _, kind in ipairs({ "grass", "water" }) do
+        for _, slot in ipairs((record[kind] or {}).slots or {}) do
+          if slot.species == "MEW" then return true end
+        end
+      end
+    end
+    return false
+  end
+  local mew = rowNamed("MEW")
+  check(mew ~= nil, "bench: it has a MEW toggle")
+  eq(mew and mew.label, "MEW: HIDDEN", "bench: which starts hidden")
+  check(not mewInTable(), "bench: with MEW out of the table")
+  list.onChoose(mew, list)
+  eq(mew.label, "MEW: FOUND", "bench: it flips")
+  eq(game.save.flags.GEN151_MEW_FOUND, true, "bench: setting the flag")
+  check(mewInTable(),
+    "bench: and asking Gen151 to put MEW in the table, which is what AREA "
+      .. "reads")
+  list.onChoose(mew, list)
+  check(not mewInTable(), "bench: flipping back takes it out again")
+
+  -- ---- dex fill
+  local fill = rowNamed("DEX FILL")
+  check(fill ~= nil, "bench: it has a DEX FILL row")
+  list.onChoose(fill, list)
+  eq(game.save.pokedex.seen.BULBASAUR, true,
+    "bench: which marks species SEEN, the flag AREA and the HINT row read")
+  eq(game.save.pokedex.owned.BULBASAUR, nil,
+    "bench: without marking them OWNED, which would empty the notebook")
+
+  run.release()
+end
+
 T.finish("gen151 features")

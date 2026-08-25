@@ -252,6 +252,12 @@ return function(mod)
 
   mod.exports.rows = resolved.rows
   mod.exports.fishing = resolved.fishing
+  -- Reconcile the runtime-conditional rows -- today that is MEW -- with the
+  -- flags they are gated on.  Gen151 calls this itself on every save load, so
+  -- nothing needs it in normal play; it is published because a mod that flips
+  -- GEN151_MEW_FOUND from outside has no other way to ask for the encounter
+  -- table to catch up, and a stale table is what the dex AREA screen reads.
+  mod.exports.syncGated = mewGate and mewGate.sync or function() end
   mod.exports.hints = Hints
   mod.exports.hintSurface = opt("hints")
   mod.exports.enabled = true

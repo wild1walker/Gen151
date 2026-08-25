@@ -36,7 +36,7 @@ if [ -n "$POKERED" ] && [ -n "$POKEYELLOW" ]; then
   echo "== derived files are up to date"
   ./tools/regen.sh "$RECOMP" "$POKERED" "$POKEYELLOW" >/dev/null
   git diff --exit-code placements.lua hints.lua SPOILERS.md thumbnail.png \
-    gen151_hints/thumbnail.png tests/fixtures
+    gen151_hints/thumbnail.png gen151_debug/thumbnail.png tests/fixtures
 fi
 
 echo "all green"

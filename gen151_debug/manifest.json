@@ -1,0 +1,18 @@
+{
+  "id": "gen151_debug",
+  "name": "Gen151 Debug",
+  "version": "1.0.0",
+  "api": 2,
+  "entry": "main.lua",
+  "profile": "content",
+  "category": "TOOL",
+  "games": ["gen1"],
+  "game_version": ">=0.0.0-0 <2.0.0",
+  "priority": 1200,
+  "dependencies": [],
+  "optional_dependencies": ["gen151@^1.0.0#wild1walker/Gen151"],
+  "conflicts": [],
+  "permissions": [],
+  "description": "A test bench for Gen151: forces its spawns, hands over the kit, plays the LINK CABLE sounds on demand, flips the Mew gate, and warps to every map it touches. Delete before release.",
+  "github": "wild1walker/Gen151"
+}

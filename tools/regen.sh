@@ -30,5 +30,6 @@ luajit tools/dump_placements.lua > SPOILERS.md
 # 5. the thumbnails -- original artwork, drawn rather than shipped
 python3 tools/make_thumbnail.py
 python3 tools/make_thumbnail.py --out gen151_hints/thumbnail.png
+python3 tools/make_thumbnail.py --out gen151_debug/thumbnail.png
 
 echo "regenerated; now run: git diff --exit-code"
