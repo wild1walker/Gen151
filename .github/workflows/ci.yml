@@ -1,0 +1,63 @@
+name: CI
+
+# The gate tools/check.sh runs locally, run on every push and pull request.
+#
+# It needs three checkouts besides this one: the engine, whose own
+# src/world/Encounter.lua and headless loader the suites drive, and the two
+# pret disassemblies the derived files are regenerated from.  All three are
+# public, and none of them is a ROM -- nothing here needs, or touches, a cart.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+  # Release calls this before it packs anything, so a release can never be
+  # cut off a red gate.
+  workflow_call:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Gen151
+        uses: actions/checkout@v4
+        with:
+          path: Gen151
+
+      - name: Checkout the engine
+        uses: actions/checkout@v4
+        with:
+          repository: bryanthaboi/gen1recomp
+          path: gen1recomp
+
+      - name: Checkout pokered
+        uses: actions/checkout@v4
+        with:
+          repository: pret/pokered
+          path: pokered
+
+      - name: Checkout pokeyellow
+        uses: actions/checkout@v4
+        with:
+          repository: pret/pokeyellow
+          path: pokeyellow
+
+      - name: Checkout Gen1Dex
+        uses: actions/checkout@v4
+        with:
+          repository: wild1walker/Gen1Dex
+          path: Gen1Dex
+        continue-on-error: true
+
+      - name: Install Lua
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq lua5.4 luajit
+
+      - name: Run the gate
+        working-directory: Gen151
+        run: |
+          ./tools/check.sh \
+            "$GITHUB_WORKSPACE/gen1recomp" \
+            "$GITHUB_WORKSPACE/pokered" \
+            "$GITHUB_WORKSPACE/pokeyellow" \
+            "$GITHUB_WORKSPACE/Gen1Dex"

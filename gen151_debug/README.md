@@ -9,8 +9,10 @@ cp -r Gen151/gen151_debug <gen1recomp>/mods/gen151_debug
 
 Then in game: **OPTIONS → GEN151 BENCH**. No developer build, no console.
 
-**Delete it before release.** It is a separate mod so that deleting it is all
-it takes, and so the shipped mod carries no debug rows in its own options.
+**This is a development tool, not part of normal play.** It is a separate mod
+so that not installing it — or deleting it — is all it takes, and so Gen151
+itself carries no debug rows in its own options. It is published alongside
+Gen151 only because there is otherwise no way to get it.
 
 ## Why it exists
 

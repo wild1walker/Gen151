@@ -1,0 +1,176 @@
+name: Release
+
+# Packs each mod in this repo into an installable .zip and publishes them as
+# one GitHub Release, once per push to main.
+#
+# Adapted from gen1recomp's tools/mod_release_workflow.yml, which assumes one
+# mod per repository.  This repo holds three: gen151 at the root, and the two
+# companions in their own directories.  The base mod's archive is the root
+# MINUS everything .modkitignore lists -- the derivation pipeline under
+# tools/, the suites under tests/, SPOILERS.md and the companion directories --
+# so the one ignore list stays the single source of truth for what ships.
+#
+# Archive layout: every mod file at the archive root, manifest.json included.
+# That is one of the two shapes the game accepts on MODS > Import mod .zip
+# (src/mods/LauncherMods.lua locateRoot), so the archives install by hand too.
+#
+# The tag comes from the root manifest.json's version, and the release is
+# refused rather than clobbered if that tag already exists -- so cutting a
+# release is "bump manifest.json, merge to main".
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '.github/**'
+      - '**.md'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Exact version to release (e.g. 1.0.1). Blank uses manifest.json."
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  # The same gate CI runs, called rather than copied, so a release cannot be
+  # cut off a red tree and the two can never drift.
+  gate:
+    uses: ./.github/workflows/ci.yml
+
+  release:
+    needs: gate
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine version
+        id: ver
+        env:
+          DISPATCH_VERSION: ${{ github.event.inputs.version }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json, os, re, sys
+
+          SEMVER = re.compile(r"^\d+\.\d+\.\d+$")
+
+          override = os.environ.get("DISPATCH_VERSION", "").strip()
+          with open("manifest.json", encoding="utf-8") as fh:
+              version = override or str(json.load(fh).get("version", ""))
+
+          if not SEMVER.match(version):
+              print(f"::error::version {version!r} is not X.Y.Z", file=sys.stderr)
+              raise SystemExit(1)
+
+          print(f"Releasing {version}.", file=sys.stderr)
+          print(f"version={version}")
+          print(f"tag=v{version}")
+          PY
+
+      - name: Refuse to clobber an existing release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.ver.outputs.tag }}
+        run: |
+          set -euo pipefail
+          if git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
+            echo "::error::Tag $TAG already exists. Bump manifest.json."
+            exit 1
+          fi
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "::error::Release $TAG already exists. Bump manifest.json."
+            exit 1
+          fi
+
+      - name: Build the .zips
+        env:
+          VERSION: ${{ steps.ver.outputs.version }}
+        run: |
+          set -euo pipefail
+          work="$RUNNER_TEMP/work"
+          out="$GITHUB_WORKSPACE/dist"
+          rm -rf "$work" "$out"
+          mkdir -p "$work" "$out"
+          git archive HEAD | tar -x -C "$work"
+
+          # the companions come out whole, before the base mod is stripped
+          for companion in gen151_hints gen151_debug; do
+            if [ -d "$work/$companion" ]; then
+              mv "$work/$companion" "$RUNNER_TEMP/$companion"
+            fi
+          done
+
+          # .modkitignore is the ship list, so read it rather than repeating it
+          if [ -f "$work/.modkitignore" ]; then
+            while IFS= read -r line; do
+              case "$line" in ''|'#'*) continue ;; esac
+              rm -rf "$work/$line"
+            done < "$work/.modkitignore"
+          fi
+          rm -rf "$work/.github" "$work/.gitignore" "$work/.modkitignore" \
+                 "$work/.gitattributes" "$work/.luarc.json"
+          find "$work" -type d -empty -delete
+
+          pack() {
+            local dir="$1"
+            local id
+            id="$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1]))["id"])' "$dir/manifest.json")"
+            local ver
+            ver="$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1]))["version"])' "$dir/manifest.json")"
+            local zip_path="$out/${id}-${ver}.zip"
+            (cd "$dir" && zip -qr "$zip_path" .)
+            echo "--- $id $ver"
+            unzip -l "$zip_path"
+            unzip -p "$zip_path" manifest.json > /dev/null \
+              || { echo "::error::$id: manifest.json is not at the archive root"; exit 1; }
+          }
+
+          pack "$work"
+          for companion in gen151_hints gen151_debug; do
+            [ -d "$RUNNER_TEMP/$companion" ] && pack "$RUNNER_TEMP/$companion"
+          done
+
+          (cd "$out" && sha256sum ./*.zip > sha256sums.txt)
+          cat "$out/sha256sums.txt"
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.ver.outputs.version }}
+          TAG: ${{ steps.ver.outputs.tag }}
+        run: |
+          set -euo pipefail
+
+          prev="$(git tag -l 'v*' --sort=-v:refname | grep -v "^${TAG}$" | head -1 || true)"
+          range="${prev:+${prev}..}$GITHUB_SHA"
+          changes="$(git log --no-merges --pretty='- %s' "$range" | head -50 || true)"
+
+          notes=$'Install from the game: **MODS > Import mod .zip**.\n\n'
+          notes+=$'| Archive | What it is |\n|---|---|\n'
+          notes+=$'| `gen151` | The mod. All 151 renewably obtainable in one save, on one version, without trading. Start here. |\n'
+          notes+=$'| `gen151_hints` | Optional. Adds a HINT row to the Pokédex side menu, next to AREA. |\n'
+          notes+=$'| `gen151_debug` | A development bench, not for normal play: it forces spawns and hands over items so the mod can be checked quickly. |\n'
+          if [ -n "$changes" ]; then
+            notes+=$'\n## Changes\n\n'"$changes"
+          fi
+          printf 'Release notes:\n%s\n' "$notes"
+
+          gh release create "$TAG" \
+            --target "$GITHUB_SHA" \
+            --title "$VERSION" \
+            --notes "$notes" \
+            dist/*.zip \
+            dist/sha256sums.txt
+
+          echo "Published release $TAG"

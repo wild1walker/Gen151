@@ -12,8 +12,9 @@
 -- surfing to Cinnabar and walking through grass a few thousand times.  This
 -- collapses that into a menu.
 --
--- **Delete it before release.**  It is a separate mod so that deleting it is
--- all it takes, and so the shipped mod carries no debug rows in its options.
+-- This is a development tool, not part of normal play.  It is a separate mod
+-- so that not installing it -- or deleting it -- is all it takes, and so
+-- Gen151 itself carries no debug rows in its options.
 --
 -- It asks for no permissions and changes nothing about Gen151: it reads the
 -- resolved placement rows out of `mod.find("gen151").exports` and drives the
