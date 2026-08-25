@@ -204,6 +204,21 @@ function Build.resolve(placements, source, opts)
     return Build.bandLevels(levelsOfGroup(group), row.band)
   end
 
+  -- The destination map's own encounter rate, out of 256.  A tier is a
+  -- promise about how long the hunt is, and the hunt is steps rather than
+  -- encounters -- so the same share costs nearly twice as much on an 8/256
+  -- route as on a 15/256 one.  This is what lets the share be re-solved per
+  -- map so the promise holds wherever a row lands.
+  local function rateOf(row)
+    if row.rod then return nil end   -- a rod has its own bite roll
+    local record = source.encounter(row.map)
+    local group = record
+      and record[row.method == "water" and "water" or "grass"]
+    local rate = group and group.rate
+    if type(rate) ~= "number" or rate <= 0 then return nil end
+    return rate
+  end
+
   local function consider(row, kind)
     if not featureOn(row) then
       out.skipped[#out.skipped + 1] =
@@ -215,17 +230,18 @@ function Build.resolve(placements, source, opts)
         { row = row, why = "already renewable on this install" }
       return nil
     end
-    local weight = rarity.weight(row.tier, opts.multiplier)
+    local weight, capped =
+      rarity.weightForRate(row.tier, opts.multiplier, rateOf(row))
     if not weight then
       out.warnings[#out.warnings + 1] =
         ("%s: unknown rarity tier %s"):format(row.species, tostring(row.tier))
       return nil
     end
-    return weight
+    return weight, capped
   end
 
   for _, row in ipairs(placements.common) do
-    local weight = consider(row)
+    local weight, capped = consider(row)
     if weight then
       local group, why = groupFor(source, row.map, row.method)
       if not group then
@@ -235,7 +251,7 @@ function Build.resolve(placements, source, opts)
         local levels = levelsFor(row, group)
         out.rows[#out.rows + 1] = {
           species = row.species, map = row.map, method = row.method,
-          levels = levels, weight = weight, tier = row.tier,
+          levels = levels, weight = weight, tier = row.tier, capped = capped,
           feature = row.feature, gated = row.gated, why = row.why,
           gate = row.gate or placements.MAP_GATES[row.map],
           vanillaCount = #(group.slots or {}),
@@ -245,7 +261,7 @@ function Build.resolve(placements, source, opts)
   end
 
   for _, row in ipairs(placements.gapFill) do
-    local weight = consider(row)
+    local weight, capped = consider(row)
     if weight then
       local group, why = groupFor(source, row.map, row.method)
       if not group then
@@ -255,7 +271,7 @@ function Build.resolve(placements, source, opts)
         out.rows[#out.rows + 1] = {
           species = row.species, map = row.map, method = row.method,
           levels = levelsFor(row, group), weight = weight, tier = row.tier,
-          feature = row.feature, why = row.why,
+          capped = capped, feature = row.feature, why = row.why,
           gate = row.gate or placements.MAP_GATES[row.map],
           vanillaCount = #(group.slots or {}),
         }
@@ -264,7 +280,7 @@ function Build.resolve(placements, source, opts)
   end
 
   for _, row in ipairs(placements.fishing) do
-    local weight = consider(row)
+    local weight, capped = consider(row)
     if weight then
       local pool, why = rodPool(source, row.map, row.rod)
       if not pool then
@@ -278,6 +294,37 @@ function Build.resolve(placements, source, opts)
           weight = weight, tier = row.tier, feature = row.feature,
           why = row.why, gate = row.gate or placements.MAP_GATES[row.map],
         }
+      end
+    end
+  end
+
+  -- ------------------------------------------------- the per-map ceiling
+  --
+  -- The per-row ceiling holds one placement to vanilla's ninth slot, but a
+  -- map with six of them can still end up a third mod content -- Pokemon
+  -- Mansion B1F did, at 34%.  Prime directive 1 survives that (no vanilla
+  -- slot moved), and the map still stops being itself, which is the same
+  -- complaint by a different route.
+  --
+  -- So a map gives away at most a quarter of its encounters, and where the
+  -- rows on one would exceed that they are ALL scaled down by the same
+  -- factor: the ladder between them is a deliberate ordering and a ceiling
+  -- has no business flattening it.  The player's own RARITY % scales the
+  -- ceiling with it, so somebody who asked for triple rates still gets them.
+  do
+    local ceiling = math.floor(rarity.MAP_CEILING
+      * (opts.multiplier or 100) / 100 + 0.5)
+    local byMap = {}
+    for _, row in ipairs(out.rows) do
+      local key = row.map .. "|" .. row.method
+      byMap[key] = (byMap[key] or 0) + row.weight
+    end
+    for _, row in ipairs(out.rows) do
+      local key = row.map .. "|" .. row.method
+      local total = byMap[key]
+      if total > ceiling and total > 0 then
+        row.weight = math.max(1, math.floor(row.weight * ceiling / total))
+        row.crowded = true
       end
     end
   end

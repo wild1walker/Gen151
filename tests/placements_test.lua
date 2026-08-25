@@ -182,16 +182,75 @@ for _, version in ipairs({ "red", "blue", "yellow" }) do
     end
   end
 
-  -- ---- rarity is a share, and the shares on one map cannot exceed it
+  -- ---- no placement is rarer than the rarest thing the cartridge has
+  --
+  -- Gen 1's tenth wild slot is 3/256.  A mod whose premise is that the
+  -- vanilla encounter is untouched has no business charging more for its own
+  -- additions than the game charges for its own, and the first cut did: 0.4%
+  -- was three and a half times rarer than anything in Kanto, ~250 encounters
+  -- a species, and on Viridian Forest five and a half thousand steps for a
+  -- STARTER.
+  for tier, weight in pairs(Rarity.TIERS) do
+    check(weight >= math.floor(Rarity.FLOOR * 10000),
+      "%s is %.2f%% of a map's encounters, rarer than vanilla's own rarest "
+        .. "slot at %.2f%%", tier, weight / 100, Rarity.FLOOR * 100)
+  end
+
+  -- ---- a tier costs the same HUNT wherever it lands
+  --
+  -- The share is not the promise; the walk is.  A fixed share costs nearly
+  -- twice as much on an 8/256 route as on a 15/256 one, and wore the same
+  -- word on the tin either way.
+  local byTier = {}
+  for _, row in ipairs(resolved.rows) do
+    local record = set.encounters[row.map]
+    local group = record and record[row.method == "water" and "water" or "grass"]
+    local rate = group and group.rate
+    if rate and rate > 0 then
+      local steps = Rarity.medianSteps(row.weight / 10000, rate)
+      byTier[row.tier] = byTier[row.tier] or {}
+      table.insert(byTier[row.tier],
+        { steps = steps, row = row,
+          bounded = row.crowded or row.capped })
+    end
+  end
+  for tier, list in pairs(byTier) do
+    local target = Rarity.steps(tier)
+    for _, entry in ipairs(list) do
+      -- a ceiling may make the hunt LONGER than the target, on purpose; it
+      -- may never make it shorter, which would be the tier lying the other way
+      check(entry.steps >= target * 0.9,
+        "%s: %s on %s is a %s but takes only %.0f steps against the tier's "
+          .. "%.0f", version, entry.row.species, entry.row.map, tier,
+        entry.steps, target)
+      if not entry.bounded then
+        check(entry.steps <= target * 1.5,
+          "%s: %s on %s is a %s but takes %.0f steps against the tier's %.0f, "
+            .. "and no ceiling explains it", version, entry.row.species,
+          entry.row.map, tier, entry.steps, target)
+      end
+    end
+  end
+
+  -- ---- and the two ceilings hold
+  --
+  -- Equalising the hunt wants a bigger share on a quiet map, and left alone
+  -- it wanted Lapras to be 12% of Route 20 -- which does not read as "rare",
+  -- it reads as "Lapras lives here".
   local perMap = {}
   for _, row in ipairs(resolved.rows) do
     local key = row.map .. "|" .. row.method
     perMap[key] = (perMap[key] or 0) + row.weight
+    check(row.weight <= Rarity.ROW_CEILING,
+      "%s: %s is %.2f%% of %s, more than vanilla's ninth slot at %.2f%%",
+      version, row.species, row.weight / 100, row.map,
+      Rarity.ROW_CEILING / 100)
   end
   for key, total in pairs(perMap) do
-    check(total < 5000,
-      "%s: %s gives away %.1f%% of its encounters, which is too much of "
-        .. "somebody else's share", version, key, total / 100)
+    check(total <= Rarity.MAP_CEILING,
+      "%s: %s gives away %.1f%% of its encounters, past the %.0f%% a map is "
+        .. "allowed to stop being itself for", version, key, total / 100,
+      Rarity.MAP_CEILING / 100)
   end
 end
 

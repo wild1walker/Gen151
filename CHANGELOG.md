@@ -3,6 +3,40 @@
 All notable changes to Gen151 are recorded here, in
 [keep a changelog](https://keepachangelog.com/en/1.1.0/) order.
 
+## [1.3.0] - 2026-08-25
+
+The encounter rates were not fair, and the numbers say so.
+
+### Changed
+
+- **The rarity ladder is anchored to the cartridge's own slot widths.** Gen 1's
+  rarest wild slot is 3/256 -- 1.17% of a map's encounters, about 85 encounters
+  to meet one -- and nothing here is rarer than that any more. VERY_RARE was
+  0.4%, three and a half times rarer than anything in Kanto, which worked out
+  at ~250 encounters a species and 5,534 median steps for a Bulbasaur in
+  Viridian Forest. For a **starter**. The new ladder is 4.30% / 2.50% / 1.17%,
+  each anchored to a share vanilla itself charges.
+- **A tier is now a promise about the hunt, not about the share.** A fixed
+  share costs nearly twice as much on an 8/256 route as on a 15/256 one and
+  wore the same word on the tin either way. The share is re-solved from each
+  map's own encounter rate, so a tier costs the same walk wherever it lands:
+  every very rare is now 603-604 median steps instead of 2,952-5,534.
+- **Two ceilings**, because equalising the hunt on a quiet map wanted Lapras to
+  be 12% of Route 20, which does not read as "rare" but as "Lapras lives here".
+  No placement may be more than 4.30% of a map (vanilla's ninth slot); no map
+  may give away more than 25% of its encounters. Where a ceiling bites the hunt
+  runs longer than the tier's target, which is the right trade.
+- `TROPHY` (0.1%) is removed. Nothing used it and it was thirteen times rarer
+  than anything in the game.
+
+Seeing all 23 additions once on Red: **~43,000 steps before, ~9,700 now.**
+
+### Added
+
+- `placements_test` now checks the whole model rather than the numbers: no tier
+  is rarer than vanilla's floor, every row's hunt matches its tier's target
+  unless a ceiling explains it, and both ceilings hold on all three versions.
+
 ## [1.2.0] - 2026-08-25
 
 ### Added

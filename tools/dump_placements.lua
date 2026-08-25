@@ -74,18 +74,27 @@ for it.  That is why the same row is present on one cartridge and absent on
 another: Ekans is already in Red's grass, so Gen151 does nothing about Ekans
 on Red.
 
-Rarity is the share of the ENCOUNTERS on that map, not of the steps taken.
-The encounter rate itself is never touched, so these numbers change what jumps
-you, never how often.
+Rarity is a promise about how long the hunt is, not a fixed share: the share
+is re-solved from each map's own encounter rate so a tier costs the same walk
+everywhere. The encounter rate itself is never touched, so these numbers change
+what jumps you, never how often.
 
 ]])
 
 for _, tier in ipairs(Rarity.ORDER) do
-  io.write(("- **%s** -- about %.2f%% of a map's encounters (%s)\n"):format(
-    tier:gsub("_", " "):lower(),
-    Rarity.TIERS[tier] / 100, Rarity.LABELS[tier]))
+  io.write(("- **%s** -- about %.0f steps of hunting (%.2f%% of encounters "
+    .. "at a %d/256 map rate)\n"):format(
+    tier:gsub("_", " "):lower(), Rarity.steps(tier) or 0,
+    Rarity.TIERS[tier] / 100, Rarity.REFERENCE_RATE))
 end
-io.write("\n")
+io.write(("\nA tier is a promise about the HUNT, not about the share: the "
+  .. "share is re-solved per map from that map's own encounter rate, so the "
+  .. "same tier costs the same walk wherever it lands. Two ceilings bound "
+  .. "it -- no placement is ever more than %.2f%% of a map (vanilla's ninth "
+  .. "slot) and no map gives away more than %.0f%% of its encounters -- so a "
+  .. "quiet map can cost more than the tier's target rather than have this "
+  .. "mod rewrite what lives there.\n\n"):format(
+  Rarity.ROW_CEILING / 100, Rarity.MAP_CEILING / 100))
 
 for _, version in ipairs(VERSIONS) do
   local resolved = Build.resolve(Placements, sourceFor(version), {

@@ -32,9 +32,39 @@ occupies. The only new thing that can happen is a new thing.
 
 What that costs, stated plainly: vanilla species' **share** of a placed map's
 encounters shifts by the substitution rate. Probability is conserved and
-something has to give. It is bounded by the rarity tier, it is listed per row in
-[SPOILERS.md](SPOILERS.md), and it is a single number you can turn down — or off
-— in the options.
+something has to give. It is listed per row in [SPOILERS.md](SPOILERS.md), and
+it is a single number you can turn down — or off — in the options. Two ceilings
+bound it: no placement is ever more than **4.30%** of a map (vanilla's own ninth
+slot) and no map gives away more than **25%** of its encounters, so three
+encounters in four are vanilla everywhere.
+
+### How rare is rare
+
+Gen 1 picks a wild slot from ten buckets out of 256, whose widths are
+`51 51 39 25 25 25 13 13 11 3`. So the rarest thing the cartridge ever asks you
+to find is a tenth-slot species at **3/256 = 1.17%** — about 85 encounters.
+Nothing here is rarer than that, because a mod whose premise is that the vanilla
+encounter is untouched has no business charging more for its own additions than
+the game charges for its own.
+
+| tier | anchored to | the hunt |
+|---|---|---|
+| uncommon | vanilla's 9th slot, 11/256 | ~160 steps |
+| rare | between the 9th and the 10th | ~280 steps |
+| very rare | vanilla's 10th slot, 3/256 | ~600 steps |
+
+**A tier is a promise about the hunt, not about the share.** A fixed share costs
+nearly twice as much on an 8/256 route as on a 15/256 one — same word on the
+tin, twice the walk — so the share is re-solved from each map's own encounter
+rate and the *walk* is what stays constant. Where a ceiling bites, the hunt runs
+longer than the target rather than let this mod rewrite what lives on a quiet
+map.
+
+This is a retune. The first cut set very rare at 0.4%, three and a half times
+rarer than anything in Kanto: ~250 encounters a species, and 5,534 median steps
+for a Bulbasaur in Viridian Forest — for a **starter**, the thing a new player
+most wants. Seeing all 23 additions once on Red cost about 43,000 steps. It now
+costs about 9,700.
 
 ---
 
@@ -224,7 +254,7 @@ version exclusives but not a wild Mew should not have to fork it.
 | CABLE SOUND | on | the snap; charming once, possibly grating on the fourth use |
 | MEW EVENT | on | the Mansion journals and what they unlock |
 | TEST BENCH | off | the built-in bench, below — not part of normal play |
-| RARITY % | 100 | scales every tier at once; 0 disables every substitution |
+| RARITY % | 100 | scales every tier at once; 0 disables every substitution; above 100 it also lifts the per-placement ceiling |
 | AREA HINTS | on | AREA on undiscovered entries, and the line under the map |
 
 There is no legendary option, because there is nothing to toggle — see below.

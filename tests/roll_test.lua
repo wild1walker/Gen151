@@ -259,7 +259,7 @@ do
       layer:add(mapId, terrain, { species = "AAA", level = 20,
                                   weight = Rarity.TIERS.UNCOMMON })
       layer:add(mapId, terrain, { species = "BBB", level = 20,
-                                  weight = Rarity.TIERS.TROPHY })
+                                  weight = Rarity.TIERS.VERY_RARE })
       local ctx = { mapId = mapId, terrain = terrain }
       local _, gotCount = histogram(function(rng)
         ctx.rng = rng.next
@@ -352,7 +352,7 @@ do
   local layer = Roll.new()
   layer:setVanillaCount(mapId, terrain, #def.grass.slots)
   layer:add(mapId, terrain, { species = "MEW", level = 60,
-                              weight = Rarity.TIERS.TROPHY,
+                              weight = Rarity.TIERS.VERY_RARE,
                               active = function() return unlocked end })
   local ctx = { mapId = mapId, terrain = terrain }
 

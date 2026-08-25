@@ -15,14 +15,16 @@ for it.  That is why the same row is present on one cartridge and absent on
 another: Ekans is already in Red's grass, so Gen151 does nothing about Ekans
 on Red.
 
-Rarity is the share of the ENCOUNTERS on that map, not of the steps taken.
-The encounter rate itself is never touched, so these numbers change what jumps
-you, never how often.
+Rarity is a promise about how long the hunt is, not a fixed share: the share
+is re-solved from each map's own encounter rate so a tier costs the same walk
+everywhere. The encounter rate itself is never touched, so these numbers change
+what jumps you, never how often.
 
-- **uncommon** -- about 4.00% of a map's encounters (uncommon)
-- **rare** -- about 1.00% of a map's encounters (rare)
-- **very rare** -- about 0.40% of a map's encounters (very rare)
-- **trophy** -- about 0.10% of a map's encounters (almost never)
+- **uncommon** -- about 161 steps of hunting (4.30% of encounters at a 25/256 map rate)
+- **rare** -- about 280 steps of hunting (2.50% of encounters at a 25/256 map rate)
+- **very rare** -- about 603 steps of hunting (1.17% of encounters at a 25/256 map rate)
+
+A tier is a promise about the HUNT, not about the share: the share is re-solved per map from that map's own encounter rate, so the same tier costs the same walk wherever it lands. Two ceilings bound it -- no placement is ever more than 4.30% of a map (vanilla's ninth slot) and no map gives away more than 25% of its encounters -- so a quiet map can cost more than the tier's target rather than have this mod rewrite what lives there.
 
 ## Red -- 23 species, 53 rows
 

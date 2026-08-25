@@ -62,7 +62,6 @@ H.TIERS = {
   UNCOMMON = "uncommon",
   RARE = "rare",
   VERY_RARE = "very rare",
-  TROPHY = "almost never",
 }
 
 function H.mapName(mapId)
@@ -128,7 +127,6 @@ H.SHORT_TIERS = {
   UNCOMMON = "UNCOMMON",
   RARE = "RARE",
   VERY_RARE = "VERY RARE",
-  TROPHY = "ALMOST NEVER",
 }
 
 -- rows for ONE species -> up to two lines.  nil when there is nothing to say,
