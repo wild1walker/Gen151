@@ -415,13 +415,18 @@ git diff --exit-code placements.lua hints.lua SPOILERS.md tests/fixtures thumbna
 cd /path/to/gen1recomp
 GEN151=/path/to/Gen151 luajit "$GEN151/tests/text_test.lua"
 
-# the runtime features: the LINK CABLE's use flow, the Mansion journals and
-# the AREA captions, all driven through the buses the mod registered on.
-# Point GEN1DEX at a Gen1Dex checkout and the caption cases run too --
-# without it they are skipped, loudly, because that screen is Gen1Dex's
+# the runtime features: the LINK CABLE's use flow, the Mansion journals, the
+# legendaries that come back, and the AREA captions -- all driven through the
+# buses the mod registered on.  Point GEN1DEX at a Gen1Dex checkout and the
+# caption cases run too; without it they are skipped, loudly, because that
+# screen is Gen1Dex's
 cd /path/to/gen1recomp
 GEN151=/path/to/Gen151 GEN1DEX=/path/to/Gen1Dex \
   luajit "$GEN151/tests/features_test.lua"
+
+# the manifest and the shipped tree, through the engine's own modkit
+python3 /path/to/gen1recomp/tools/modkit.py validate .
+python3 /path/to/gen1recomp/tools/modkit.py lint .
 
 # or all of it at once, which is what CI should run
 ./tools/check.sh /path/to/gen1recomp /path/to/pokered /path/to/pokeyellow \
@@ -436,9 +441,12 @@ tables: no vanilla species, level or rate changed on any map on any version;
 everything added lands in a table that can be rolled again; every gap closes;
 and Mew is absent from `data.encounters` until its gate flips. The features
 suite drives the LINK CABLE onto a Kadabra and onto a Pidgey, reads all four
-journals one at a time, and — with Gen1Dex present — reads this mod's captions
-back off its AREA screen, Mew's sealed one included; through the loader's own
-hook and event tables, so what runs is the wiring as installed.
+journals one at a time, walks a beaten legendary's map again to find its object
+back and its beat flag cleared — while a caught one stays caught, `ONE SHOT`
+leaves the cartridge's behaviour alone, and a hidden boulder on the same map is
+left where it was — and, with Gen1Dex present, reads this mod's captions back
+off its AREA screen, Mew's sealed one included; through the loader's own hook
+and event tables, so what runs is the wiring as installed.
 
 ---
 
@@ -455,6 +463,8 @@ hints.lua          GENERATED hint vocabulary
 linkcable.lua      the trade-evolution item
 dexhints.lua       the words under Gen1Dex's AREA map, for this mod's spawns
 mewgate.lua        the journals, and the spawn they unlock
+legendaries.lua    the four statics: beaten or fled, back where they were
+bench.lua          the in-game bench, registered only when TEST BENCH is on
 tools/             the derivation pipeline (not shipped)
 tests/             (not shipped)
 ```
