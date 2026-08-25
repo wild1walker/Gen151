@@ -3,6 +3,18 @@
 All notable changes to Gen151 are recorded here, in
 [keep a changelog](https://keepachangelog.com/en/1.1.0/) order.
 
+## [1.0.2] - 2026-08-25
+
+### Changed
+
+- **MEW EVENT now defaults on.** It shipped off because it is an invention
+  rather than a restoration, and that reasoning has not changed -- but a mod
+  called Gen151 that leaves 151 out of the box is answering a question nobody
+  asked it. Nothing about the feature itself moves: the gate is still all four
+  Pokemon Mansion journals, MEW is still absent from the encounter table until
+  the flag flips so AREA cannot spoil the location, and the toggle is still
+  there for anyone who wants the cartridge's own answer.
+
 ## [1.0.1] - 2026-08-25
 
 A companion fix. Gen151 itself is unchanged; the version moves because one

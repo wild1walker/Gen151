@@ -96,8 +96,15 @@ return function(mod)
       default = true,
       visible_if = { key = "trade_evolutions", equals = "link_cable" } },
 
-    -- An invention rather than a restoration, so it defaults off (SPEC 5).
-    { key = "mew", type = "toggle", label = "MEW EVENT", default = false,
+    -- An invention rather than a restoration, and it shipped off for that
+    -- reason.  On, now, by the author's call: a mod called Gen151 that leaves
+    -- 151 out of the box is answering a question nobody asked it.  The
+    -- caution the default was expressing is still all there in the design --
+    -- the gate is four journals in an optional late-game dungeon, MEW is
+    -- absent from the encounter table until the flag flips so AREA cannot
+    -- spoil it, and the toggle is right here for anyone who wants the
+    -- cartridge's own answer instead.
+    { key = "mew", type = "toggle", label = "MEW EVENT", default = true,
       visible_if = { key = "enabled", equals = true } },
 
     -- A percentage over the whole tier table, so the ladder keeps its shape.

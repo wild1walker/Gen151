@@ -226,8 +226,9 @@ for _, version in ipairs({ "red", "blue", "yellow" }) do
   --
   -- Every species this version had no renewable source for is either placed,
   -- follows by evolution from something placed, reachable with the LINK
-  -- CABLE, a legendary Gen151 deliberately leaves alone, or Mew, whose
-  -- feature defaults off.
+  -- CABLE, or a legendary Gen151 deliberately leaves alone.  MEW is placed
+  -- too, now that its feature defaults on -- but behind a gate, so the check
+  -- below still insists it is absent from the live table.
   local UNTOUCHED = { ARTICUNO = true, ZAPDOS = true, MOLTRES = true,
                       MEWTWO = true }
   local CABLE = { ALAKAZAM = true, MACHAMP = true, GOLEM = true,
@@ -262,8 +263,7 @@ for _, version in ipairs({ "red", "blue", "yellow" }) do
   end
   local uncovered = {}
   for _, species in ipairs(vanilla.dex) do
-    if missing[species] and not covered[species] and not UNTOUCHED[species]
-       and species ~= "MEW" then
+    if missing[species] and not covered[species] and not UNTOUCHED[species] then
       uncovered[#uncovered + 1] = species
     end
   end

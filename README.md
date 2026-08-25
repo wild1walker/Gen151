@@ -178,7 +178,7 @@ version exclusives but not a wild Mew should not have to fork it.
 | SNORLAX | on | the renewable Snorlax |
 | TRADE EVOS | LINK CABLE | LINK CABLE, or off entirely |
 | CABLE SOUND | on | the snap; charming once, possibly grating on the fourth use |
-| MEW EVENT | **off** | the Mansion journals and what they unlock |
+| MEW EVENT | on | the Mansion journals and what they unlock |
 | RARITY % | 100 | scales every tier at once; 0 disables every substitution |
 | HINTS | AREA + DEX ROW | AREA only, + FIELD NOTES, or + the dex row |
 
@@ -204,10 +204,13 @@ sleeper — so a player who KOs or flees both is not locked out.
 
 ### Mew
 
-Off by default, because it is an invention rather than a restoration. Switched
-on, Mew is not a static and not an ordinary wild slot: reading all four Pokemon
-Mansion journals flips an event flag, and only then does Mew become a very rare
-renewable encounter in the basement the journals describe.
+On by default. Mew is not a static and not an ordinary wild slot: reading all
+four Pokemon Mansion journals flips an event flag, and only then does Mew become
+a very rare renewable encounter in the basement the journals describe.
+
+This is the one part of Gen151 that is an invention rather than a restoration,
+which is why it has a switch of its own — turn it off and Mew stays exactly as
+unobtainable as the cartridge left it.
 
 Before the flag is set, Mew is **not in the encounter table at all** — otherwise
 the AREA screen would spoil the location the moment anyone opened the dex. The

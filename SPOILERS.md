@@ -7,8 +7,8 @@ up every map in here on its own.
 
 **GENERATED** by `tools/dump_placements.lua` from `placements.lua`, through
 the same resolver the mod runs, so a row here cannot disagree with the spawn
-it describes.  Every option is switched on for this dump, including the Mew
-event, which ships off by default.
+it describes.  Every option is switched on for this dump, which is also how
+the mod ships.
 
 A species appears on a version only when that version has no renewable source
 for it.  That is why the same row is present on one cartridge and absent on
