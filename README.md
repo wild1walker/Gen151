@@ -267,9 +267,14 @@ that draws it.
 
 ## Options
 
-Every independent decision is its own row. The single biggest complaint about
-the existing all-151 mod is that it is all-or-nothing; someone who wants the
-version exclusives but not a wild Mew should not have to fork it.
+Every independent decision is its own row. This mod exists downstream of
+**[All Pokémon Catchable 151](https://github.com/wowabox/All_Pokemon_Catchable_151_Mod)**
+by **Wowabox (Darklinkduck)**, which got to "complete the Kanto dex in one save
+without trading" first and is where the idea comes from. The one thing asked of
+it repeatedly was that it be splittable: someone who wants the version
+exclusives but not a wild Mew should not have to fork a mod to get them. That
+request is what this options table is an answer to, and it is the only reason
+there is a second mod in this space at all.
 
 | Option | Default | What it does |
 |---|---|---|
@@ -489,6 +494,17 @@ central structural decision. Everything else is downstream of it.
 ## Credits
 
 By **Wild**.
+
+**The idea is not mine.**
+[All Pokémon Catchable 151](https://github.com/wowabox/All_Pokemon_Catchable_151_Mod)
+by **Wowabox (Darklinkduck)** got there first: complete the Kanto dex in one
+save, without trading, without a second cartridge, without event Pokemon. That
+mod set the goal, and Gen151 is a second take on it -- one that answers the
+"let me pick which parts" request with a row per decision, and that measures
+renewability rather than obtainability. None of its code is used here, and the
+two are alternatives rather than a fork and its upstream, but the question this
+mod is answering is Wowabox's question. Their mod is MIT licensed and worth
+your time on its own terms.
 
 Derived from the [pret](https://github.com/pret) disassemblies of Pokemon Red,
 Blue and Yellow, and built on the encounter, merge and hook seams of

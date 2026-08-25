@@ -45,6 +45,11 @@ return {
     },
   },
   credits = {
+    { who = "Wowabox (Darklinkduck)",
+      for_ = "All Pokemon Catchable 151, which got to completing the Kanto "
+        .. "dex in one save without trading first.  That mod set the goal "
+        .. "this one is a second take on; none of its code is used here, but "
+        .. "the idea is theirs" },
     { who = "pret/pokered and pret/pokeyellow",
       for_ = "the disassembly every placement in this mod is derived from" },
     { who = "Pokemon Gen 1 Recompilation Project",
