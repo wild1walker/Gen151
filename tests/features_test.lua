@@ -753,13 +753,20 @@ end
 -- species it forces are ones Gen151 actually placed, and that the Mew toggle
 -- moves the encounter table rather than just the flag.
 
+-- The bench is developer-mode only: the option row is not offered outside it
+-- and, more to the point, not READ outside it, so a stored `bench = true` from
+-- before that change cannot hand a player a BENCH row they have no way to
+-- remove.  Everything below therefore loads with dev on -- which is what the
+-- loader hands the mod as mod.developer -- and the block after it checks the
+-- other half.
 do
   local data = datasetFor("red")
   local paths = { GEN151 }
-  local run = T.sdk.loadMods(paths, { data = data, fs = aliasFs(paths, {
-    ["options.lua"] =
-      'return { modOptions = { gen151 = { bench = true } } }',
-  }) })
+  local run = T.sdk.loadMods(paths, { dev = true, data = data,
+    fs = aliasFs(paths, {
+      ["options.lua"] =
+        'return { modOptions = { gen151 = { bench = true } } }',
+    }) })
   local game = stubGame(data)
   run.loader.game = game
 
@@ -914,6 +921,29 @@ do
   eq(game.save.pokedex.owned.BULBASAUR, nil,
     "bench: without marking them OWNED, which would empty the notebook")
 
+  run.release()
+end
+
+-- ---- and the row set on, with developer mode off, installs nothing
+--
+-- This is the upgrade case: somebody turned TEST BENCH on when it was an
+-- ordinary row, took an update, and no longer has a row to turn it off with.
+-- Gating only the row would leave them a BENCH row in the START menu forever.
+do
+  local data = datasetFor("red")
+  local paths = { GEN151 }
+  local run = T.sdk.loadMods(paths, { dev = false, data = data,
+    fs = aliasFs(paths, {
+      ["options.lua"] =
+        'return { modOptions = { gen151 = { bench = true } } }',
+    }) })
+  run.loader.game = stubGame(data)
+  local items = run.loader.hooks:call("ui.start_menu.items",
+    function(_, given) return given end, run.loader.game,
+    { { label = "POKeDEX" } })
+  eq(#items, 1, "bench: a stored ON adds no START row outside developer mode")
+  check(data.screens == nil or data.screens.Gen151DebugBench == nil,
+    "bench: and registers no screen")
   run.release()
 end
 
