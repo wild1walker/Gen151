@@ -592,9 +592,56 @@ if GEN1DEX then
   for _, row in ipairs(exports.rows or {}) do
     if not row.gated then sample = row.species break end
   end
+  -- the fixture's town map knows none of Kanto's maps; the real dataset has
+  -- an entry for every one, so the placed row's map is given one here the
+  -- same way the Gen1Dex-less block above does it
+  local townMap2 = data.field.townMap
+  townMap2.locations = townMap2.locations or {}
+  for _, row in ipairs(exports.rows or {}) do
+    townMap2.locations[row.map] = townMap2.locations[row.map]
+      or { x = 5, y = 5, name = "PLACED" }
+  end
+
   local screen = TownMap.new(game, { nestSpecies = sample })
   check(type(screen) == "table" and rawget(screen, "draw") ~= nil,
     "hints: opening AREA on a placed species really installs the strip")
+
+  -- ---- and the nests are still on it
+  --
+  -- This is the half of the AREA screen that is Gen151's and belongs to no
+  -- hook: the appended slots are in data.encounters, TownMap scans that table
+  -- itself, and the nests fall out.  Gen1Dex draws a caption strip over the
+  -- same screen, so the two have to coexist -- a caption naming a place with
+  -- nothing marked on the map is worse than either half alone.
+  check(type(screen.nests) == "table" and #screen.nests > 0,
+    ("hints: %s's nests are marked with Gen1Dex installed too (%d)")
+      :format(tostring(sample), #(screen.nests or {})))
+
+  -- and they reach the screen: the strip is drawn over the engine's own draw,
+  -- not instead of it
+  local marks = 0
+  local realImageDraw = love.graphics.draw
+  local realRect = love.graphics.rectangle
+  love.graphics.draw = function(img, ...)
+    if img == screen.nestIcon and screen.nestIcon ~= nil then
+      marks = marks + 1
+    end
+    return realImageDraw(img, ...)
+  end
+  love.graphics.rectangle = function(mode, x, y, w, h, ...)
+    -- the fallback marker the engine draws when the nest icon did not load
+    if mode == "fill" and w == 4 and h == 4 then marks = marks + 1 end
+    return realRect(mode, x, y, w, h, ...)
+  end
+  screen.blink = 0                    -- nests blink; 0 is an on frame in gen 1
+  screen.mode = "grid"
+  screen.bg = screen.bg
+    or { map = { 1 }, img = {}, quads = { [1] = {} } }
+  pcall(screen.draw, screen)
+  love.graphics.draw = realImageDraw
+  love.graphics.rectangle = realRect
+  check(marks > 0,
+    ("hints: and they are actually drawn on it (%d markers)"):format(marks))
 
   -- ---- MEW's answer is WITHHELD, not merely missing
   --
