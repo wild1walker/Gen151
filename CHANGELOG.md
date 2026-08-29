@@ -3,6 +3,27 @@
 All notable changes to Gen151 are recorded here, in
 [keep a changelog](https://keepachangelog.com/en/1.1.0/) order.
 
+## [1.5.2] - 2026-08-29
+
+### Changed
+
+- **TEST BENCH is a developer row now, not a player one.** Turning it on grows
+  a `BENCH` row in the START menu that forces this mod's spawns, hands over a
+  kit and plays the cable sounds on demand. That is the whole point of it and
+  no part of playing the game, and a row saying `TEST BENCH` and nothing else,
+  sitting in a shipped cart's options between `RARITY %` and `LEGENDARIES`, is
+  an invitation to find out what it does.
+
+  It is offered only in developer mode (`POKEPORT_DEV=1`, or `--developer`),
+  read from `mod.developer` -- the verdict the loader resolves once and copies
+  onto the handle, which is the only way a sandboxed mod can learn it. The
+  bench itself is unchanged and works there exactly as before.
+
+  The **read** is gated on the same flag, not just the row, which is the half
+  that matters on an upgrade: somebody who turned it on while it was an
+  ordinary row would otherwise keep a `BENCH` row in their START menu with
+  nothing left in the options to remove it with.
+
 ## [1.5.1] - 2026-08-25
 
 ### Changed

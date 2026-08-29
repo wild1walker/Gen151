@@ -126,8 +126,8 @@ local function readOnlyAlias(paths, overrides)
   }
 end
 
-local function loadPaths(paths, data, overrides)
-  return T.sdk.loadMods(paths, { data = data,
+local function loadPaths(paths, data, overrides, dev)
+  return T.sdk.loadMods(paths, { data = data, dev = dev,
                                  fs = readOnlyAlias(paths, overrides) })
 end
 
@@ -551,11 +551,12 @@ end
 -- half of the same question.
 
 do
+  -- dev on, because the bench is only offered and only read there
   local data = datasetFor("red")
   local run = loadPaths({ GEN151 }, data, {
     ["options.lua"] = 'return { modOptions = { gen151 = '
       .. '{ bench = true } } }',
-  })
+  }, true)
   local game = dexGame(data, {})
   run.loader.game = game
   local factory = data.screens and data.screens.Gen151DebugBench
