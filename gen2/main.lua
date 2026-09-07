@@ -32,24 +32,29 @@ local TIERS = { UNCOMMON = 430, RARE = 250, VERY_RARE = 117 }
 -- directory is not on package.path, so mod:read plus load is the documented
 -- way to reach one.
 --
--- The `gen2/` prefix is not decoration.  ALL 251 lives inside the Gen151
--- repository, beside ALL 151, and the two ship files of the same NAME with
--- different contents -- build.lua, placements.lua and roll.lua are each a
--- different table for a different cartridge.  `mod:read` is rooted at the
--- mod's own folder (the bundle's facade does the same at
--- runtime/facade.lua:77), so a bare "build.lua" here would quietly load
--- Kanto's, which compiles and is wrong in a way nothing would report.
-local DIR = "gen2/"
-
+-- Every name here is written out in full, `gen2/` and all, rather than
+-- assembled from a prefix.  ALL 251 lives inside the Gen151 repository beside
+-- ALL 151, and the two ship files of the same NAME with different contents --
+-- build.lua, placements.lua and roll.lua are each a different table for a
+-- different cartridge.  `mod:read` is rooted at the mod's own folder (the
+-- bundle's facade does the same at runtime/facade.lua:77), so a bare
+-- "build.lua" here would quietly load Kanto's: it compiles, and it is wrong in
+-- a way nothing would report.
+--
+-- Spelled out rather than prefixed because the bundle's tools/check.py reads
+-- these names STATICALLY to prove every file a feature loads is actually
+-- shipped.  A runtime prefix is invisible to it, and it duly resolved three of
+-- these five against Kanto's copies and called the other two missing.  A
+-- literal path is honest to the reader and to the checker at once.
 local function submodule(name)
-  local source = mod and mod:read(DIR .. name)
+  local source = mod and mod:read(name)
   if not source then
     if mod then
       mod.log:error("%s is missing -- the whole spawn layer is skipped", name)
     end
     return nil
   end
-  local chunk, err = load(source, "@" .. DIR .. name)
+  local chunk, err = load(source, "@" .. name)
   if not chunk then
     mod.log:error("%s did not compile: %s", name, tostring(err))
     return nil
@@ -95,11 +100,11 @@ end
 function Gen251.install()
   if lineage() == "gen1" then return end
 
-  local Placements = submodule("placements.lua")
-  local Build = submodule("build.lua")
-  local Roll = submodule("roll.lua")
-  local Trade = submodule("trade.lua")
-  local Statics = submodule("statics.lua")
+  local Placements = submodule("gen2/placements.lua")
+  local Build = submodule("gen2/build.lua")
+  local Roll = submodule("gen2/roll.lua")
+  local Trade = submodule("gen2/trade.lua")
+  local Statics = submodule("gen2/statics.lua")
   if not (Placements and Build and Roll and Trade and Statics) then return end
 
   -- The ten trade evolutions, which are a missing cable rather than a missing

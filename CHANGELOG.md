@@ -3,6 +3,19 @@
 All notable changes to Gen151 are recorded here, in
 [keep a changelog](https://keepachangelog.com/en/1.1.0/) order.
 
+## [1.6.1] - 2026-09-07
+
+### Fixed
+
+- **The `gen2/` file names are written out in full** rather than assembled from
+  a prefix at runtime. The bundle's `tools/check.py` reads these names
+  *statically*, to prove every file a feature loads is actually shipped — and a
+  runtime prefix is invisible to it, so it resolved three of the five against
+  Kanto's copies at the repository root and called the other two missing. A
+  literal path is honest to the reader and to the checker at once, and the
+  reason it matters is unchanged: `build.lua`, `placements.lua` and `roll.lua`
+  exist on both sides with the same names and different contents.
+
 ## [1.6.0] - 2026-09-07
 
 ### Added
