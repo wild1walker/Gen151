@@ -3,6 +3,43 @@
 All notable changes to Gen151 are recorded here, in
 [keep a changelog](https://keepachangelog.com/en/1.1.0/) order.
 
+## [1.6.0] - 2026-09-07
+
+### Added
+
+- **`ALL 251`** — every one of the 251 obtainable in one save, on one
+  cartridge, without trading, while every vanilla encounter keeps its exact
+  vanilla behaviour. A separate row rather than ALL 151's Gen 2 arm, because it
+  is separate research: a different placement table, against different gaps, on
+  different maps. None of ALL 151's three inputs survives the move — Gold's dex
+  is 251, its maps are Johto, and its gaps are closed by different means. The
+  two are each gated to their own generation and can never install together.
+
+  It brings the ten Gen 2 trade evolutions (a missing cable rather than a
+  missing habitat, so answered in code rather than in the table), and the
+  statics: LUGIA, HO-OH and SNORLAX stay until they are caught, RAIKOU and
+  ENTEI go back to roaming. Nothing writes an event flag — Gen 2's
+  `EVENT_FOUGHT_*` are load-bearing for progression a player would not expect
+  to lose.
+
+- **`GS BALL`** — unlocks Crystal's own CELEBI event, which shipped finished
+  and unreachable outside Japan. Off is a Crystal that never heard of the
+  Mobile Adapter, which is the Crystal everybody played.
+
+  Both sit here rather than in repositories of their own because they answer
+  the question ALL 151 answers — *can this save actually hold them all?* — and
+  the research behind all three is one body of work.
+
+### Changed
+
+- The Gen 2 files live under `gen2/`, and the folder is load-bearing rather
+  than tidiness: `build.lua`, `placements.lua` and `roll.lua` exist on both
+  sides with the same names and different contents. `mod:read` is rooted at the
+  mod's own folder, so a bare `"build.lua"` from the Gen 2 side would quietly
+  load Kanto's — which compiles, and is wrong in a way nothing would report.
+
+- `tools/check.sh` runs the three Gen 2 suites, so the gate covers them.
+
 ## [1.5.2] - 2026-08-29
 
 ### Changed

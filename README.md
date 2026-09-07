@@ -265,6 +265,27 @@ that draws it.
 
 ---
 
+## On Gold, Silver and Crystal
+
+This repository ships the Gen 2 half too, as **two more rows** rather than as
+this one's Gen 2 arm.
+
+**`ALL 251`.** Every one of the 251 obtainable in one save, on one cartridge,
+without trading. A separate row because it is separate *research*: a different
+table, against different gaps, on different maps. None of ALL 151's three
+inputs survives the move — Gold's dex is 251, its maps are Johto, and the gaps
+it has are closed by different means (breeding, time of day, the day-care, the
+phone). The two are each gated to their own generation and can never install
+together, so a save only ever sees the one that means anything.
+
+**`GS BALL`.** Unlocks Crystal's own CELEBI event, which shipped finished and
+unreachable outside Japan. Off is a Crystal that never heard of the Mobile
+Adapter — which is the Crystal everybody played.
+
+Both live here rather than in repositories of their own because they answer the
+same question ALL 151 does — *can this save actually hold them all?* — and the
+research behind all three is one body of work.
+
 ## Options
 
 Every independent decision is its own row. This mod exists downstream of
@@ -482,9 +503,24 @@ dexhints.lua       the words under Gen1Dex's AREA map, for this mod's spawns
 mewgate.lua        the journals, and the spawn they unlock
 legendaries.lua    the four statics: beaten or fled, back where they were
 bench.lua          the in-game bench, registered only when TEST BENCH is on
+gen2/              the Gen 2 half -- ALL 251 and the GS BALL
+  main.lua         ALL 251's wiring
+  placements.lua   the Johto placement table, its own source of truth
+  build.lua        placements + the live tables -> roll rows
+  roll.lua         the two-stage roll, Gold's encounter shape
+  statics.lua      LUGIA, HO-OH, SNORLAX, and the two roamers
+  trade.lua        the ten Gen 2 trade evolutions
+  celebi.lua       the GS BALL, and the CELEBI event it unlocks
 tools/             the derivation pipeline (not shipped)
 tests/             (not shipped)
 ```
+
+The `gen2/` files are in a folder of their own for a load-bearing reason:
+`build.lua`, `placements.lua` and `roll.lua` exist on both sides with the same
+names and different contents, because they are different tables for different
+cartridges. `mod:read` is rooted at the mod's own folder, so a bare
+`"build.lua"` from the Gen 2 side would quietly load Kanto's — which compiles,
+and is wrong in a way nothing would report.
 
 `placements.lua` driving the encounter patches, the hints and SPOILERS.md is the
 central structural decision. Everything else is downstream of it.

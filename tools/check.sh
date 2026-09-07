@@ -32,6 +32,15 @@ echo "== the runtime features: the cable, the journals, the AREA captions"
 ( cd "$RECOMP" \
   && GEN151="$HERE" GEN1DEX="$GEN1DEX_DIR" luajit "$HERE/tests/features_test.lua" )
 
+echo "== ALL 251: the Johto placement table, its build and its roll"
+lua tests/gen251_test.lua
+
+echo "== ALL 251: the placement table's own invariants"
+lua tests/placements2_test.lua
+
+echo "== the GS BALL, and the CELEBI event it unlocks"
+lua tests/celebi_test.lua
+
 echo "== modkit"
 python3 "$RECOMP/tools/modkit.py" validate "$HERE"
 python3 "$RECOMP/tools/modkit.py" lint "$HERE"
