@@ -1,5 +1,34 @@
 # Changelog
 
+## [1.6.2] - 2026-09-07
+
+### Fixed
+
+- **Installed on its own on Gold, Silver or Crystal, this mod crashed.** The
+  MOD MANAGER page showed:
+
+  ```
+  FAILED: mods/gen151/build.lua:36:
+  attempt to index local 'record' (a number value)
+  ```
+
+  `build.lua` is ALL 151's — a placement table researched against *Kanto*
+  maps, Red and Blue's version exclusives, and a 151-entry dex. On Gold it
+  read Johto's encounter registry with Kanto's shape and took the game down.
+
+  The manifest says `games: [gen1, gen2]`, and that is true of the
+  *repository* — the Gen 2 half has been in `gen2/` since 1.6.0. But `entry`
+  is a single file, so a standalone install ran the Gen 1 half on both
+  cartridges. Inside the Gen1Wild bundle it never showed, because
+  `features.lua` carries `gen1_only = true` on ALL 151 and lists ALL 251 and
+  the GS BALL as their own rows — the bundle was making a choice the entry did
+  not.
+
+  The entry dispatches now. On a Gen 2 cartridge it installs **ALL 251 and the
+  GS BALL** — the two features 1.6.0's changelog announced and which a
+  standalone install has never actually had — and returns before a single
+  Kanto table is read.
+
 All notable changes to Gen151 are recorded here, in
 [keep a changelog](https://keepachangelog.com/en/1.1.0/) order.
 
