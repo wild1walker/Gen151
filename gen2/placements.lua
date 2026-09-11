@@ -48,12 +48,15 @@
 --                              SLOWKING, STEELIX, SCIZOR, KINGDRA, PORYGON2.
 --                              A trade evolution is not a missing habitat,
 --                              it is a missing cable, so it gets the cable.
---   the eleven statics         LAPRAS, SNORLAX, SUDOWOODO, the three birds,
---                              the three beasts, LUGIA, HO-OH.  All of them
---                              exist on the cartridge and none is renewable,
---                              so the answer is to let a fled or fainted one
---                              come back rather than to put a second copy in
---                              the grass.
+--   the eight statics          LAPRAS, SNORLAX, SUDOWOODO, the three beasts,
+--                              LUGIA, HO-OH.  All of them exist on the
+--                              cartridge, so the answer is to let a fled or
+--                              fainted one come back rather than to put a
+--                              second copy in the grass.  NOT the three Kanto
+--                              birds: Gen 2's statics are the thirteen
+--                              `loadwildmon` calls in its map scripts and the
+--                              birds are not among them, which is why they are
+--                              placed like MEWTWO and MEW.
 --
 -- And six babies that look missing and are not: PICHU, CLEFFA, IGGLYBUFF,
 -- SMOOCHUM, ELEKID and MAGBY all breed from adults already in the grass, and

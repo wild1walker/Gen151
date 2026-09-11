@@ -315,17 +315,27 @@ price and shelve a consumable. Everything else about a trade evolution is
 untouched: SCIZOR still costs a METAL COAT, an EVERSTONE still says no, and
 the Time Capsule still refuses a held-item trade.
 
-**The statics** -- LUGIA, HO-OH, SNORLAX and SUDOWOODO -- keep their objects
-and become RETRYABLE instead. Knock one out or run, and it is back on the map
-the next time you walk in, because what is put back is the object's own
-visibility flag and not the EVENT_FOUGHT flag: Gen 2's fought flags are
-load-bearing for unrelated progression, and clearing EVENT_FOUGHT_SUICUNE to
-give a player their SUICUNE back could take HO-OH away from them. Nothing here
-writes an event flag at all.
+**The eight statics**, answered three different ways and none of them a spawn.
+A second LUGIA in the grass would make it an encounter rather than an event,
+which is a far bigger change than making the one in the WHIRL ISLANDS come
+back.
 
-**SUICUNE on Crystal** is the one static that cannot be un-hidden, so a lost
-one is seeded into the ROAMER slot instead and roams Johto -- which is what
-the other two beasts do on that cartridge anyway.
+- LUGIA, HO-OH, SNORLAX and SUDOWOODO are **put back on their maps**. Knock one
+  out or run, and it is there again the next time you walk in. What is restored
+  is the object's own visibility flag and never the EVENT_FOUGHT flag: Gen 2's
+  fought flags are load-bearing for unrelated progression, and clearing
+  EVENT_FOUGHT_SUICUNE to give a player their SUICUNE back could take HO-OH
+  away from them. Nothing here writes an event flag at all.
+- RAIKOU, ENTEI and SUICUNE live in the **roamer slots** -- Crystal's SUICUNE
+  included, whose object genuinely cannot be un-hidden, because the third slot
+  that cartridge already rolls is exactly where Gold and Silver keep it.
+- LAPRAS was **never a gap**: it is on a daily flag, so it is back in UNION
+  CAVE every Friday.
+
+The three Kanto birds are not on that list, and that took checking: Gen 2's
+only statics are the thirteen `loadwildmon` calls in its map scripts, and
+ARTICUNO, ZAPDOS and MOLTRES are not among them. So they are placed, like
+MEWTWO and MEW, and their rows are in Set A above.
 
 **CELEBI on Crystal** is not a placement either. The whole GS BALL event is on
 the cartridge and unreachable, because the one byte that starts it was only
