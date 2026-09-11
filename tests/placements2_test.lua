@@ -103,6 +103,97 @@ do
   eq(table.concat(twice, ", "), "", "no species is placed twice on one lineage")
 end
 
+-- --------------------------------------------- the gate one row is behind
+
+do
+  io.write("a gate is read for a row, not for a map\n")
+
+  -- The table used to be flat: map -> gate, with Route 32's SURF carrying a
+  -- comment saying it meant the WATER table.  A comment is not something a
+  -- reader of the table can act on, and nothing did: the two Set B rows that
+  -- land in Route 32's GRASS were behind SURF, on a route a player walks down
+  -- on the way to UNION CAVE.  A key may name the method now, and everything
+  -- that wants a gate goes through this one function.
+  ok(type(P.gateFor) == "function", "the table answers for a row")
+
+  eq(P.gateFor("ROUTE_32", "water"), "SURF",
+     "the river below VIOLET is behind SURF")
+  eq(tostring(P.gateFor("ROUTE_32", "grass")), "nil",
+     "and the grass beside it is behind nothing, which is the walk itself")
+  eq(P.gateFor("ILEX_FOREST", "grass"), "CUT",
+     "an unqualified key still answers for either method")
+  eq(P.gateFor("ILEX_FOREST", "water"), "CUT", "both of them")
+  eq(tostring(P.gateFor("ROUTE_30", "grass")), "nil",
+     "a map with no entry at all is open Johto")
+
+  -- Two maps whose own rows cite a requirement the gate table did not carry.
+  -- Left alone they printed "behind nothing" beside a reason that said
+  -- otherwise, which is the one contradiction a table like this can produce.
+  eq(P.gateFor("ICE_PATH_B3F", "grass"), "STRENGTH",
+     "ARTICUNO's floor is three below the one that needs STRENGTH")
+  eq(P.gateFor("SILVER_CAVE_OUTSIDE", "grass"), "16 BADGES",
+     "MOLTRES's slope is behind the same count as the room inside it")
+
+  -- Every row's gate, through the function, is a rung a player can look up.
+  local bad = {}
+  for _, row in ipairs(P.common) do
+    local gate = P.gateFor(row.map, row.method)
+    if gate ~= nil and not gates[gate] then
+      bad[#bad + 1] = row.species .. "=" .. tostring(gate)
+    end
+  end
+  eq(table.concat(bad, ", "), "",
+     "no row is behind a rung the ladder does not have")
+end
+
+-- ------------------------------------------------- the spoiler table
+
+do
+  io.write("every row reaches SPOILERS.md\n")
+
+  -- The doc is GENERATED (tools/dump_placements2.lua) and CI regenerates it
+  -- and fails on a diff -- but only when it is handed the two pret trees, and
+  -- the Johto half needs neither.  This is the cheap half of that guard, and
+  -- it is the one that catches what was actually wrong: the whole Gen 2
+  -- placement table was missing from the document for as long as the document
+  -- existed, and nothing said so.
+  local handle = io.open("SPOILERS.md")
+  if not handle then
+    io.write("  note: no SPOILERS.md beside this suite; skipped\n")
+  else
+    local text = handle:read("*a")
+    handle:close()
+
+    local at = text:find("ALL 251 -- Johto SPOILERS", 1, true)
+    ok(at ~= nil, "the document has a Johto half at all")
+
+    -- Searched from that heading DOWN, so a Kanto row for the same species on
+    -- a route number both regions have -- CHARMANDER on ROUTE 3, SQUIRTLE on
+    -- ROUTE 25 -- cannot answer for a Johto one that is missing.
+    local johto = at and text:sub(at) or ""
+
+    local missing = {}
+    for _, row in ipairs(P.common) do
+      -- The species and its destination, on one line: a row whose map moved
+      -- and whose doc did not is the same bug one species smaller.
+      local where = row.map:gsub("_", " ")
+      local found = false
+      for line in johto:gmatch("[^\n]+") do
+        if line:find("| " .. row.species .. " |", 1, true)
+            and line:find(where, 1, true) then
+          found = true
+          break
+        end
+      end
+      if not found then
+        missing[#missing + 1] = row.species .. " on " .. row.map
+      end
+    end
+    eq(table.concat(missing, ", "), "",
+       "every placement is in the spoiler table, at the map it places on")
+  end
+end
+
 -- ------------------------------------------- SPEC 5: gates that exist
 
 do

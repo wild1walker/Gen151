@@ -24,7 +24,10 @@ python3 tools/build_placements.py --recomp "$RECOMP" --pokered "$POKERED" \
 # 3. the hint vocabulary, from the placements
 python3 tools/build_hints.py
 
-# 4. the spoiler table, through the resolver the mod itself runs
+# 4. the spoiler table, through the resolver the mod itself runs -- both
+#    halves: dump_placements.lua ends by sourcing dump_placements2.lua,
+#    which needs no pret tree because the Johto table carries its own
+#    bands rather than resolved levels
 luajit tools/dump_placements.lua > SPOILERS.md
 
 # 5. the thumbnails -- original artwork, drawn rather than shipped

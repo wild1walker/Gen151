@@ -73,21 +73,51 @@ P.GATES = {
 -- Which rung each map this table touches sits on.  A map with no entry is
 -- open Johto -- reachable on foot with nothing in the bag -- and prints no
 -- requirement line, because there is nothing to require.
+--
+-- A key may name a METHOD as well as a map -- "ROUTE_32:water" -- for the one
+-- shape a flat map->gate table gets wrong: a map whose WATER is behind
+-- something its grass is not.  Route 32 is exactly that and used to be spelled
+-- `ROUTE_32 = "SURF"` with a comment saying it meant the water table, which no
+-- reader of the table was in a position to act on: the two Set B rows that
+-- land in Route 32's GRASS were being told to bring SURF to a route a player
+-- walks down on the way to Union Cave.  Read through `P.gateFor`, never by
+-- indexing this table directly.
 P.MAP_GATES = {
   ILEX_FOREST = "CUT",
   DARK_CAVE_VIOLET_ENTRANCE = "FLASH",
   DARK_CAVE_BLACKTHORN_ENTRANCE = "FLASH",
-  ROUTE_32 = "SURF",          -- the water table, not the grass
+  ["ROUTE_32:water"] = "SURF",
   ROUTE_41 = "SURF",
   MOUNT_MORTAR_B1F = "STRENGTH",
   ICE_PATH_1F = "STRENGTH",
+  -- The floor ARTICUNO is on is three below the one that needs STRENGTH, so
+  -- it cannot be open Johto; without a row here the table said it was.
+  ICE_PATH_B3F = "STRENGTH",
   WHIRL_ISLAND_B1F = "WHIRLPOOL",
   WHIRL_ISLAND_B2F = "WHIRLPOOL",
   -- Kanto in its entirety is behind the Elite Four in Gen 2.
   ROUTE_2 = "the LEAGUE", ROUTE_3 = "the LEAGUE", ROUTE_10_NORTH = "the LEAGUE",
   ROUTE_25 = "the LEAGUE", VICTORY_ROAD = "8 BADGES",
   SILVER_CAVE_ROOM_3 = "16 BADGES",
+  -- The mountain's slope, which is behind the same badge count as the room
+  -- inside it -- MOLTRES's own row already says "behind sixteen badges" and
+  -- the gate table was the only place that did not.
+  SILVER_CAVE_OUTSIDE = "16 BADGES",
 }
+
+-- The gate for one row: the method-qualified key first, then the map's own.
+--
+-- One function so the spawn, the hint and the spoiler table cannot answer this
+-- differently -- the same reason placements.lua is a single source of truth in
+-- the first place.
+function P.gateFor(map, method)
+  if type(map) ~= "string" then return nil end
+  if type(method) == "string" then
+    local scoped = P.MAP_GATES[map .. ":" .. method]
+    if scoped then return scoped end
+  end
+  return P.MAP_GATES[map]
+end
 
 -- ------------------------------------------------------------------ SET A
 --

@@ -239,6 +239,37 @@ do
   -- The real table, against a real-shaped cartridge, must not report holes
   -- for a reason other than the fixture being small.
   ok(#P.common > 0, "the shipped table is loadable from here too")
+
+  -- ---- and the gate comes from the table's own reading of it
+  --
+  -- The stub above carries a bare MAP_GATES and gets the flat lookup, which
+  -- is the fallback and is tested by the VULPIX row.  The SHIPPED table
+  -- answers through `gateFor`, where a key may name a method -- so a row is
+  -- behind what its own method is behind, and the spawn, the hint and
+  -- SPOILERS.md cannot disagree about which.
+  local scoped = {
+    -- Both spellings for one map, which is the whole point: the river is
+    -- behind SURF and the route it runs past is not.  A flat read answers
+    -- CUT for either, which is what the shipped table used to do to Route 32.
+    MAP_GATES = { ROUTE_32 = "CUT", ["ROUTE_32:water"] = "SURF" },
+    common = {
+      { species = "TOTODILE", map = "ROUTE_32", method = "water", band = "mid",
+        tier = "VERY_RARE", feature = "gifts", why = "x" },
+    },
+  }
+  scoped.gateFor = function(map, method)
+    if type(method) == "string" then
+      local hit = scoped.MAP_GATES[map .. ":" .. method]
+      if hit then return hit end
+    end
+    return scoped.MAP_GATES[map]
+  end
+  local out2 = Build.rows(scoped, tables(), POKEMON,
+                          { tiers = TIERS, lineage = "crystal" })
+  eq(out2.rows[1] and out2.rows[1].species, "TOTODILE", "the row applies")
+  eq(out2.rows[1] and out2.rows[1].gate, "SURF",
+     "behind what its own METHOD is behind, not what the map's other table "
+     .. "is: a flat read would send a swimmer after the wrong badge")
 end
 
 -- --------------------------------------------------------------- the roll

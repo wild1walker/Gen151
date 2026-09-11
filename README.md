@@ -278,6 +278,9 @@ it has are closed by different means (breeding, time of day, the day-care, the
 phone). The two are each gated to their own generation and can never install
 together, so a save only ever sees the one that means anything.
 
+Its table is spoiled in the same place this one's is, in the second half of
+[SPOILERS.md](SPOILERS.md).
+
 **`GS BALL`.** Unlocks Crystal's own CELEBI event, which shipped finished and
 unreachable outside Japan. Off is a Crystal that never heard of the Mobile
 Adapter — which is the Crystal everybody played.

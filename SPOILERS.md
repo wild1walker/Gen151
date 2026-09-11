@@ -217,3 +217,125 @@ Omastar, Kabutops, Raichu, Weezing, Beedrill, Kakuna, Gloom, Vileplume,
 Primeape, Arcanine, Vaporeon, Jolteon, Flareon -- follows from a placement
 above rather than getting one of its own.  Fixing the parent fixes the child,
 and a wild Venusaur on a route where Bulbasaur lives would read as an error.
+
+# ALL 251 -- Johto SPOILERS
+
+The same table for the Gold, Silver and Crystal half of the mod, and the same
+promise: nothing below is a surprise it means to keep.
+
+**GENERATED** by `tools/dump_placements2.lua` from `gen2/placements.lua`, so a
+row here cannot disagree with the spawn it describes.
+
+Two things read differently from the Kanto half above.
+
+**A Johto placement SUBSTITUTES; it does not append.** Gold picks a grass slot
+off a fixed seven-entry probability ladder, so an eighth slot can never be
+drawn -- there is nothing to append to. A placed species takes a slot that was
+already there, which is why the tables below have no row count against
+vanilla: nothing is added and nothing is taken away.
+
+**The Levels column is a BAND, not a range.** A row takes a third of its
+destination map's OWN levels -- the low, middle or high third -- rather than a
+level of its own, so one row stays right on all three cartridges even where
+their bands differ by twenty levels. What that third actually comes out as
+depends on which cartridge you are playing, so the honest thing to print is
+the third.
+
+And the same rule as Kanto decides whether a row fires at all: a species is
+placed only where the cartridge has no renewable source for it already. Set
+B's reasons say which cartridge that is, species by species.
+
+## Set A -- the decisions -- 19 species, 19 rows
+
+The half that needed taste. Where a later official game put a species in the
+wild, that is the authority; where none ever did, the row justifies itself on
+habitat and gate instead and says so.
+
+| Species | Where | How | Band | Rarity | Behind | Why |
+|---|---|---|---|---|---|---|
+| AERODACTYL | VICTORY ROAD | grass | high | very rare | 8 BADGES | the last rock cave before the League, which is where Gen151 put it in Kanto and is the same argument here: the only band that suits a revived AERODACTYL behind the only gate that suits it |
+| ARTICUNO | ICE PATH B3F | grass | high | very rare | STRENGTH | the deepest floor of the only ice cave either region has, behind STRENGTH: Gen 2 kept ARTICUNO's habitat and left the bird out of it |
+| BULBASAUR | ROUTE 2 | grass | mid | very rare | the LEAGUE | Let's Go puts wild BULBASAUR in VIRIDIAN FOREST, and Route 2 is what Gen 2 left of that forest -- the same trees, walked through rather than entered |
+| CELEBI | ILEX FOREST | grass | high | very rare | CUT | GOLD and SILVER have no shrine script to switch on -- no GS BALL, no event, nothing gated -- but they do have the forest the shrine stands in, and that is where it would have been |
+| CHARMANDER | ROUTE 3 | grass | mid | very rare | the LEAGUE | Let's Go's own CHARMANDER route, still there and still the climb to MT.MOON |
+| CHIKORITA | ILEX FOREST | grass | mid | very rare | CUT | Johto has exactly one forest and this is it -- the leaf on CHIKORITA's head is the forest's own canopy, and the shrine at its centre is already where Johto keeps what it will not explain |
+| CYNDAQUIL | BURNED TOWER 1F | grass | mid | very rare | nothing | the tower burned down and nothing has grown back: a fire mouse that sleeps in ash is the one thing that would live there, and the floor already rolls its own encounters |
+| EEVEE | ROUTE 34 | grass | mid | rare | nothing | Route 34 is the GOLDENROD approach, so the gate is the same one BILL's gift sits behind -- the rule Gen151 used for the CELADON MANSION EEVEE, one city over |
+| KABUTO | WHIRL ISLAND B1F | grass | mid | very rare | WHIRLPOOL | one floor above its Helix counterpart, so the two fossils keep the separation the Mt. Moon choice gave them |
+| MEW | RUINS OF ALPH INNER CHAMBER | grass | mid | very rare | nothing | the one room in Johto you reach by solving something rather than by walking, which is the shape MEW's Gen 1 placement had: the MANSION journals made you read before the forest would answer |
+| MEWTWO | SILVER CAVE ROOM 3 | grass | high | very rare | 16 BADGES | CERULEAN CAVE is sealed in Gen 2 and MT.SILVER is the cave that replaced it: the deepest room, behind sixteen badges, which asks more than the Kanto cave ever did |
+| MOLTRES | SILVER CAVE OUTSIDE | grass | high | very rare | 16 BADGES | FireRed puts MOLTRES at a mountain's summit and MT.SILVER is the only summit Gen 2 has -- behind sixteen badges, which is the hardest thing either region asks for anything |
+| OMANYTE | WHIRL ISLAND B2F | grass | mid | very rare | WHIRLPOOL | the deep floor of the sea cave, behind SURF and WHIRLPOOL: a living ammonite belongs where the water never reached the surface |
+| PORYGON | ROUTE 10 NORTH | grass | mid | rare | the LEAGUE | the route the POWER PLANT stands on, and the only place Gen 2 still keeps VOLTORB: the man-made-Pokemon habitat, behind the LEAGUE rather than behind a coin counter |
+| SQUIRTLE | ROUTE 25 | grass | mid | very rare | the LEAGUE | Let's Go puts wild SQUIRTLE on Routes 24 and 25; 25 is the one that still carries a grass table in Gen 2 |
+| TOGEPI | ROUTE 30 | grass | low | very rare | nothing | where MR.POKeMON found the egg: the row puts the species back where its own story says it came from |
+| TOTODILE | ROUTE 32 | surf | mid | very rare | SURF | the river below VIOLET, which is the first real water in Johto and the only stretch of it a jaw that size has room in |
+| TYROGUE | MOUNT MORTAR B1F | grass | mid | very rare | STRENGTH | the KARATE KING's own floor -- the cartridge already hands a TYROGUE over down here, so this is that gift made renewable rather than a new idea about where one lives |
+| ZAPDOS | ROUTE 10 NORTH | grass | high | very rare | the LEAGUE | the route the POWER PLANT stands on, which is where ZAPDOS lived in Red and is still the only place Gen 2 keeps VOLTORB |
+
+## Set B -- the version exclusives -- 16 species, 16 rows
+
+Derived rather than decided, by `tools/build_placements2.py`: a version
+exclusive is missing on one cartridge and present on another, so its placement
+is the map the OTHER cartridge puts it on -- same game, same species, same map.
+Where a donor keeps it in more than one place, the lowest band wins, because
+the earliest place a cartridge keeps a species is the one its own designers
+thought of as that species' home.
+
+Only the ROOT of each line is placed: placing EKANS gives ARBOK, because the
+renewability closure runs over evolution.
+
+| Species | Where | How | Band | Rarity | Behind | Why |
+|---|---|---|---|---|---|---|
+| DELIBIRD | ICE PATH 1F | grass | mid | uncommon | STRENGTH | SILVER and CRYSTAL keep it on ICE_PATH_1F / ICE_PATH_B1F / ICE_PATH_B2F_BLACKTHORN_SIDE / ICE_PATH_B2F_MAHOGANY_SIDE / ICE_PATH_B3F; GOLD keeps it nowhere at all |
+| EKANS | ROUTE 32 | grass | mid | uncommon | nothing | SILVER and CRYSTAL keep it on ROUTE_32 / ROUTE_33 / ROUTE_42; GOLD keeps it nowhere at all |
+| GIRAFARIG | ROUTE 43 | grass | mid | uncommon | nothing | GOLD and SILVER keep it on ROUTE_43; CRYSTAL keeps it nowhere at all |
+| GLIGAR | ROUTE 45 | grass | mid | uncommon | nothing | GOLD and CRYSTAL keep it on ROUTE_45; SILVER keeps it nowhere at all |
+| GROWLITHE | ROUTE 36 | grass | mid | uncommon | nothing | GOLD and CRYSTAL keep it on ROUTE_35 / ROUTE_36 / ROUTE_37; SILVER keeps it nowhere at all |
+| LEDYBA | ROUTE 30 | grass | mid | uncommon | nothing | SILVER and CRYSTAL keep it on NATIONAL_PARK / ROUTE_30 / ROUTE_31 / ROUTE_36 / ROUTE_37; GOLD keeps it nowhere at all |
+| MANKEY | ROUTE 42 | grass | mid | uncommon | nothing | GOLD keeps it on ROUTE_42; neither SILVER nor CRYSTAL keeps it anywhere |
+| MANTINE | ROUTE 41 | surf | mid | uncommon | SURF | GOLD and CRYSTAL keep it on ROUTE_41; SILVER keeps it nowhere at all |
+| MAREEP | ROUTE 32 | grass | mid | uncommon | nothing | GOLD and SILVER keep it on ROUTE_32 / ROUTE_42 / ROUTE_43; CRYSTAL keeps it nowhere at all |
+| MEOWTH | ROUTE 38 | grass | mid | uncommon | nothing | SILVER and CRYSTAL keep it on ROUTE_38 / ROUTE_39; GOLD keeps it nowhere at all |
+| PHANPY | ROUTE 46 | grass | mid | uncommon | nothing | SILVER and CRYSTAL keep it on ROUTE_45 / ROUTE_46; GOLD keeps it nowhere at all |
+| SANDSHREW | UNION CAVE 1F | grass | mid | uncommon | nothing | GOLD and CRYSTAL keep it on UNION_CAVE_1F / UNION_CAVE_B1F; SILVER keeps it nowhere at all |
+| SKARMORY | ROUTE 45 | grass | mid | uncommon | nothing | SILVER and CRYSTAL keep it on ROUTE_45; GOLD keeps it nowhere at all |
+| SPINARAK | ROUTE 30 | grass | mid | uncommon | nothing | GOLD and CRYSTAL keep it on NATIONAL_PARK / ROUTE_30 / ROUTE_31 / ROUTE_36 / ROUTE_37; SILVER keeps it nowhere at all |
+| TEDDIURSA | DARK CAVE VIOLET ENTRANCE | grass | mid | uncommon | FLASH | GOLD and CRYSTAL keep it on DARK_CAVE_BLACKTHORN_ENTRANCE / DARK_CAVE_VIOLET_ENTRANCE / ROUTE_45; SILVER keeps it nowhere at all |
+| VULPIX | ROUTE 36 | grass | mid | uncommon | nothing | SILVER keeps it on ROUTE_36 / ROUTE_37; neither GOLD nor CRYSTAL keeps it anywhere |
+
+## Not placed in Johto, on purpose
+
+**The ten trade evolutions** -- ALAKAZAM, MACHAMP, GOLEM, GENGAR, POLITOED,
+SLOWKING, STEELIX, SCIZOR, KINGDRA, PORYGON2 -- get the cable rather than a
+habitat, and on Gold the cable is a RULE rather than an item. Gen 2 ships the
+EVERSTONE, which the cartridge's own evolution code already checks before it
+checks anything else, so there is a first-class opt-out and no need to invent,
+price and shelve a consumable. Everything else about a trade evolution is
+untouched: SCIZOR still costs a METAL COAT, an EVERSTONE still says no, and
+the Time Capsule still refuses a held-item trade.
+
+**The statics** -- LUGIA, HO-OH, SNORLAX and SUDOWOODO -- keep their objects
+and become RETRYABLE instead. Knock one out or run, and it is back on the map
+the next time you walk in, because what is put back is the object's own
+visibility flag and not the EVENT_FOUGHT flag: Gen 2's fought flags are
+load-bearing for unrelated progression, and clearing EVENT_FOUGHT_SUICUNE to
+give a player their SUICUNE back could take HO-OH away from them. Nothing here
+writes an event flag at all.
+
+**SUICUNE on Crystal** is the one static that cannot be un-hidden, so a lost
+one is seeded into the ROAMER slot instead and roams Johto -- which is what
+the other two beasts do on that cartridge anyway.
+
+**CELEBI on Crystal** is not a placement either. The whole GS BALL event is on
+the cartridge and unreachable, because the one byte that starts it was only
+ever written by the Mobile Adapter GB. The mod writes the byte and stops: the
+receptionist, KURT, the shrine in ILEX FOREST and the level 30 CELEBI are all
+the cartridge's own, in its own words. On Gold and Silver none of it exists,
+which is why CELEBI has a placement row there and not on Crystal.
+
+**Six babies that look missing and are not** -- PICHU, CLEFFA, IGGLYBUFF,
+SMOOCHUM, ELEKID and MAGBY. Every one breeds from an adult already in the
+grass and the engine implements the Day-Care, so the gap set closes over
+breeding and drops them. Placing them would have been inventing work for the
+player.

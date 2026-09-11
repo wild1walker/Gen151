@@ -212,6 +212,17 @@ end
 --   unplaced  placements whose destination map has no table on this
 --             cartridge, which is a bug in the table rather than a fact
 --             about the save, so it is reported rather than swallowed
+-- Through the table's own `gateFor` when it has one, so the method-qualified
+-- keys ("ROUTE_32:water" -- water behind SURF, grass behind nothing) are read
+-- the one way.  The flat fallback is for a caller that hands in a bare
+-- { MAP_GATES = ... } stub rather than the real table.
+local function gateFor(placements, row)
+  if type(placements.gateFor) == "function" then
+    return placements.gateFor(row.map, row.method)
+  end
+  return (placements.MAP_GATES or {})[row.map]
+end
+
 function Build.rows(placements, tables, pokemon, opts)
   opts = opts or {}
   local tiers = opts.tiers or {}
@@ -242,7 +253,7 @@ function Build.rows(placements, tables, pokemon, opts)
         out.rows[#out.rows + 1] = {
           species = row.species, map = row.map, terrain = row.method,
           weight = weight, levels = levels, feature = row.feature,
-          tier = row.tier, gate = (placements.MAP_GATES or {})[row.map],
+          tier = row.tier, gate = gateFor(placements, row),
           why = row.why,
         }
       end

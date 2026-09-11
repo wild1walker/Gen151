@@ -1,5 +1,41 @@
 # Changelog
 
+## [1.7.0] - 2026-09-11
+
+### Added
+
+- **SPOILERS.md has a Johto half.** The document covered Red, Blue and Yellow
+  and stopped, so the whole ALL 251 placement table -- thirty-five rows, both
+  sets -- was missing from the one file that exists to answer "where did you
+  put it?". It is generated now by `tools/dump_placements2.lua` out of
+  `gen2/placements.lua`, through the same table the spawns come from, and
+  `tools/regen.sh` builds both halves in the one command it always did.
+
+  Two things read differently there and the document says why. A Johto
+  placement SUBSTITUTES rather than appends, because Gold's grass roll is a
+  fixed seven-entry ladder and an eighth slot can never be drawn. And the
+  levels column is a BAND -- the low, middle or high third of the destination
+  map's own levels -- because a row takes a third of whatever that map holds
+  on the cartridge you are playing, and printing one Lv range would be
+  picking a cartridge without saying which.
+
+### Fixed
+
+- **Two Johto maps claimed to be open ground while their own rows said
+  otherwise.** ICE PATH B3F, three floors below the one that needs STRENGTH,
+  and SILVER CAVE OUTSIDE, whose MOLTRES row already reads "behind sixteen
+  badges" -- both carried no gate at all. Every row's requirement is now a
+  rung the ladder actually has, checked for the whole table rather than for
+  the maps somebody remembered.
+
+- **Route 32's grass was behind SURF.** The gate table was flat -- one gate
+  per map -- and Route 32's entry was the river, marked as such in a comment
+  no reader of the table was in a position to act on. The two version
+  exclusives that land in its GRASS were behind SURF, on a route a player
+  walks down on the way to UNION CAVE. A key can name the method now
+  (`ROUTE_32:water`), every reader goes through `P.gateFor`, and the spawn,
+  the hint text and the spoiler table cannot answer it differently.
+
 ## [1.6.2] - 2026-09-07
 
 ### Fixed
