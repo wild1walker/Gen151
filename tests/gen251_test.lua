@@ -270,6 +270,27 @@ do
   eq(out2.rows[1] and out2.rows[1].gate, "SURF",
      "behind what its own METHOD is behind, not what the map's other table "
      .. "is: a flat read would send a swimmer after the wrong badge")
+
+  -- ---- and a row that answers for itself beats both
+  --
+  -- MAP_GATES answers for getting TO a place and cannot answer for getting
+  -- IN.  MEW's room in the RUINS opens on a solved chamber puzzle, so the row
+  -- carries the rung -- Gen 151's own rule (build.lua:256), where Kanto's MEW
+  -- overrides the MANSION's SURF with 4 JOURNALS for the same reason.
+  local own = {
+    MAP_GATES = { ROUTE_36 = "CUT" },
+    gateFor = function(map) return ({ ROUTE_36 = "CUT" })[map] end,
+    common = {
+      { species = "VULPIX", map = "ROUTE_36", method = "grass", band = "mid",
+        tier = "UNCOMMON", feature = "exclusives", gate = "a SOLVED PUZZLE",
+        why = "x" },
+    },
+  }
+  local out3 = Build.rows(own, tables(), POKEMON,
+                          { tiers = TIERS, lineage = "crystal" })
+  eq(out3.rows[1] and out3.rows[1].gate, "a SOLVED PUZZLE",
+     "the row's own rung wins over its map's, which is the only way a "
+     .. "placement can say the thing standing in the way is not the walk")
 end
 
 -- --------------------------------------------------------------- the roll

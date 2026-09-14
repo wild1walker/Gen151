@@ -216,7 +216,15 @@ end
 -- keys ("ROUTE_32:water" -- water behind SURF, grass behind nothing) are read
 -- the one way.  The flat fallback is for a caller that hands in a bare
 -- { MAP_GATES = ... } stub rather than the real table.
+--
+-- The ROW wins over the map, which is Gen 151's own rule (build.lua:256
+-- `row.gate or placements.MAP_GATES[row.map]`) and exists for one shape: a
+-- placement whose requirement is not the requirement for GETTING TO the map.
+-- Kanto's MEW is the case there -- reaching the MANSION is not what unlocks
+-- it, reading all four of its journals is -- and Johto's MEW is the same
+-- shape.
 local function gateFor(placements, row)
+  if type(row.gate) == "string" then return row.gate end
   if type(placements.gateFor) == "function" then
     return placements.gateFor(row.map, row.method)
   end

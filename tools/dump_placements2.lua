@@ -72,7 +72,7 @@ local function table_(rows)
       methodOf(row),
       row.band,
       Rarity.LABELS[row.tier] or row.tier,
-      P.gateFor(row.map, row.method) or "nothing",
+      row.gate or P.gateFor(row.map, row.method) or "nothing",
       (row.why or ""):gsub("|", "/")))
   end
   io.write("\n")

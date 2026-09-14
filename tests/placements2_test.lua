@@ -134,10 +134,32 @@ do
   eq(P.gateFor("SILVER_CAVE_OUTSIDE", "grass"), "16 BADGES",
      "MOLTRES's slope is behind the same count as the room inside it")
 
-  -- Every row's gate, through the function, is a rung a player can look up.
+  -- ---- a row that answers for itself
+  --
+  -- MAP_GATES answers for getting TO a place.  It cannot answer for getting
+  -- IN, and one row needs that: the RUINS OF ALPH's inner rooms open when a
+  -- chamber puzzle is solved, which is not a move, a badge or a walk.  Kanto's
+  -- MEW is the same shape and the same answer -- `gate = "4 JOURNALS"` on the
+  -- row, overriding the MANSION's own -- so this is that rule ported, not a
+  -- new one invented for one species.
+  local mew
+  for _, row in ipairs(P.common) do
+    if row.species == "MEW" then mew = row end
+  end
+  ok(mew, "MEW is placed")
+  eq(mew and mew.map, "RUINS_OF_ALPH_INNER_CHAMBER", "in the inner chamber")
+  eq(mew and mew.gate, "a SOLVED PUZZLE",
+     "and it carries its own gate, because reaching the RUINS is not what "
+     .. "opens the room")
+  eq(tostring(P.MAP_GATES[mew and mew.map or "?"]), "nil",
+     "the map itself has no entry, which is what the row is there to cover")
+
+  -- Every row's gate -- the row's own first, then its map's -- is a rung a
+  -- player can look up.  A hint that prints a requirement nobody can find is
+  -- worse than a hint that prints none.
   local bad = {}
   for _, row in ipairs(P.common) do
-    local gate = P.gateFor(row.map, row.method)
+    local gate = row.gate or P.gateFor(row.map, row.method)
     if gate ~= nil and not gates[gate] then
       bad[#bad + 1] = row.species .. "=" .. tostring(gate)
     end

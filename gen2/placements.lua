@@ -68,9 +68,20 @@ local P = {}
 
 -- The rungs, in the order Johto opens them, spelled the way the game spells
 -- them because these strings reach the player through the FIELD NOTES box.
+--
+-- Not only field moves and badges.  Gen 151's ladder has "the SILPH SCOPE",
+-- "the FLUTE", "the BICYCLE" and "the SAFARI ZONE" on it, because a rung is
+-- whatever the player has to have DONE, not whatever HM they have to carry --
+-- and a rung nobody can look up is the one thing a hint must never print.
 P.GATES = {
   "CUT", "FLASH", "SURF", "WHIRLPOOL", "STRENGTH",
   "8 BADGES", "the LEAGUE", "16 BADGES",
+  -- The RUINS OF ALPH's inner rooms are behind a solved chamber puzzle: the
+  -- puzzle's own `setmapscene RUINS_OF_ALPH_INNER_CHAMBER`
+  -- (../pokecrystal/maps/RuinsOfAlphKabutoChamber.asm:36) is what opens the
+  -- floor, so the chamber is not somewhere a player walks to.  Any of the
+  -- four will do, which is why the rung names the act and not a chamber.
+  "a SOLVED PUZZLE",
 }
 
 -- Which rung each map this table touches sits on.  A map with no entry is
@@ -244,8 +255,13 @@ P.common = {
     why = "CERULEAN CAVE is sealed in Gen 2 and MT.SILVER is the cave that "
       .. "replaced it: the deepest room, behind sixteen badges, which asks "
       .. "more than the Kanto cave ever did" },
+  -- The one row here that carries its OWN gate, for the same reason Kanto's
+  -- MEW does: what stands between a player and this room is not a move or a
+  -- badge, and a map gate could not say so.  MAP_GATES answers for getting to
+  -- a place; this answers for getting IN.
   { species = "MEW", map = "RUINS_OF_ALPH_INNER_CHAMBER", method = "grass",
     band = "mid", tier = "VERY_RARE", feature = "gifts",
+    gate = "a SOLVED PUZZLE",
     why = "the one room in Johto you reach by solving something rather than "
       .. "by walking, which is the shape MEW's Gen 1 placement had: the "
       .. "MANSION journals made you read before the forest would answer" },

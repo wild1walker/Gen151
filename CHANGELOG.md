@@ -1,5 +1,28 @@
 # Changelog
 
+## [1.8.0] - 2026-09-14
+
+### Added
+
+- **A rung for the RUINS OF ALPH, and a row that can carry its own.** MEW's
+  AREA line read "behind nothing" beside a reason saying you get there by
+  solving something. The room is not somewhere a player walks to — the
+  chamber puzzle's own `setmapscene RUINS_OF_ALPH_INNER_CHAMBER` is what
+  opens the floor — so the gate table, which answers for getting *to* a
+  place, could not answer for getting *in*.
+
+  Two things fixed it, and neither is new: **a SOLVED PUZZLE** joins the
+  Johto ladder, which already had room for something that is not an HM or a
+  badge (Kanto's ladder carries "the SILPH SCOPE", "the FLUTE", "the BICYCLE"
+  and "the SAFARI ZONE"); and a row can now override its map's rung, which is
+  Gen 151's own rule — Kanto's MEW overrides the MANSION's with `4 JOURNALS`
+  for exactly this reason. Johto's MEW is the same shape, so it gets the same
+  answer rather than a new one.
+
+  Every row's rung, its own or its map's, is now checked against the ladder:
+  a hint that prints a requirement nobody can look up is worse than a hint
+  that prints none.
+
 ## [1.7.0] - 2026-09-11
 
 ### Added
